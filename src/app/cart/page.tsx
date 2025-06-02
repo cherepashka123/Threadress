@@ -10,11 +10,9 @@ import {
   FaPlusCircle,
   FaShoppingCart,
 } from 'react-icons/fa';
-import { useCart } from '@/context/CartContext';
-import { Item } from '@/data/items';
+import { useCart, CartItem } from '@/context/CartContext';
 
 export default function CartPage() {
-  // Safely extract cartItems (default to empty array)
   const {
     cartItems = [],
     add,
@@ -22,28 +20,27 @@ export default function CartPage() {
     updateQuantity,
     clear,
   } = useCart() as {
-    cartItems: Item[];
-    add: (item: Item) => void;
-    remove: (item: Item) => void;
+    cartItems: CartItem[];
+    add: (item: CartItem) => void;
+    remove: (item: CartItem) => void;
     updateQuantity: (id: number, qty: number) => void;
     clear: () => void;
   };
 
-  // Subtotal state
   const [subtotal, setSubtotal] = useState<number>(0);
 
   useEffect(() => {
+    // Now each `item` is a CartItem (which has `quantity`)
     const total = cartItems.reduce(
-      (acc: number, item: Item) => acc + item.price * (item.quantity || 1),
+      (acc: number, item: CartItem) => acc + item.price * item.quantity,
       0
     );
     setSubtotal(total);
   }, [cartItems]);
 
-  // Countdown state (in seconds) – starts at 4 hours = 14400s
+  // 4-hour countdown timer (in seconds)
   const [timeLeft, setTimeLeft] = useState<number>(4 * 3600);
 
-  // Decrement timer every second
   useEffect(() => {
     if (timeLeft <= 0) return;
     const timer = setInterval(() => {
@@ -66,7 +63,7 @@ export default function CartPage() {
     return `${hrs}:${mins}:${secs}`;
   };
 
-  // Animation variants
+  // Framer‐motion variants
   const listVariants = {
     hidden: {},
     visible: { transition: { staggerChildren: 0.05 } },
@@ -80,8 +77,6 @@ export default function CartPage() {
     },
     exit: { opacity: 0, x: 20, transition: { duration: 0.2 } },
   };
-
-  // Pulse animation for timer box
   const pulseVariants = {
     idle: { boxShadow: '0 0 0px rgba(255,255,255,0)' },
     pulse: {
@@ -94,7 +89,7 @@ export default function CartPage() {
     <div className="min-h-screen bg-[#f9f5f0] py-16 px-4 lg:px-8">
       {/* Header */}
       <header className="flex items-center justify-between mb-8 px-4 lg:px-0">
-        <h1 className="text-3xl font-heading font-bold text-gray-900 flex items-center gap-2">
+        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
           <FaShoppingCart /> My Cart
         </h1>
       </header>
@@ -112,7 +107,7 @@ export default function CartPage() {
                 animate="visible"
                 variants={listVariants}
               >
-                {cartItems.map((item: Item) => (
+                {cartItems.map((item: CartItem) => (
                   <motion.li
                     key={item.id}
                     className="flex bg-white rounded-2xl shadow-md overflow-hidden"
@@ -145,19 +140,17 @@ export default function CartPage() {
                         <div className="flex items-center space-x-2">
                           <button
                             onClick={() =>
-                              updateQuantity(item.id, (item.quantity || 1) - 1)
+                              updateQuantity(item.id, item.quantity - 1)
                             }
-                            disabled={(item.quantity || 1) <= 1}
+                            disabled={item.quantity <= 1}
                             className="text-gray-600 disabled:opacity-50"
                           >
                             <FaMinusCircle size={20} />
                           </button>
-                          <span className="text-gray-800">
-                            {item.quantity || 1}
-                          </span>
+                          <span className="text-gray-800">{item.quantity}</span>
                           <button
                             onClick={() =>
-                              updateQuantity(item.id, (item.quantity || 1) + 1)
+                              updateQuantity(item.id, item.quantity + 1)
                             }
                             className="text-gray-600"
                           >
@@ -168,7 +161,7 @@ export default function CartPage() {
                         {/* Price & Remove */}
                         <div className="flex items-center space-x-4">
                           <span className="text-indigo-600 font-medium">
-                            ${(item.price * (item.quantity || 1)).toFixed(2)}
+                            ${(item.price * item.quantity).toFixed(2)}
                           </span>
                           <button
                             onClick={() => remove(item)}
@@ -187,9 +180,8 @@ export default function CartPage() {
           )}
         </main>
 
-        {/* Right Column: Interactive Pickup Notice + Order Summary */}
+        {/* Right Column: Pickup Notice + Order Summary */}
         <aside className="lg:w-1/3 space-y-6">
-          {/* Interactive Pickup Window Notice */}
           {cartItems.length > 0 && (
             <motion.div
               className="bg-[#fff8f0] border-l-4 border-[#f0d1b8] p-4 rounded-lg shadow-sm"
@@ -266,7 +258,7 @@ export default function CartPage() {
   );
 }
 
-// Helper to format seconds to "HH:MM:SS"
+// Helper to format seconds as "HH:MM:SS"
 function formatTime(seconds: number) {
   const hrs = Math.floor(seconds / 3600)
     .toString()

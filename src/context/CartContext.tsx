@@ -4,8 +4,10 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 import { Item } from '@/data/items';
 
+export type CartItem = Item & { quantity: number }; // ✅ Define CartItem
+
 type CartContextValue = {
-  cartItems: Item[];
+  cartItems: CartItem[];
   add: (item: Item) => void;
   remove: (item: Item) => void;
   updateQuantity: (id: number, qty: number) => void;
@@ -15,15 +17,14 @@ type CartContextValue = {
 const CartContext = createContext<CartContextValue | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [cartItems, setCartItems] = useState<Item[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]); // ✅ Use CartItem
 
   function add(item: Item) {
     setCartItems((prev) => {
       const exists = prev.find((i) => i.id === item.id);
       if (exists) {
-        // increment quantity
         return prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: (i.quantity || 1) + 1 } : i
+          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
         );
       } else {
         return [...prev, { ...item, quantity: 1 }];
@@ -39,7 +40,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCartItems((prev) =>
       prev
         .map((i) => (i.id === id ? { ...i, quantity: Math.max(qty, 1) } : i))
-        .filter((i) => i.quantity! > 0)
+        .filter((i) => i.quantity > 0)
     );
   }
 
@@ -58,8 +59,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
 export function useCart() {
   const ctx = useContext(CartContext);
-  if (!ctx) {
-    throw new Error('useCart must be used within CartProvider');
-  }
+  if (!ctx) throw new Error('useCart must be used within CartProvider');
   return ctx;
 }
