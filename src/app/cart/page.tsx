@@ -30,7 +30,6 @@ export default function CartPage() {
   const [subtotal, setSubtotal] = useState<number>(0);
 
   useEffect(() => {
-    // Now each `item` is a CartItem (which has `quantity`)
     const total = cartItems.reduce(
       (acc: number, item: CartItem) => acc + item.price * item.quantity,
       0
@@ -38,7 +37,6 @@ export default function CartPage() {
     setSubtotal(total);
   }, [cartItems]);
 
-  // 4-hour countdown timer (in seconds)
   const [timeLeft, setTimeLeft] = useState<number>(4 * 3600);
 
   useEffect(() => {
@@ -49,7 +47,6 @@ export default function CartPage() {
     return () => clearInterval(timer);
   }, [timeLeft]);
 
-  // Format seconds as "HH:MM:SS"
   const formatTime = (seconds: number) => {
     const hrs = Math.floor(seconds / 3600)
       .toString()
@@ -63,7 +60,6 @@ export default function CartPage() {
     return `${hrs}:${mins}:${secs}`;
   };
 
-  // Framer‐motion variants
   const listVariants = {
     hidden: {},
     visible: { transition: { staggerChildren: 0.05 } },
