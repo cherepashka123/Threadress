@@ -98,7 +98,7 @@ export default function Search() {
               <h3 className="text-lg font-semibold text-neutral-900">
                 {item.name}
               </h3>
-              <p className="text-neutral-600">{item.store}</p>
+              {/* <p className="text-neutral-600">{item.storeName}</p> */}
               <p className="text-indigo-600 font-medium">
                 ${item.price.toFixed(2)}
               </p>
