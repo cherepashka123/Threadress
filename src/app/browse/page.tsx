@@ -3,8 +3,8 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { FaMapMarkerAlt } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaMapMarkerAlt, FaFilter, FaSort, FaTimes } from 'react-icons/fa';
 import { items as rawItems, Item } from '@/data/items';
 import { useCart } from '@/context/CartContext';
 
@@ -12,23 +12,23 @@ type WithDistance = Item & {
   distanceMiles: number | null;
 };
 
+type SortOption = 'distance' | 'price-low' | 'price-high' | 'name';
+type FilterOption = 'all' | 'dresses' | 'tops' | 'bottoms' | 'accessories';
+
 export default function BrowsePage() {
   const { add } = useCart();
-
-  // 1) Track user coordinates
   const [userLat, setUserLat] = useState<number | null>(null);
   const [userLng, setUserLng] = useState<number | null>(null);
-
-  // 2) Track items augmented with distance
   const [itemsWithDistance, setItemsWithDistance] = useState<WithDistance[]>(
     []
   );
-
-  // 3) Toast state
   const [toastMessage, setToastMessage] = useState<string>('');
   const [showToast, setShowToast] = useState<boolean>(false);
+  const [sortBy, setSortBy] = useState<SortOption>('distance');
+  const [filterBy, setFilterBy] = useState<FilterOption>('all');
+  const [showFilters, setShowFilters] = useState(false);
 
-  // 4) Haversine formula for miles
+  // Haversine formula for miles
   function haversineDistance(
     lat1: number,
     lon1: number,
@@ -50,7 +50,7 @@ export default function BrowsePage() {
     return R * c;
   }
 
-  // 5) Request geolocation on mount
+  // Request geolocation on mount
   useEffect(() => {
     if (!navigator.geolocation) {
       console.warn('Geolocation not supported');
@@ -71,10 +71,9 @@ export default function BrowsePage() {
     );
   }, []);
 
-  // 6) Compute distances whenever location changes
+  // Compute distances whenever location changes
   useEffect(() => {
     if (userLat === null || userLng === null) {
-      // No location → distances become null
       setItemsWithDistance(
         rawItems.map((it) => ({ ...it, distanceMiles: null }))
       );
@@ -86,39 +85,141 @@ export default function BrowsePage() {
         it.latitude != null && it.longitude != null
           ? haversineDistance(userLat, userLng, it.latitude, it.longitude)
           : null;
-      return {
-        ...it,
-        distanceMiles: dist,
-      };
+      return { ...it, distanceMiles: dist };
     });
     setItemsWithDistance(withDist);
   }, [userLat, userLng]);
 
-  // 7) Show toast helper
+  // Show toast helper
   function triggerToast(message: string) {
     setToastMessage(message);
     setShowToast(true);
-    // Hide after 3 seconds
-    setTimeout(() => {
-      setShowToast(false);
-    }, 3000);
+    setTimeout(() => setShowToast(false), 3000);
   }
 
+  // Sort and filter items
+  const filteredAndSortedItems = [...itemsWithDistance]
+    .filter((item) => filterBy === 'all' || item.category === filterBy)
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'distance':
+          if (a.distanceMiles === null) return 1;
+          if (b.distanceMiles === null) return -1;
+          return a.distanceMiles - b.distanceMiles;
+        case 'price-low':
+          return a.price - b.price;
+        case 'price-high':
+          return b.price - a.price;
+        case 'name':
+          return a.name.localeCompare(b.name);
+        default:
+          return 0;
+      }
+    });
+
   return (
-    <main className="min-h-screen bg-gray-50 py-20">
-      <div className="max-w-7xl mx-auto px-6">
-        <h1 className="text-4xl font-heading font-bold text-center text-gray-900 mb-12">
-          Browse Local Items
-        </h1>
+    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-20 relative">
+      {/* Tech background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, #8b6f5f08 1px, transparent 0)`,
+            backgroundSize: '40px 40px',
+          }}
+        />
+        <div className="absolute top-20 left-[20%] w-32 h-32 rounded-full bg-gradient-to-r from-[#8b6f5f]/5 to-transparent blur-xl" />
+        <div className="absolute bottom-40 right-[30%] w-40 h-40 rounded-full bg-gradient-to-r from-[#d4c4bc]/5 to-transparent blur-xl" />
+      </div>
 
-        {/* Toast Notification */}
-        {showToast && (
-          <div className="fixed top-5 right-5 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg animate-fade-in">
-            {toastMessage}
+      <div className="max-w-7xl mx-auto px-6 relative">
+        {/* Header with animated underline */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
+          <div className="relative inline-block">
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: '120%' }}
+              transition={{ duration: 1, delay: 0.2 }}
+              className="absolute -left-[10%] top-[50%] h-px bg-gradient-to-r from-transparent via-[#8b6f5f]/30 to-transparent"
+            />
+            <h1 className="text-4xl font-[500] text-[#8b6f5f] tracking-tight mb-4">
+              Browse Local Fashion
+            </h1>
           </div>
-        )}
+        </motion.div>
 
-        {/* Animated grid container */}
+        {/* Filters and Sort Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-8 flex flex-wrap gap-4 justify-between items-center"
+        >
+          {/* Filter Toggle Button */}
+          <motion.button
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-[#8b6f5f]/20 text-[#8b6f5f] hover:bg-[#8b6f5f] hover:text-white transition-all duration-300"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            {showFilters ? <FaTimes /> : <FaFilter />}
+            <span>{showFilters ? 'Close Filters' : 'Filters'}</span>
+          </motion.button>
+
+          {/* Sort Dropdown */}
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as SortOption)}
+            className="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-[#8b6f5f]/20 text-[#8b6f5f] hover:border-[#8b6f5f] transition-all duration-300 cursor-pointer"
+          >
+            <option value="distance">Nearest First</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="name">Name: A to Z</option>
+          </select>
+        </motion.div>
+
+        {/* Filter Panel */}
+        <AnimatePresence>
+          {showFilters && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="mb-8 overflow-hidden"
+            >
+              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-[#8b6f5f]/20 shadow-lg">
+                <div className="flex flex-wrap gap-4">
+                  {['all', 'dresses', 'tops', 'bottoms', 'accessories'].map(
+                    (option) => (
+                      <motion.button
+                        key={option}
+                        onClick={() => setFilterBy(option as FilterOption)}
+                        className={`px-4 py-2 rounded-full transition-all duration-300 ${
+                          filterBy === option
+                            ? 'bg-[#8b6f5f] text-white'
+                            : 'bg-white/50 text-[#8b6f5f] hover:bg-[#8b6f5f]/10'
+                        }`}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        {option.charAt(0).toUpperCase() + option.slice(1)}
+                      </motion.button>
+                    )
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Items Grid */}
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
           initial="hidden"
@@ -128,10 +229,10 @@ export default function BrowsePage() {
             visible: { transition: { staggerChildren: 0.1 } },
           }}
         >
-          {itemsWithDistance.map((item) => (
+          {filteredAndSortedItems.map((item) => (
             <motion.div
               key={item.id}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden group"
+              className="group relative"
               variants={{
                 hidden: { opacity: 0, y: 30 },
                 visible: {
@@ -140,56 +241,101 @@ export default function BrowsePage() {
                   transition: { type: 'spring', stiffness: 120, damping: 20 },
                 },
               }}
-              whileHover={{ scale: 1.03 }}
             >
-              {/* Image Card */}
-              <div className="relative w-full h-60 overflow-hidden">
-                <Image
-                  src={item.image}
-                  alt={item.name}
-                  fill
-                  className="object-cover rounded-t-2xl transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
+              <motion.div
+                className="relative bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/20 transition-all duration-300 group-hover:border-transparent group-hover:shadow-[0_8px_40px_-12px_rgba(0,0,0,0.1)]"
+                whileHover={{ y: -5 }}
+              >
+                {/* Image Container */}
+                <div className="relative w-full h-60 overflow-hidden">
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
 
-              {/* Details */}
-              <div className="p-4 space-y-2">
-                {/* Name & Store */}
-                <h2 className="text-lg font-semibold text-gray-800">
-                  {item.name}
-                </h2>
-                <p className="text-sm text-gray-500">{item.storeName}</p>
+                {/* Details */}
+                <div className="p-4 space-y-2">
+                  <h2 className="text-lg font-semibold text-gray-800 group-hover:text-[#8b6f5f] transition-colors duration-300">
+                    {item.name}
+                  </h2>
+                  <p className="text-sm text-gray-500">{item.storeName}</p>
 
-                {/* Distance */}
-                {item.distanceMiles != null ? (
-                  <div className="flex items-center text-xs text-gray-500">
-                    <FaMapMarkerAlt className="mr-1 text-red-500" />
-                    {item.distanceMiles.toFixed(1)} mi away
-                  </div>
-                ) : (
-                  <p className="text-xs text-gray-400">Distance unknown</p>
-                )}
+                  {/* Distance */}
+                  {item.distanceMiles != null ? (
+                    <div className="flex items-center text-xs text-gray-500">
+                      <FaMapMarkerAlt className="mr-1 text-[#8b6f5f]" />
+                      {item.distanceMiles.toFixed(1)} mi away
+                    </div>
+                  ) : (
+                    <p className="text-xs text-gray-400">Distance unknown</p>
+                  )}
 
-                {/* Price */}
-                <p className="text-base font-medium text-indigo-600">
-                  ${item.price.toFixed(2)}
-                </p>
+                  {/* Price */}
+                  <p className="text-base font-medium bg-clip-text text-transparent bg-gradient-to-r from-[#8b6f5f] to-[#d4c4bc]">
+                    ${item.price.toFixed(2)}
+                  </p>
 
-                {/* Add to Cart Button */}
-                <button
-                  onClick={() => {
-                    add(item);
-                    triggerToast(`${item.name} added to cart`);
-                  }}
-                  className="mt-3 w-full px-4 py-2 bg-gradient-to-r from-indigo-500 to-blue-500 text-white text-sm font-medium rounded-lg shadow-md hover:opacity-90 transition"
+                  {/* Add to Cart Button */}
+                  <motion.button
+                    onClick={() => {
+                      add(item);
+                      triggerToast(`${item.name} added to cart`);
+                    }}
+                    className="w-full px-4 py-2 bg-white text-[#8b6f5f] border border-[#8b6f5f] rounded-lg hover:bg-[#8b6f5f] hover:text-white transition-all duration-300"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Add to Cart
+                  </motion.button>
+                </div>
+
+                {/* Hover Accent */}
+                <motion.div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none"
+                  transition={{ duration: 0.3 }}
                 >
-                  Add to Cart
-                </button>
-              </div>
+                  <div className="absolute top-0 left-0 w-20 h-20">
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        background:
+                          'radial-gradient(circle at 0 0, rgba(139,111,95,0.1), transparent 70%)',
+                      }}
+                    />
+                  </div>
+                  <div className="absolute bottom-0 right-0 w-20 h-20">
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        background:
+                          'radial-gradient(circle at 100% 100%, rgba(212,196,188,0.1), transparent 70%)',
+                      }}
+                    />
+                  </div>
+                </motion.div>
+              </motion.div>
             </motion.div>
           ))}
         </motion.div>
       </div>
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed bottom-5 right-5 bg-[#8b6f5f] text-white px-6 py-3 rounded-lg shadow-lg backdrop-blur-sm"
+          >
+            {toastMessage}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

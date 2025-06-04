@@ -1,7 +1,8 @@
 @import 'tailwindcss';
+@import 'https://unpkg.com/leaflet@1.9.3/dist/leaflet.css';
+@import 'https://api.fontshare.com/v2/css?f[]=satoshi@1,2,300,400,500,600,700&display=swap';
 
 /* src/styles/globals.css */
-@import 'https://unpkg.com/leaflet@1.9.3/dist/leaflet.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -11,12 +12,13 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-primary: 'Satoshi', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-primary);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -30,7 +32,74 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings:
+    'salt' 1,
+    'ss01' 1,
+    'ss02' 1,
+    'liga' 1;
+  letter-spacing: -0.02em;
+}
+
+/* Typography System */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-primary);
+  letter-spacing: -0.03em;
+  font-weight: 600;
+}
+
+.display-large {
+  font-size: 4rem;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+}
+
+.display-medium {
+  font-size: 3rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+.heading-large {
+  font-size: 2.25rem;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+.heading-medium {
+  font-size: 1.75rem;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  font-weight: 500;
+}
+
+.body-large {
+  font-size: 1.25rem;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+
+.body-medium {
+  font-size: 1.125rem;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+}
+
+.caption {
+  font-size: 0.875rem;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
 }
 
 /* In src/styles/globals.css */

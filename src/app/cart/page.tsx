@@ -1,269 +1,284 @@
 // src/app/cart/page.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
+import Link from 'next/link';
 import {
-  FaTrashAlt,
-  FaMinusCircle,
-  FaPlusCircle,
   FaShoppingCart,
+  FaTrash,
+  FaMinus,
+  FaPlus,
+  FaArrowLeft,
 } from 'react-icons/fa';
 import { useCart, CartItem } from '@/context/CartContext';
 
 export default function CartPage() {
-  const {
-    cartItems = [],
-    add,
-    remove,
-    updateQuantity,
-    clear,
-  } = useCart() as {
-    cartItems: CartItem[];
-    add: (item: CartItem) => void;
-    remove: (item: CartItem) => void;
-    updateQuantity: (id: number, qty: number) => void;
-    clear: () => void;
-  };
-
-  const [subtotal, setSubtotal] = useState<number>(0);
-
-  useEffect(() => {
-    const total = cartItems.reduce(
-      (acc: number, item: CartItem) => acc + item.price * item.quantity,
-      0
-    );
-    setSubtotal(total);
-  }, [cartItems]);
-
-  const [timeLeft, setTimeLeft] = useState<number>(4 * 3600);
-
-  useEffect(() => {
-    if (timeLeft <= 0) return;
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => Math.max(prev - 1, 0));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [timeLeft]);
-
-  const formatTime = (seconds: number) => {
-    const hrs = Math.floor(seconds / 3600)
-      .toString()
-      .padStart(2, '0');
-    const mins = Math.floor((seconds % 3600) / 60)
-      .toString()
-      .padStart(2, '0');
-    const secs = Math.floor(seconds % 60)
-      .toString()
-      .padStart(2, '0');
-    return `${hrs}:${mins}:${secs}`;
-  };
+  const { items: cartItems, remove, updateQuantity, clear } = useCart();
+  const subtotal = cartItems.reduce(
+    (sum: number, item: CartItem) => sum + item.price * item.quantity,
+    0
+  );
+  const shipping = subtotal > 100 ? 0 : 10;
+  const total = subtotal + shipping;
 
   const listVariants = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.05 } },
-  };
-  const itemVariants = {
-    hidden: { opacity: 0, x: -20 },
+    hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      x: 0,
-      transition: { type: 'spring', stiffness: 120, damping: 20 },
+      transition: { staggerChildren: 0.1 },
     },
-    exit: { opacity: 0, x: 20, transition: { duration: 0.2 } },
   };
-  const pulseVariants = {
-    idle: { boxShadow: '0 0 0px rgba(255,255,255,0)' },
-    pulse: {
-      boxShadow: '0 0 15px rgba(255,255,255,0.5)',
-      transition: { yoyo: Infinity, duration: 1 },
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: 'spring', stiffness: 100 },
+    },
+    exit: {
+      opacity: 0,
+      x: -100,
+      transition: { duration: 0.3 },
     },
   };
 
   return (
-    <div className="min-h-screen bg-[#f9f5f0] py-16 px-4 lg:px-8">
-      {/* Header */}
-      <header className="flex items-center justify-between mb-8 px-4 lg:px-0">
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-          <FaShoppingCart /> My Cart
-        </h1>
-      </header>
+    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-20 relative">
+      {/* Tech background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, #8b6f5f08 1px, transparent 0)`,
+            backgroundSize: '40px 40px',
+          }}
+        />
+        <div className="absolute top-20 left-[20%] w-32 h-32 rounded-full bg-gradient-to-r from-[#8b6f5f]/5 to-transparent blur-xl" />
+        <div className="absolute bottom-40 right-[30%] w-40 h-40 rounded-full bg-gradient-to-r from-[#d4c4bc]/5 to-transparent blur-xl" />
+      </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 max-w-6xl mx-auto">
-        {/* Cart Items List */}
-        <main className="flex-1 space-y-6">
-          {cartItems.length === 0 ? (
-            <p className="text-gray-700">Your cart is empty.</p>
-          ) : (
-            <AnimatePresence>
-              <motion.ul
-                className="space-y-6"
-                initial="hidden"
-                animate="visible"
-                variants={listVariants}
+      <div className="max-w-6xl mx-auto px-6 relative">
+        {/* Header with animated underline */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
+          <div className="relative inline-block">
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: '120%' }}
+              transition={{ duration: 1, delay: 0.2 }}
+              className="absolute -left-[10%] top-[50%] h-px bg-gradient-to-r from-transparent via-[#8b6f5f]/30 to-transparent"
+            />
+            <h1 className="text-4xl font-[500] text-[#8b6f5f] tracking-tight mb-4 flex items-center justify-center gap-3">
+              <FaShoppingCart className="w-8 h-8" />
+              Shopping Cart
+            </h1>
+          </div>
+        </motion.div>
+
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+          {/* Cart Items List */}
+          <motion.div
+            className="flex-1"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            {cartItems.length === 0 ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-12 px-6 bg-white/80 backdrop-blur-sm rounded-2xl border border-[#8b6f5f]/20"
               >
-                {cartItems.map((item: CartItem) => (
-                  <motion.li
-                    key={item.id}
-                    className="flex bg-white rounded-2xl shadow-md overflow-hidden"
-                    variants={itemVariants}
-                    exit="exit"
-                    whileHover={{ scale: 1.02 }}
-                  >
-                    {/* Product Image */}
-                    <div className="relative w-24 h-24 flex-shrink-0">
-                      <Image
-                        src={item.image}
-                        alt={item.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
+                <FaShoppingCart className="w-12 h-12 mx-auto text-[#8b6f5f]/30 mb-4" />
+                <p className="text-gray-600 mb-6">Your cart is empty</p>
+                <Link
+                  href="/browse"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#8b6f5f] text-white rounded-full hover:bg-[#7a6152] transition-colors duration-300"
+                >
+                  <FaArrowLeft className="w-4 h-4" />
+                  Continue Shopping
+                </Link>
+              </motion.div>
+            ) : (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  className="space-y-4"
+                  variants={listVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {cartItems.map((item: CartItem) => (
+                    <motion.div
+                      key={item.id}
+                      variants={itemVariants}
+                      exit="exit"
+                      className="group relative bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/20 transition-all duration-300 hover:border-transparent hover:shadow-[0_8px_40px_-12px_rgba(0,0,0,0.1)]"
+                    >
+                      <div className="flex items-center p-4 gap-4">
+                        {/* Image */}
+                        <div className="relative w-24 h-24 rounded-xl overflow-hidden flex-shrink-0">
+                          <Image
+                            src={item.image}
+                            alt={item.name}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
+                        </div>
 
-                    {/* Details */}
-                    <div className="flex-1 p-4 flex flex-col justify-between">
-                      <div>
-                        <h2 className="text-lg font-semibold text-gray-900">
-                          {item.name}
-                        </h2>
-                        <p className="text-sm text-gray-500">
-                          {item.storeName}
-                        </p>
-                      </div>
-                      <div className="flex items-center justify-between pt-2">
+                        {/* Details */}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-semibold text-gray-800 group-hover:text-[#8b6f5f] transition-colors duration-300">
+                            {item.name}
+                          </h3>
+                          <p className="text-sm text-gray-500">
+                            {item.storeName}
+                          </p>
+                          <p className="text-base font-medium bg-clip-text text-transparent bg-gradient-to-r from-[#8b6f5f] to-[#d4c4bc]">
+                            ${(item.price * item.quantity).toFixed(2)}
+                          </p>
+                        </div>
+
                         {/* Quantity Controls */}
-                        <div className="flex items-center space-x-2">
-                          <button
+                        <div className="flex items-center gap-3">
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                             onClick={() =>
-                              updateQuantity(item.id, item.quantity - 1)
+                              updateQuantity(
+                                item.id,
+                                Math.max(0, item.quantity - 1)
+                              )
                             }
-                            disabled={item.quantity <= 1}
-                            className="text-gray-600 disabled:opacity-50"
+                            className="w-8 h-8 flex items-center justify-center rounded-full border border-[#8b6f5f]/20 text-[#8b6f5f] hover:bg-[#8b6f5f] hover:text-white transition-all duration-300"
                           >
-                            <FaMinusCircle size={20} />
-                          </button>
-                          <span className="text-gray-800">{item.quantity}</span>
-                          <button
+                            <FaMinus className="w-3 h-3" />
+                          </motion.button>
+                          <span className="w-8 text-center">
+                            {item.quantity}
+                          </span>
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                             onClick={() =>
                               updateQuantity(item.id, item.quantity + 1)
                             }
-                            className="text-gray-600"
+                            className="w-8 h-8 flex items-center justify-center rounded-full border border-[#8b6f5f]/20 text-[#8b6f5f] hover:bg-[#8b6f5f] hover:text-white transition-all duration-300"
                           >
-                            <FaPlusCircle size={20} />
-                          </button>
+                            <FaPlus className="w-3 h-3" />
+                          </motion.button>
                         </div>
 
-                        {/* Price & Remove */}
-                        <div className="flex items-center space-x-4">
-                          <span className="text-indigo-600 font-medium">
-                            ${(item.price * item.quantity).toFixed(2)}
-                          </span>
-                          <button
-                            onClick={() => remove(item)}
-                            className="text-red-500 hover:text-red-700 transition-colors"
-                            aria-label={`Remove ${item.name}`}
-                          >
-                            <FaTrashAlt size={18} />
-                          </button>
-                        </div>
+                        {/* Remove Button */}
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => remove(item.id)}
+                          className="w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300"
+                        >
+                          <FaTrash className="w-3 h-3" />
+                        </motion.button>
                       </div>
-                    </div>
-                  </motion.li>
-                ))}
-              </motion.ul>
-            </AnimatePresence>
-          )}
-        </main>
 
-        {/* Right Column: Pickup Notice + Order Summary */}
-        <aside className="lg:w-1/3 space-y-6">
-          {cartItems.length > 0 && (
-            <motion.div
-              className="bg-[#fff8f0] border-l-4 border-[#f0d1b8] p-4 rounded-lg shadow-sm"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <motion.div
-                className="flex items-center justify-between"
-                variants={pulseVariants}
-                initial="idle"
-                animate="pulse"
-              >
-                <p className="text-[#8b5e3c] font-semibold text-lg">
-                  Pickup in:{' '}
-                  <span className="font-bold">{formatTime(timeLeft)}</span>
-                </p>
-              </motion.div>
-              <p className="mt-2 text-sm text-gray-600">
-                Store hours may affect availability and pickup time.
-              </p>
-            </motion.div>
-          )}
+                      {/* Hover Accent */}
+                      <motion.div
+                        className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none"
+                        transition={{ duration: 0.3 }}
+                      >
+                        <div className="absolute top-0 left-0 w-16 h-16">
+                          <div
+                            className="absolute inset-0"
+                            style={{
+                              background:
+                                'radial-gradient(circle at 0 0, rgba(139,111,95,0.1), transparent 70%)',
+                            }}
+                          />
+                        </div>
+                        <div className="absolute bottom-0 right-0 w-16 h-16">
+                          <div
+                            className="absolute inset-0"
+                            style={{
+                              background:
+                                'radial-gradient(circle at 100% 100%, rgba(212,196,188,0.1), transparent 70%)',
+                            }}
+                          />
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            )}
+          </motion.div>
 
           {/* Order Summary */}
-          <div className="bg-white p-6 rounded-2xl shadow-lg">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              Order Summary
-            </h2>
-            <div className="flex justify-between text-gray-700 mb-2">
-              <span>Subtotal</span>
-              <span>${subtotal.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between text-gray-700 mb-4">
-              <span>Tax (8%)</span>
-              <span>${(subtotal * 0.08).toFixed(2)}</span>
-            </div>
-            <hr className="border-gray-200 mb-4" />
-            <div className="flex justify-between text-xl font-bold text-gray-900 mb-6">
-              <span>Total</span>
-              <span>${(subtotal * 1.08).toFixed(2)}</span>
-            </div>
-            <button
-              disabled={cartItems.length === 0}
-              className={`w-full py-3 text-white font-semibold rounded-lg transition duration-300 ${
-                cartItems.length === 0
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-[#c3a78e] to-[#b3926a] hover:opacity-90'
-              }`}
+          {cartItems.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="lg:w-80 space-y-6"
             >
-              Proceed to Checkout
-            </button>
-            {cartItems.length > 0 && (
-              <button
-                onClick={() => clear()}
-                className="w-full mt-3 py-2 text-red-600 font-medium rounded-lg hover:bg-red-50 transition"
-              >
-                Clear Cart
-              </button>
-            )}
-          </div>
-        </aside>
-      </div>
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-[#8b6f5f]/20 p-6">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                  Order Summary
+                </h2>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Subtotal</span>
+                    <span className="font-medium">${subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Shipping</span>
+                    <span className="font-medium">
+                      {shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}
+                    </span>
+                  </div>
+                  <div className="pt-3 border-t border-gray-200">
+                    <div className="flex justify-between">
+                      <span className="font-semibold text-gray-800">Total</span>
+                      <span className="font-semibold bg-clip-text text-transparent bg-gradient-to-r from-[#8b6f5f] to-[#d4c4bc]">
+                        ${total.toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
 
-      {/* Mobile Bottom Checkout Bar */}
-      {cartItems.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-inner lg:hidden">
-          <button className="w-full py-3 text-white font-semibold rounded-lg bg-gradient-to-r from-[#c3a78e] to-[#b3926a] hover:opacity-90 transition">
-            Checkout — ${(subtotal * 1.08).toFixed(2)}
-          </button>
+                {/* Checkout Button */}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full mt-6 px-6 py-3 bg-[#8b6f5f] text-white rounded-xl hover:bg-[#7a6152] transition-colors duration-300"
+                >
+                  Proceed to Checkout
+                </motion.button>
+
+                {/* Clear Cart Button */}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={clear}
+                  className="w-full mt-3 px-6 py-3 border border-[#8b6f5f]/20 text-[#8b6f5f] rounded-xl hover:bg-[#8b6f5f] hover:text-white transition-all duration-300"
+                >
+                  Clear Cart
+                </motion.button>
+              </div>
+
+              {/* Free Shipping Notice */}
+              {subtotal < 100 && (
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-[#8b6f5f]/20 p-4 text-sm text-gray-600">
+                  Add ${(100 - subtotal).toFixed(2)} more to get free shipping!
+                </div>
+              )}
+            </motion.div>
+          )}
         </div>
-      )}
-    </div>
+      </div>
+    </main>
   );
-}
-
-// Helper to format seconds as "HH:MM:SS"
-function formatTime(seconds: number) {
-  const hrs = Math.floor(seconds / 3600)
-    .toString()
-    .padStart(2, '0');
-  const mins = Math.floor((seconds % 3600) / 60)
-    .toString()
-    .padStart(2, '0');
-  const secs = Math.floor(seconds % 60)
-    .toString()
-    .padStart(2, '0');
-  return `${hrs}:${mins}:${secs}`;
 }

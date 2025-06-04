@@ -1,30 +1,146 @@
-"use client";
+'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import Image from 'next/image';
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 
 interface PrototypeProps {
-  embedUrl: string;
-  width?: number | string;
-  height?: number | string;
-  style?: React.CSSProperties;
+  width?: number;
+  height?: number;
 }
 
 export default function Prototype({
-  embedUrl,
-  width = 800,
-  height = 450,
-  style = { border: '1px solid rgba(0, 0, 0, 0.1)' },
+  width = 1000,
+  height = 600,
 }: PrototypeProps) {
+  const [isHovered, setIsHovered] = useState(false);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const rotateX = useTransform(mouseY, [-300, 300], [5, -5]);
+  const rotateY = useTransform(mouseX, [-300, 300], [-5, 5]);
+
+  const springConfig = { stiffness: 100, damping: 30 };
+  const springRotateX = useSpring(rotateX, springConfig);
+  const springRotateY = useSpring(rotateY, springConfig);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    mouseX.set(e.clientX - centerX);
+    mouseY.set(e.clientY - centerY);
+  };
+
   return (
-    <div className="flex justify-center my-8">
-      <iframe
-        src={embedUrl}
-        width={width}
-        height={height}
-        style={style}
-        allowFullScreen
-        loading="lazy"
-      />
+    <div className="flex justify-center my-8 perspective-[2000px]">
+      <motion.div
+        className="relative rounded-2xl overflow-hidden"
+        style={{
+          width,
+          height,
+          rotateX: springRotateX,
+          rotateY: springRotateY,
+        }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => {
+          setIsHovered(false);
+          mouseX.set(0);
+          mouseY.set(0);
+        }}
+      >
+        {/* Main image with hover effect */}
+        <motion.div
+          className="relative w-full h-full"
+          animate={{
+            scale: isHovered ? 1.03 : 1,
+          }}
+          transition={{ duration: 0.4 }}
+        >
+          <Image
+            src="/Threadress.png"
+            alt="Threadress Prototype"
+            fill
+            className="object-cover"
+            priority
+            quality={100}
+          />
+
+          {/* Interactive overlay effects */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-tr from-[#8b6f5f]/10 to-transparent opacity-0 transition-opacity duration-300"
+            animate={{
+              opacity: isHovered ? 1 : 0,
+            }}
+          />
+
+          {/* Shine effect */}
+          <motion.div
+            className="absolute inset-0 opacity-0"
+            animate={{
+              opacity: isHovered ? 1 : 0,
+              background: [
+                'linear-gradient(45deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%)',
+                'linear-gradient(45deg, transparent 50%, rgba(255,255,255,0.1) 100%, transparent 100%)',
+              ],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              repeatType: 'reverse',
+            }}
+          />
+
+          {/* Border glow effect */}
+          <motion.div
+            className="absolute -inset-0.5 rounded-2xl opacity-0"
+            animate={{
+              opacity: isHovered ? 1 : 0,
+              boxShadow: [
+                '0 0 20px rgba(139,111,95,0.2)',
+                '0 0 30px rgba(139,111,95,0.3)',
+                '0 0 20px rgba(139,111,95,0.2)',
+              ],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              repeatType: 'reverse',
+            }}
+          />
+        </motion.div>
+
+        {/* Interactive corner accents */}
+        {[
+          'top-0 left-0',
+          'top-0 right-0',
+          'bottom-0 left-0',
+          'bottom-0 right-0',
+        ].map((position, index) => (
+          <motion.div
+            key={index}
+            className={`absolute w-16 h-16 ${position} pointer-events-none`}
+            animate={{
+              opacity: isHovered ? 1 : 0,
+              scale: isHovered ? 1 : 0.8,
+            }}
+            transition={{ duration: 0.3 }}
+          >
+            <div
+              className="absolute inset-0"
+              style={{
+                background: `radial-gradient(circle at ${position.includes('left') ? '0%' : '100%'} ${
+                  position.includes('top') ? '0%' : '100%'
+                }, rgba(139,111,95,0.2), transparent)`,
+              }}
+            />
+          </motion.div>
+        ))}
+      </motion.div>
     </div>
   );
 }

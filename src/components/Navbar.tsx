@@ -23,6 +23,9 @@ export default function Navbar() {
         <Link href="/map" className="hover:text-indigo-600">
           Find Boutiques
         </Link>
+        <Link href="/vector-search" className="hover:text-indigo-600">
+          Smart Search
+        </Link>
         <Link href="#features" className="hover:text-indigo-600">
           Features
         </Link>
@@ -37,7 +40,7 @@ export default function Navbar() {
         </Link>
       </div>
 
-      {/* Right: “Join Waitlist” + Mobile menu */}
+      {/* Right: "Join Waitlist" + Mobile menu */}
       <div className="flex-none flex items-center space-x-4">
         {/* Join Waitlist button */}
         <Link
@@ -77,6 +80,9 @@ export default function Navbar() {
             </li>
             <li>
               <Link href="/map">Find Boutiques</Link>
+            </li>
+            <li>
+              <Link href="/vector-search">Smart Search</Link>
             </li>
             <li>
               <Link href="#features">Features</Link>
