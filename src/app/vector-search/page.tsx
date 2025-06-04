@@ -1,52 +1,89 @@
+'use client';
+
 import VectorSearchDemo from '@/components/VectorSearchDemo';
+import { motion } from 'framer-motion';
 
 export default function VectorSearchPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white py-16">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <h1 className="text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
-              Smart Fashion Discovery
-            </h1>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Find your perfect style across our network of boutiques and
-              stores. Our AI-powered search understands fashion and helps you
-              discover similar items nearby.
-            </p>
-          </div>
+    <main className="relative bg-[#fafafa] min-h-screen">
+      {/* Tech-inspired background */}
+      <div className="absolute inset-0">
+        <motion.div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `radial-gradient(circle at center, rgba(0,0,0,0.1) 1px, transparent 1px)`,
+            backgroundSize: '24px 24px',
+          }}
+        />
+      </div>
 
-          <VectorSearchDemo />
+      <div className="max-w-7xl mx-auto px-6 py-24">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
+        >
+          <h1 className="text-3xl md:text-4xl font-light tracking-[-0.02em] text-neutral-900 mb-4">
+            Smart Fashion Discovery
+          </h1>
+          <p className="text-neutral-600 font-light max-w-xl mx-auto">
+            Find your perfect style across our network of boutiques using
+            AI-powered search
+          </p>
+        </motion.div>
 
-          <div className="mt-16 text-center">
-            <h2 className="text-2xl font-semibold mb-4">How It Works</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-              <div className="p-6 rounded-xl bg-white/5 backdrop-blur-sm">
-                <h3 className="text-xl font-medium mb-3">
-                  Style Understanding
-                </h3>
-                <p className="text-gray-400">
-                  Our AI analyzes your search to understand style, cut, fabric,
-                  and occasion preferences.
-                </p>
-              </div>
-              <div className="p-6 rounded-xl bg-white/5 backdrop-blur-sm">
-                <h3 className="text-xl font-medium mb-3">Smart Matching</h3>
-                <p className="text-gray-400">
-                  We find similar items by comparing style features across our
-                  partner stores' inventory.
-                </p>
-              </div>
-              <div className="p-6 rounded-xl bg-white/5 backdrop-blur-sm">
-                <h3 className="text-xl font-medium mb-3">Local Availability</h3>
-                <p className="text-gray-400">
-                  See real-time availability and locations of matching items in
-                  stores near you.
-                </p>
-              </div>
-            </div>
+        <VectorSearchDemo />
+
+        {/* How It Works section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="mt-24 text-center"
+        >
+          <h2 className="text-3xl font-light tracking-[-0.02em] text-neutral-900 mb-12">
+            How It Works
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="p-6 rounded-xl bg-white border border-neutral-100"
+            >
+              <h3 className="text-lg font-light text-neutral-900 mb-3">
+                Style Understanding
+              </h3>
+              <p className="text-neutral-600 font-light">
+                Our AI analyzes your search to understand style, cut, fabric,
+                and occasion preferences.
+              </p>
+            </motion.div>
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="p-6 rounded-xl bg-white border border-neutral-100"
+            >
+              <h3 className="text-lg font-light text-neutral-900 mb-3">
+                Smart Matching
+              </h3>
+              <p className="text-neutral-600 font-light">
+                We find similar items by comparing style features across our
+                partner stores' inventory.
+              </p>
+            </motion.div>
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="p-6 rounded-xl bg-white border border-neutral-100"
+            >
+              <h3 className="text-lg font-light text-neutral-900 mb-3">
+                Local Availability
+              </h3>
+              <p className="text-neutral-600 font-light">
+                See real-time availability and locations of matching items in
+                stores near you.
+              </p>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </main>
   );

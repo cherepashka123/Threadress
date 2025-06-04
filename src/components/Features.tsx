@@ -7,16 +7,13 @@ import { useRef } from 'react';
 
 export default function Features() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start end', 'end start'],
-  });
+  const { scrollYProgress } = useScroll({ target: containerRef });
 
   const features = [
     {
       title: 'Real-Time Inventory',
       description:
-        'View live boutique stock levels instantly. No more wasted trips or guesswork.',
+        'View live boutique stock levels instantly. Know exactly what is available.',
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -39,7 +36,7 @@ export default function Features() {
     {
       title: 'Seamless Checkout',
       description:
-        'One-click payments and flexible terms. Checkout in seconds.',
+        'One-click payments with flexible terms. Complete your purchase in seconds.',
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -62,7 +59,7 @@ export default function Features() {
     {
       title: 'Sustainable Shopping',
       description:
-        'Discover eco-innovative boutiques. Shop smart, reduce waste, support green.',
+        'Discover eco-innovative boutiques. Support local businesses and sustainable fashion.',
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -85,7 +82,7 @@ export default function Features() {
     {
       title: 'AI-Powered Match',
       description:
-        'Our AI engine suggests sizes and styles based on your profile. No more returns.',
+        'Smart size and style suggestions based on your profile. Perfect fit every time.',
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -102,8 +99,8 @@ export default function Features() {
           />
         </svg>
       ),
-      gradient: 'from-pink-500 to-rose-500',
-      accent: 'pink',
+      gradient: 'from-indigo-500 to-purple-500',
+      accent: 'indigo',
     },
   ];
 
@@ -117,279 +114,82 @@ export default function Features() {
   return (
     <section
       ref={containerRef}
-      className="relative py-32 bg-[#f4efe9] overflow-hidden"
+      className="relative py-24 bg-[#fafafa] overflow-hidden"
     >
-      {/* Fashion-forward background elements */}
+      {/* Tech-inspired background */}
       <div className="absolute inset-0">
         <motion.div
-          style={{ y }}
-          className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,#8b6f5f08_0%,transparent_50%)]"
-        />
-        <motion.div
+          className="absolute inset-0"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1.5 }}
-          className="absolute inset-0"
+          transition={{ duration: 1 }}
         >
-          {/* Flowing curves */}
-          <svg
-            className="absolute w-full h-full opacity-[0.03]"
-            viewBox="0 0 1000 1000"
-            preserveAspectRatio="xMidYMid slice"
-          >
-            <motion.path
-              d="M0,500 Q250,400 500,500 T1000,500"
-              fill="none"
-              stroke="#8b6f5f"
-              strokeWidth="1"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{
-                duration: 2,
-                ease: 'easeInOut',
-                repeat: Infinity,
-                repeatType: 'reverse',
-              }}
-            />
-            <motion.path
-              d="M0,400 Q250,500 500,400 T1000,400"
-              fill="none"
-              stroke="#8b6f5f"
-              strokeWidth="1"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{
-                duration: 2.5,
-                ease: 'easeInOut',
-                repeat: Infinity,
-                repeatType: 'reverse',
-              }}
-            />
-            <motion.path
-              d="M0,600 Q250,500 500,600 T1000,600"
-              fill="none"
-              stroke="#8b6f5f"
-              strokeWidth="1"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{
-                duration: 3,
-                ease: 'easeInOut',
-                repeat: Infinity,
-                repeatType: 'reverse',
-              }}
-            />
-          </svg>
-
-          {/* Floating fashion elements */}
-          <motion.div
-            className="absolute top-20 left-[20%] w-32 h-32 rounded-full"
+          {/* Subtle dot pattern */}
+          <div
+            className="absolute inset-0 opacity-[0.03]"
             style={{
-              background:
-                'radial-gradient(circle at center, #8b6f5f05, transparent 70%)',
-            }}
-            animate={{
-              y: [0, -20, 0],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              repeatType: 'reverse',
-            }}
-          />
-          <motion.div
-            className="absolute bottom-40 right-[30%] w-40 h-40 rounded-full"
-            style={{
-              background:
-                'radial-gradient(circle at center, #8b6f5f03, transparent 70%)',
-            }}
-            animate={{
-              y: [0, 20, 0],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              repeatType: 'reverse',
-              delay: 1,
+              backgroundImage: `radial-gradient(circle at center, rgba(0,0,0,0.1) 1px, transparent 1px)`,
+              backgroundSize: '24px 24px',
             }}
           />
         </motion.div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 relative">
+      <div className="max-w-7xl mx-auto px-6 relative">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 1 }}
           className="text-center mb-20"
         >
-          <div className="relative inline-block">
-            <motion.div
-              initial={{ width: 0 }}
-              whileInView={{ width: '140%' }}
-              transition={{ duration: 1, delay: 0.2 }}
-              className="absolute -left-[20%] top-[50%] h-px bg-gradient-to-r from-transparent via-[#8b6f5f]/30 to-transparent"
-            />
-            <h2
-              className="
-              text-4xl
-              font-[500]
-              text-[#8b6f5f]
-              tracking-[-0.01em]
-              mb-4
-              px-12
-            "
-            >
-              Key Features
-            </h2>
-            <motion.div
-              initial={{ scale: 0 }}
-              whileInView={{ scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="absolute -right-3 -top-3 w-8 h-8 border-2 border-[#8b6f5f]/20 rounded-full"
-            />
-            <motion.div
-              initial={{ scale: 0 }}
-              whileInView={{ scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="absolute -left-5 -bottom-5 w-6 h-6 border border-[#8b6f5f]/20 rounded-full"
-            />
-          </div>
+          <h2 className="text-3xl md:text-4xl font-light tracking-[-0.02em] text-neutral-900 mb-4">
+            Key Features
+          </h2>
+          <p className="text-neutral-600 font-light max-w-xl mx-auto">
+            Experience the future of local fashion discovery
+          </p>
         </motion.div>
 
-        <div
-          ref={ref}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true, margin: '-50px' }}
               className="group relative"
             >
-              <div
-                className="
-                relative
-                p-8
-                bg-white/80
-                backdrop-blur-sm
-                rounded-2xl
-                transition-all
-                duration-500
-                hover:shadow-[0_8px_40px_-12px_rgba(139,111,95,0.12)]
-                border border-[#8b6f5f]/10
-                hover:border-transparent
-                h-full
-                overflow-hidden
-              "
-              >
-                {/* Decorative elements */}
-                <motion.div
-                  className={`
-                    absolute -right-12 -top-12 w-24 h-24 
-                    bg-gradient-to-br ${feature.gradient} opacity-[0.07]
-                    rounded-full blur-xl
-                    transition-transform duration-700
-                    group-hover:scale-150
-                  `}
-                />
-
-                {/* Icon with gradient background */}
+              <div className="relative p-6 bg-white rounded-xl transition-all duration-300 hover:shadow-lg border border-neutral-100">
+                {/* Feature icon */}
                 <div
                   className={`
-                  relative
-                  inline-flex
-                  items-center
-                  justify-center
-                  w-10
-                  h-10
-                  rounded-xl
-                  bg-gradient-to-r ${feature.gradient}
-                  text-white
-                  shadow-sm
-                  mb-6
-                  transition-all
-                  duration-500
-                  group-hover:scale-110
-                  group-hover:rotate-[12deg]
-                  group-hover:shadow-[0_0_20px_rgba(0,0,0,0.1)]
-                `}
+                    relative inline-flex items-center justify-center
+                    w-10 h-10 rounded-lg mb-4
+                    bg-gradient-to-r ${feature.gradient}
+                    text-white
+                  `}
                 >
                   {feature.icon}
                   <motion.div
-                    className="absolute inset-0 rounded-xl bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+                    className="absolute inset-0 rounded-lg bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"
                     whileHover={{ scale: 1.2, opacity: 0 }}
                   />
                 </div>
 
-                {/* Title with animated accent */}
-                <div className="relative">
-                  <h3
-                    className="
-                    text-lg
-                    font-[500]
-                    text-gray-900
-                    mb-3
-                    tracking-[-0.005em]
-                    transition-colors
-                    duration-300
-                  "
-                  >
-                    {feature.title}
-                  </h3>
-                  <motion.div
-                    className={`
-                      absolute
-                      -left-2
-                      top-[50%]
-                      w-0.5
-                      h-0
-                      bg-${feature.accent}-500/30
-                      transition-all
-                      duration-300
-                      group-hover:h-[120%]
-                      group-hover:-top-[10%]
-                    `}
-                  />
-                </div>
-
-                {/* Description */}
-                <p
-                  className="
-                  text-sm
-                  font-[400]
-                  text-gray-600
-                  leading-relaxed
-                  tracking-[0]
-                  transition-colors
-                  duration-300
-                  group-hover:text-gray-900
-                "
-                >
+                {/* Feature content */}
+                <h3 className="text-lg font-medium text-neutral-900 mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-neutral-600 font-light text-sm">
                   {feature.description}
                 </p>
 
-                {/* Interactive hover line */}
+                {/* Hover effect */}
                 <motion.div
-                  className={`
-                    absolute
-                    bottom-0
-                    left-[5%]
-                    right-[95%]
-                    h-[2px]
-                    bg-gradient-to-r ${feature.gradient}
-                    opacity-0
-                    transition-all
-                    duration-700
-                    ease-out
-                    group-hover:right-[5%]
-                    group-hover:opacity-30
-                  `}
+                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{
+                    background: `radial-gradient(circle at 50% 50%, rgba(99,102,241,0.03), transparent 70%)`,
+                  }}
                 />
               </div>
             </motion.div>

@@ -158,150 +158,198 @@ export default function HomePage() {
       <StitchDivider />
       <Mission />
       <StitchDivider />
-      <section className="py-8 relative overflow-hidden" id="browse-preview">
-        {/* Interactive background elements */}
-        <motion.div
-          className="absolute inset-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.5 }}
-        >
-          {/* Animated gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white via-violet-50/30 to-white" />
-
-          {/* Floating elements */}
-          <motion.div
-            className="absolute top-20 left-[20%] w-32 h-32 rounded-full bg-gradient-to-r from-violet-100/20 to-transparent blur-xl"
-            animate={{
-              y: [0, -20, 0],
-              opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-          <motion.div
-            className="absolute bottom-40 right-[30%] w-40 h-40 rounded-full bg-gradient-to-r from-indigo-100/20 to-transparent blur-xl"
-            animate={{
-              y: [0, 20, 0],
-              opacity: [0.2, 0.4, 0.2],
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: 1,
-            }}
-          />
-        </motion.div>
-
-        {/* Section content */}
-        <div className="max-w-6xl mx-auto px-6 relative">
+      <HowItWorks />
+      <StitchDivider />
+      <section className="relative bg-[#fafafa] py-24" id="browse-preview">
+        <div className="max-w-7xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-6"
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
           >
-            <div className="relative inline-block">
-              {/* Animated decorative elements */}
-              <motion.div
-                className="absolute -left-8 -top-8 w-16 h-16"
-                initial={{ opacity: 0, scale: 0 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                <motion.div
-                  className="w-full h-full rounded-full border border-violet-200"
-                  animate={{
-                    scale: [1, 1.2, 1],
-                    opacity: [0.3, 0.1, 0.3],
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                  }}
-                />
-              </motion.div>
+            <h2 className="text-3xl md:text-4xl font-light tracking-[-0.02em] text-neutral-900 mb-4">
+              Discover Local Fashion
+            </h2>
+            <p className="text-neutral-800 font-light max-w-xl mx-auto">
+              Explore real-time inventory from local boutiques and discover
+              unique pieces near you
+            </p>
+          </motion.div>
 
-              <h2 className="text-3xl font-[500] tracking-tight mb-4 relative">
-                <motion.span
-                  className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-indigo-600"
+          <div className="grid md:grid-cols-2 gap-12 md:gap-24">
+            {/* Left: Search Component */}
+            <div className="relative">
+              <div className="sticky top-24">
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6 }}
+                  className="relative"
                 >
-                  Discover Local Fashion
-                </motion.span>
-                <motion.div
-                  className="absolute -right-3 -top-3 w-6 h-6 border border-violet-200 rounded-full"
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
-                />
-              </h2>
-              <motion.p
-                className="text-gray-600 max-w-2xl mx-auto"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-              >
-                Explore real-time inventory from local boutiques and discover
-                unique pieces near you
-              </motion.p>
+                  <div className="flex items-start gap-6">
+                    <div className="relative">
+                      <motion.div
+                        className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-600 font-light"
+                        whileHover={{ scale: 1.1 }}
+                        transition={{
+                          type: 'spring',
+                          stiffness: 400,
+                          damping: 10,
+                        }}
+                      >
+                        1
+                      </motion.div>
+                      <motion.div
+                        className="absolute top-8 left-1/2 -translate-x-1/2 w-px h-24 bg-gradient-to-b from-neutral-200 to-transparent"
+                        initial={{ scaleY: 0 }}
+                        whileInView={{ scaleY: 1 }}
+                        transition={{ duration: 0.8 }}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-sm font-light text-neutral-500 mb-1">
+                        Smart Search
+                      </div>
+                      <h3 className="text-xl font-medium text-neutral-900 mb-4">
+                        Find What You Need
+                      </h3>
+                      <motion.div
+                        className="bg-white rounded-xl border border-neutral-200/50 shadow-sm overflow-hidden h-[480px]"
+                        whileHover={{ y: -4 }}
+                        transition={{
+                          type: 'spring',
+                          stiffness: 400,
+                          damping: 17,
+                        }}
+                      >
+                        <Search />
+                      </motion.div>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
             </div>
-          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Left: Search Component */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="backdrop-blur-sm bg-white/90 rounded-2xl border border-violet-100/20 shadow-lg shadow-violet-100/20 p-1 hover:shadow-xl hover:shadow-violet-100/30 transition-all duration-300"
-            >
-              <Search />
-            </motion.div>
-
-            {/* Right: Interactive Map Preview */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="group"
-            >
-              <Link href="/map" className="block relative">
-                <div className="overflow-hidden rounded-2xl backdrop-blur-sm bg-white/90 border border-violet-100/20 shadow-lg shadow-violet-100/20 transition-all duration-300 group-hover:shadow-xl group-hover:shadow-violet-100/30">
-                  <MapPreviewComponent />
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-tr from-violet-600/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                    whileHover={{ opacity: 1 }}
-                  />
-                  <motion.div
-                    className="absolute bottom-4 left-1/2 transform -translate-x-1/2"
-                    initial={{ y: 10, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    <motion.p
-                      className="text-sm text-violet-700 bg-white/95 px-4 py-2 rounded-full shadow-sm backdrop-blur-sm border border-violet-100/20 transition-all duration-300 group-hover:scale-105 group-hover:bg-violet-50"
-                      whileHover={{ y: -2 }}
-                    >
-                      View full map
-                    </motion.p>
-                  </motion.div>
-                </div>
-              </Link>
-            </motion.div>
+            {/* Right: Map Preview */}
+            <div className="relative">
+              <div className="sticky top-24">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                  className="relative"
+                >
+                  <div className="flex items-start gap-6">
+                    <div className="relative">
+                      <motion.div
+                        className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-600 font-light"
+                        whileHover={{ scale: 1.1 }}
+                        transition={{
+                          type: 'spring',
+                          stiffness: 400,
+                          damping: 10,
+                        }}
+                      >
+                        2
+                      </motion.div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-sm font-light text-neutral-500 mb-1">
+                        Local Discovery
+                      </div>
+                      <h3 className="text-xl font-medium text-neutral-900 mb-4">
+                        Browse Nearby
+                      </h3>
+                      <Link href="/map" className="block">
+                        <motion.div
+                          className="bg-white rounded-xl border border-neutral-200/50 shadow-sm overflow-hidden h-[480px]"
+                          whileHover={{ y: -4 }}
+                          transition={{
+                            type: 'spring',
+                            stiffness: 400,
+                            damping: 17,
+                          }}
+                        >
+                          <div className="h-full">
+                            <MapPreviewComponent />
+                          </div>
+                          <motion.div
+                            className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-white to-transparent py-4"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                          >
+                            <div className="text-center">
+                              <motion.span
+                                className="inline-flex items-center gap-2 text-sm text-neutral-600 font-light bg-white/80 px-4 py-2 rounded-full shadow-sm backdrop-blur-sm"
+                                whileHover={{ gap: '12px' }}
+                                transition={{
+                                  type: 'spring',
+                                  stiffness: 400,
+                                  damping: 17,
+                                }}
+                              >
+                                View full map
+                                <motion.svg
+                                  className="w-4 h-4"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  initial={{ x: 0 }}
+                                  whileHover={{ x: 4 }}
+                                >
+                                  <path
+                                    d="M4 12h16m-4-4l4 4-4 4"
+                                    stroke="currentColor"
+                                    strokeWidth="1.5"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  />
+                                </motion.svg>
+                              </motion.span>
+                            </div>
+                          </motion.div>
+                        </motion.div>
+                      </Link>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
           </div>
+
+          {/* Interactive flow element */}
+          <motion.div
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-px"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+          >
+            <motion.div
+              className="absolute left-0 right-0 h-full"
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              transition={{ duration: 1, delay: 0.2 }}
+            >
+              <div className="h-px bg-neutral-200/50" />
+              <motion.div
+                className="absolute top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-neutral-300"
+                animate={{
+                  x: ['0%', '100%'],
+                  opacity: [0, 1, 0],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+              />
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
-      <StitchDivider />
-      <HowItWorks />
       <StitchDivider />
       <section className="py-6 flex flex-col items-center">
         <h2 className="text-2xl font-bold text-center mb-3">

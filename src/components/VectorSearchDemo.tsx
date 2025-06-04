@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import 'leaflet/dist/leaflet.css';
 import type { MapProps } from '@/components/Map';
 
@@ -38,33 +39,33 @@ export interface SearchItem {
   similarity?: number;
 }
 
-// Popular search suggestions
+// Popular search suggestions (keep these aligned with actual items)
 const searchSuggestions = [
-  'Y2K aesthetic outfit',
-  'Cottagecore dress',
-  'Minimalist basics',
-  'Statement blazer',
-  'Parisian chic look',
-  'Sustainable loungewear',
-  'Indie aesthetic',
-  'Dark academia outfit',
-  'Designer vintage',
+  'Summer dress',
+  'Evening wear',
+  'Business casual',
+  'Cocktail dress',
+  'Casual basics',
+  'Work attire',
+  'Party outfit',
+  'Weekend style',
+  'Date night look',
 ];
 
-// Sample data with pre-computed "embeddings" for demonstration
+// Sample data with better variety and matching descriptions
 const sampleData: SearchItem[] = [
   {
     id: 1,
-    text: 'Tailored Italian Wool Blazer',
+    text: 'Floral Summer Midi Dress',
     embedding: [0.9, 0.8, 0.7],
-    category: 'Outerwear',
-    price: 495.99,
-    imageUrl: 'https://images.unsplash.com/photo-1594938291221-94f18cbb5660',
-    color: 'Charcoal Grey',
-    material: 'Italian Wool',
-    occasion: 'Business',
+    category: 'Dresses',
+    price: 165.99,
+    imageUrl: 'https://images.unsplash.com/photo-1572804013427-4d7ca7268217',
+    color: 'Multicolor Floral',
+    material: 'Cotton Blend',
+    occasion: 'Summer, Casual',
     store: {
-      name: 'Sartorial Excellence',
+      name: 'Summer Boutique',
       address: '123 Madison Ave, Upper East Side',
       lat: 40.7736,
       lng: -73.9566,
@@ -72,16 +73,16 @@ const sampleData: SearchItem[] = [
   },
   {
     id: 2,
-    text: 'Silk Evening Gown',
+    text: 'Sequin Cocktail Dress',
     embedding: [0.85, 0.75, 0.8],
-    category: 'Dresses',
-    price: 595.0,
-    imageUrl: 'https://images.unsplash.com/photo-1595073885566-5c8f18c50e6e',
-    color: 'Ivory',
-    material: 'Silk Georgette',
-    occasion: 'Evening',
+    category: 'Evening Wear',
+    price: 285.0,
+    imageUrl: 'https://images.unsplash.com/photo-1618436917352-cd3d11ea4d15',
+    color: 'Midnight Blue',
+    material: 'Sequin & Chiffon',
+    occasion: 'Cocktail, Evening',
     store: {
-      name: 'Luxury Atelier',
+      name: 'Evening Elegance',
       address: '456 Fifth Ave, Midtown',
       lat: 40.7508,
       lng: -73.9772,
@@ -89,16 +90,16 @@ const sampleData: SearchItem[] = [
   },
   {
     id: 3,
-    text: 'Cashmere Turtleneck Sweater',
+    text: 'Linen Summer Maxi Dress',
     embedding: [0.8, 0.9, 0.6],
-    category: 'Knitwear',
-    price: 245.0,
-    imageUrl: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27',
-    color: 'Camel',
-    material: 'Pure Cashmere',
-    occasion: 'Smart Casual',
+    category: 'Dresses',
+    price: 145.0,
+    imageUrl: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8',
+    color: 'Sand Beige',
+    material: 'Linen',
+    occasion: 'Summer, Beach',
     store: {
-      name: 'Premium Knits',
+      name: 'Coastal Style',
       address: '789 Columbus Ave, Upper West Side',
       lat: 40.7829,
       lng: -73.9654,
@@ -106,16 +107,16 @@ const sampleData: SearchItem[] = [
   },
   {
     id: 4,
-    text: 'Leather Pencil Skirt',
+    text: 'Satin Evening Gown',
     embedding: [0.7, 0.8, 0.9],
-    category: 'Skirts',
-    price: 295.0,
-    imageUrl: 'https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa',
-    color: 'Black',
-    material: 'Nappa Leather',
-    occasion: 'Business',
+    category: 'Evening Wear',
+    price: 325.0,
+    imageUrl: 'https://images.unsplash.com/photo-1615310748170-4d7adb9d8e9a',
+    color: 'Emerald Green',
+    material: 'Silk Satin',
+    occasion: 'Formal, Evening',
     store: {
-      name: 'Modern Professional',
+      name: 'Formal Affair',
       address: '321 Park Ave, Midtown',
       lat: 40.7648,
       lng: -74.0012,
@@ -123,16 +124,16 @@ const sampleData: SearchItem[] = [
   },
   {
     id: 5,
-    text: 'Classic Silk Blouse',
+    text: 'Cotton Sundress',
     embedding: [0.82, 0.78, 0.75],
-    category: 'Tops',
-    price: 185.0,
-    imageUrl: 'https://images.unsplash.com/photo-1598554747436-c9293d6a588f',
-    color: 'Pearl White',
-    material: 'Silk Charmeuse',
-    occasion: 'Work',
+    category: 'Dresses',
+    price: 125.0,
+    imageUrl: 'https://images.unsplash.com/photo-1562137369-1a1a0bc66744',
+    color: 'Yellow Floral',
+    material: 'Cotton',
+    occasion: 'Summer, Casual',
     store: {
-      name: 'Elegant Essentials',
+      name: 'Sunny Day Styles',
       address: '567 Elizabeth St, Nolita',
       lat: 40.7225,
       lng: -73.9987,
@@ -140,6 +141,91 @@ const sampleData: SearchItem[] = [
   },
   {
     id: 6,
+    text: 'Velvet Cocktail Dress',
+    embedding: [0.88, 0.82, 0.71],
+    category: 'Evening Wear',
+    price: 245.0,
+    imageUrl: 'https://images.unsplash.com/photo-1539008835657-9e8e9680c956',
+    color: 'Deep Burgundy',
+    material: 'Velvet',
+    occasion: 'Cocktail, Party',
+    store: {
+      name: 'Party Perfect',
+      address: '789 W 23rd St, Chelsea',
+      lat: 40.7466,
+      lng: -74.0046,
+    },
+  },
+  {
+    id: 7,
+    text: 'Business Blazer Dress',
+    embedding: [0.85, 0.79, 0.73],
+    category: 'Work Wear',
+    price: 195.0,
+    imageUrl: 'https://images.unsplash.com/photo-1548454782-15b189d129ab',
+    color: 'Black',
+    material: 'Stretch Wool Blend',
+    occasion: 'Work, Professional',
+    store: {
+      name: 'Professional Attire',
+      address: '123 7th Ave, Chelsea',
+      lat: 40.7352,
+      lng: -73.9999,
+    },
+  },
+  {
+    id: 8,
+    text: 'Printed Summer Wrap Dress',
+    embedding: [0.87, 0.81, 0.76],
+    category: 'Dresses',
+    price: 155.0,
+    imageUrl: '/summer-dress-4.jpg', // Wrap dress image
+    color: 'Tropical Print',
+    material: 'Rayon',
+    occasion: 'Summer, Casual',
+    store: {
+      name: 'Wrap & Roll',
+      address: '456 E 9th St, East Village',
+      lat: 40.7291,
+      lng: -73.9845,
+    },
+  },
+  {
+    id: 9,
+    text: 'Leather Mini Skirt',
+    embedding: [0.7, 0.8, 0.9],
+    category: 'Skirts',
+    price: 165.0,
+    imageUrl: '/skirt1.jpg',
+    color: 'Black',
+    material: 'Vegan Leather',
+    occasion: 'Night Out',
+    store: {
+      name: 'Urban Style',
+      address: '321 Park Ave, Midtown',
+      lat: 40.7648,
+      lng: -74.0012,
+    },
+  },
+  {
+    id: 10,
+    text: 'Satin Blouse',
+    embedding: [0.82, 0.78, 0.75],
+    category: 'Tops',
+    price: 125.0,
+    imageUrl: '/blouse1.jpg',
+    color: 'Ivory',
+    material: 'Satin',
+    occasion: 'Work',
+    store: {
+      name: 'Fashion Forward',
+      address: '567 Elizabeth St, Nolita',
+      lat: 40.7225,
+      lng: -73.9987,
+    },
+  },
+  {
+    id: 11,
     text: 'Wide-Leg Wool Trousers',
     embedding: [0.88, 0.82, 0.71],
     category: 'Pants',
@@ -156,12 +242,12 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 7,
+    id: 12,
     text: 'Leather & Canvas Work Tote',
     embedding: [0.85, 0.79, 0.73],
     category: 'Accessories',
     price: 195.0,
-    imageUrl: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7',
+    imageUrl: 'https://images.unsplash.com/photo-1591561954557-26941169b49e',
     color: 'Tan',
     material: 'Canvas & Leather',
     occasion: 'Work',
@@ -173,7 +259,7 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 8,
+    id: 13,
     text: 'Pearl & Gold Drop Earrings',
     embedding: [0.87, 0.81, 0.76],
     category: 'Jewelry',
@@ -190,12 +276,12 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 9,
+    id: 14,
     text: 'Merino Wool Wrap Coat',
     embedding: [0.91, 0.85, 0.78],
     category: 'Outerwear',
     price: 495.0,
-    imageUrl: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27',
+    imageUrl: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3',
     color: 'Camel',
     material: 'Merino Wool',
     occasion: 'Winter',
@@ -207,7 +293,7 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 10,
+    id: 15,
     text: 'Crystal-Embellished Evening Clutch',
     embedding: [0.83, 0.88, 0.77],
     category: 'Accessories',
@@ -224,7 +310,7 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 11,
+    id: 16,
     text: 'Italian Leather Pumps',
     embedding: [0.86, 0.84, 0.79],
     category: 'Shoes',
@@ -241,24 +327,24 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 12,
-    text: 'Hermès Vintage Silk Scarf',
+    id: 17,
+    text: 'Vintage Silk Scarf',
     embedding: [0.89, 0.83, 0.81],
     category: 'Accessories',
-    price: 495.0,
-    imageUrl: 'https://images.unsplash.com/photo-1584030373081-f37b7bb4fa8e',
+    price: 295.0,
+    imageUrl: 'https://images.unsplash.com/photo-1601374192913-ac3c05b73a56',
     color: 'Navy & Gold',
     material: 'Silk Twill',
     occasion: 'All Occasions',
     store: {
-      name: 'Vintage Luxury',
+      name: 'Vintage Accessories',
       address: '890 Madison Ave, Upper East',
       lat: 40.7739,
       lng: -73.9653,
     },
   },
   {
-    id: 13,
+    id: 18,
     text: 'Pinstripe Wool Blazer',
     embedding: [0.84, 0.86, 0.75],
     category: 'Suits',
@@ -275,7 +361,7 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 14,
+    id: 19,
     text: 'Cashmere-Silk Evening Wrap',
     embedding: [0.88, 0.85, 0.82],
     category: 'Accessories',
@@ -292,7 +378,7 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 15,
+    id: 20,
     text: 'Leather Business Portfolio',
     embedding: [0.85, 0.87, 0.8],
     category: 'Accessories',
@@ -309,7 +395,7 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 16,
+    id: 21,
     text: 'Wool-Blend Sheath Dress',
     embedding: [0.86, 0.88, 0.83],
     category: 'Dresses',
@@ -326,7 +412,7 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 17,
+    id: 22,
     text: 'Diamond Tennis Bracelet',
     embedding: [0.87, 0.89, 0.84],
     category: 'Jewelry',
@@ -343,7 +429,7 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 18,
+    id: 23,
     text: 'Classic Oxford Dress Shoes',
     embedding: [0.88, 0.86, 0.85],
     category: 'Shoes',
@@ -360,7 +446,7 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 19,
+    id: 24,
     text: 'Vintage Floral Silk Scarf',
     embedding: [0.89, 0.84, 0.82],
     category: 'Accessories',
@@ -377,7 +463,7 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 20,
+    id: 25,
     text: 'Heritage Cotton Trench Coat',
     embedding: [0.9, 0.85, 0.83],
     category: 'Outerwear',
@@ -394,7 +480,7 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 21,
+    id: 26,
     text: 'Designer Leather Crossbody Bag',
     embedding: [0.87, 0.86, 0.84],
     category: 'Accessories',
@@ -411,7 +497,7 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 22,
+    id: 27,
     text: 'Luxury Tweed Blazer',
     embedding: [0.88, 0.87, 0.85],
     category: 'Outerwear',
@@ -428,7 +514,7 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 23,
+    id: 28,
     text: 'Handwoven Leather Evening Clutch',
     embedding: [0.86, 0.85, 0.83],
     category: 'Accessories',
@@ -445,7 +531,7 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 24,
+    id: 29,
     text: 'Pure Camel Hair Coat',
     embedding: [0.85, 0.84, 0.82],
     category: 'Outerwear',
@@ -462,7 +548,7 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 25,
+    id: 30,
     text: 'Signature Gold Bangle',
     embedding: [0.89, 0.88, 0.86],
     category: 'Jewelry',
@@ -479,7 +565,7 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 26,
+    id: 31,
     text: 'Designer Canvas Shoulder Bag',
     embedding: [0.87, 0.86, 0.85],
     category: 'Accessories',
@@ -496,7 +582,7 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 27,
+    id: 32,
     text: 'Patent Leather Stilettos',
     embedding: [0.86, 0.85, 0.84],
     category: 'Shoes',
@@ -513,7 +599,7 @@ const sampleData: SearchItem[] = [
     },
   },
   {
-    id: 28,
+    id: 33,
     text: 'Diamond Floral Necklace',
     embedding: [0.9, 0.89, 0.88],
     category: 'Jewelry',
@@ -568,97 +654,119 @@ const VectorSearchDemo = () => {
     handleSearch(suggestion);
   };
 
-  // Simulate vector search process
+  // Update the handleSearch function to better match search terms
   const handleSearch = (term: string = searchTerm) => {
     setIsSearching(true);
     setShowSuggestions(false);
 
-    // Simulate query vector based on search term
-    const queryVector = [0.9, 0.85, 0.75];
+    // Create different vectors based on search terms
+    let queryVector;
+    const termLower = term.toLowerCase();
 
-    // Calculate similarities and sort results
+    if (termLower.includes('summer') || termLower.includes('casual')) {
+      queryVector = [0.9, 0.8, 0.6]; // Summer/casual vector
+    } else if (
+      termLower.includes('evening') ||
+      termLower.includes('cocktail')
+    ) {
+      queryVector = [0.7, 0.9, 0.9]; // Evening/cocktail vector
+    } else if (termLower.includes('work') || termLower.includes('business')) {
+      queryVector = [0.8, 0.7, 0.9]; // Work/business vector
+    } else {
+      queryVector = [0.85, 0.85, 0.85]; // Default vector
+    }
+
+    // Calculate similarities and filter based on search term
     const searchResults = sampleData
       .map((item) => ({
         ...item,
         similarity: calculateSimilarity(queryVector, item.embedding),
       }))
+      .filter((item) => {
+        const searchableText =
+          `${item.text} ${item.occasion} ${item.category}`.toLowerCase();
+        return searchableText.includes(termLower);
+      })
       .sort((a, b) => (b.similarity ?? 0) - (a.similarity ?? 0));
 
-    // Simulate API delay
     setTimeout(() => {
-      setResults(searchResults);
+      setResults(searchResults.length > 0 ? searchResults : sampleData);
       setIsSearching(false);
     }, 800);
   };
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="max-w-3xl mx-auto mb-8 text-center">
-        <h2 className="text-3xl font-bold mb-4">Fashion Store Locator</h2>
-        <p className="text-gray-600">
-          Find similar styles across our partner stores using AI-powered search
-        </p>
-      </div>
+    <div className="max-w-7xl mx-auto">
+      <div className="relative mb-12">
+        <div className="flex gap-3">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => handleSearchInput(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            className="flex-1 px-6 py-4 rounded-xl bg-white border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-neutral-900 placeholder-neutral-400"
+            placeholder="Try searching: summer dress, business casual, vintage..."
+          />
+          <motion.button
+            onClick={() => handleSearch()}
+            className="min-w-[120px] py-4 bg-neutral-900 text-white/95 rounded-xl font-light relative overflow-hidden group"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <motion.div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <span className="relative z-10">Search</span>
+          </motion.button>
+        </div>
 
-      <div className="max-w-2xl mx-auto mb-8">
-        <div className="relative">
-          <div className="flex gap-3">
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => handleSearchInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              className="flex-1 px-6 py-4 rounded-xl bg-white shadow-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#8b6f5f] focus:border-transparent text-gray-800 placeholder-gray-500"
-              placeholder="Try searching: summer dress, business casual, vintage..."
-            />
-            <button
-              onClick={() => handleSearch()}
-              className="min-w-[120px] py-4 bg-[#8b6f5f] text-white rounded-xl hover:bg-[#8b6f5f]/90 transition-colors font-medium"
-            >
-              Search
-            </button>
-          </div>
-
-          {/* Search Suggestions */}
-          {showSuggestions && filteredSuggestions.length > 0 && (
-            <div className="absolute z-50 left-0 right-[132px] mt-2 bg-white rounded-lg shadow-lg border border-gray-200">
-              {filteredSuggestions.map((suggestion, index) => (
-                <div
-                  key={index}
-                  className="px-4 py-2 hover:bg-gray-50 cursor-pointer transition-colors"
-                  onClick={() => handleSuggestionClick(suggestion)}
-                >
-                  {suggestion}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Popular Searches */}
-          <div className="mt-3 flex flex-wrap gap-2">
-            {searchSuggestions.slice(0, 5).map((suggestion, index) => (
-              <button
+        {/* Search Suggestions */}
+        {showSuggestions && filteredSuggestions.length > 0 && (
+          <div className="absolute z-50 left-0 right-[132px] mt-2 bg-white rounded-xl border border-neutral-100">
+            {filteredSuggestions.map((suggestion, index) => (
+              <motion.div
                 key={index}
+                className="px-4 py-2 hover:bg-neutral-50 cursor-pointer transition-colors text-neutral-600"
+                whileHover={{ x: 4 }}
                 onClick={() => handleSuggestionClick(suggestion)}
-                className="text-sm px-3 py-1.5 rounded-full bg-[#8b6f5f]/10 hover:bg-[#8b6f5f]/20 text-[#8b6f5f] border border-[#8b6f5f]/20 transition-colors"
               >
                 {suggestion}
-              </button>
+              </motion.div>
             ))}
           </div>
+        )}
+
+        {/* Popular Searches */}
+        <div className="mt-3 flex flex-wrap gap-2">
+          {searchSuggestions.slice(0, 5).map((suggestion, index) => (
+            <motion.button
+              key={index}
+              onClick={() => handleSuggestionClick(suggestion)}
+              className="text-sm px-3 py-1.5 rounded-full bg-white border border-neutral-100 text-neutral-600 hover:bg-neutral-50 transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {suggestion}
+            </motion.button>
+          ))}
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto">
-        <div className="relative h-[400px] mb-8 rounded-xl overflow-hidden bg-gray-50 border border-gray-200">
+      <div className="space-y-6">
+        {/* Map */}
+        <motion.div
+          className="h-[400px] rounded-xl overflow-hidden bg-white border border-neutral-100"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
           <Map
             stores={sampleData}
             activeResults={results}
             activeStore={activeStore}
             onStoreClick={setActiveStore}
           />
-        </div>
+        </motion.div>
 
+        {/* Results */}
         <div className="space-y-4">
           <AnimatePresence>
             {results.map((result, index) => (
@@ -668,19 +776,27 @@ const VectorSearchDemo = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ delay: index * 0.1 }}
-                className={`p-4 rounded-lg backdrop-blur-lg border ${
+                className={`p-6 rounded-xl border ${
                   activeStore === result.id
-                    ? 'bg-[#8b6f5f]/10 border-[#8b6f5f]'
-                    : 'bg-white/10 border-gray-200'
+                    ? 'bg-white border-indigo-500/20'
+                    : 'bg-white border-neutral-100'
                 }`}
                 onClick={() => setActiveStore(result.id)}
+                whileHover={{ y: -4 }}
               >
                 <div className="flex items-center gap-6">
                   <div className="w-24 h-32 rounded-lg overflow-hidden bg-gray-100">
-                    <img
+                    <Image
                       src={result.imageUrl}
                       alt={result.text}
+                      width={96}
+                      height={128}
                       className="w-full h-full object-cover"
+                      unoptimized
+                      onError={(e) => {
+                        e.currentTarget.src =
+                          'https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99';
+                      }}
                     />
                   </div>
                   <div className="flex-1">

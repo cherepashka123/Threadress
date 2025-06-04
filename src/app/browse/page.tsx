@@ -118,83 +118,76 @@ export default function BrowsePage() {
     });
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-20 relative">
-      {/* Tech background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div
-          className="absolute inset-0"
+    <main className="relative bg-[#fafafa] min-h-screen">
+      {/* Tech-inspired background */}
+      <div className="absolute inset-0">
+        <motion.div
+          className="absolute inset-0 opacity-[0.03]"
           style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, #8b6f5f08 1px, transparent 0)`,
-            backgroundSize: '40px 40px',
+            backgroundImage: `radial-gradient(circle at center, rgba(0,0,0,0.1) 1px, transparent 1px)`,
+            backgroundSize: '24px 24px',
           }}
         />
-        <div className="absolute top-20 left-[20%] w-32 h-32 rounded-full bg-gradient-to-r from-[#8b6f5f]/5 to-transparent blur-xl" />
-        <div className="absolute bottom-40 right-[30%] w-40 h-40 rounded-full bg-gradient-to-r from-[#d4c4bc]/5 to-transparent blur-xl" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 relative">
-        {/* Header with animated underline */}
+      <div className="max-w-7xl mx-auto px-6 py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          transition={{ duration: 0.8 }}
+          className="mb-16"
         >
-          <div className="relative inline-block">
-            <motion.div
-              initial={{ width: 0 }}
-              whileInView={{ width: '120%' }}
-              transition={{ duration: 1, delay: 0.2 }}
-              className="absolute -left-[10%] top-[50%] h-px bg-gradient-to-r from-transparent via-[#8b6f5f]/30 to-transparent"
-            />
-            <h1 className="text-4xl font-[500] text-[#8b6f5f] tracking-tight mb-4">
-              Browse Local Fashion
-            </h1>
-          </div>
+          <h1 className="text-3xl md:text-4xl font-light tracking-[-0.02em] text-neutral-900 mb-4">
+            Browse Collection
+          </h1>
+          <p className="text-neutral-600 font-light">
+            Discover unique pieces from local boutiques
+          </p>
         </motion.div>
 
-        {/* Filters and Sort Bar */}
+        {/* Filters Section */}
         <motion.div
+          className="bg-white rounded-xl p-6 border border-neutral-100 mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-8 flex flex-wrap gap-4 justify-between items-center"
+          transition={{ duration: 0.8, delay: 0.2 }}
         >
-          {/* Filter Toggle Button */}
-          <motion.button
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-[#8b6f5f]/20 text-[#8b6f5f] hover:bg-[#8b6f5f] hover:text-white transition-all duration-300"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            {showFilters ? <FaTimes /> : <FaFilter />}
-            <span>{showFilters ? 'Close Filters' : 'Filters'}</span>
-          </motion.button>
-
-          {/* Sort Dropdown */}
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as SortOption)}
-            className="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-[#8b6f5f]/20 text-[#8b6f5f] hover:border-[#8b6f5f] transition-all duration-300 cursor-pointer"
-          >
-            <option value="distance">Nearest First</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-            <option value="name">Name: A to Z</option>
-          </select>
-        </motion.div>
-
-        {/* Filter Panel */}
-        <AnimatePresence>
-          {showFilters && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="mb-8 overflow-hidden"
+          {/* Filters and Sort Bar */}
+          <div className="mb-8 flex flex-wrap gap-4 justify-between items-center">
+            {/* Filter Toggle Button */}
+            <motion.button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-[#8b6f5f]/20 text-[#8b6f5f] hover:bg-[#8b6f5f] hover:text-white transition-all duration-300"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-[#8b6f5f]/20 shadow-lg">
+              {showFilters ? <FaTimes /> : <FaFilter />}
+              <span>{showFilters ? 'Close Filters' : 'Filters'}</span>
+            </motion.button>
+
+            {/* Sort Dropdown */}
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortOption)}
+              className="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-[#8b6f5f]/20 text-[#8b6f5f] hover:border-[#8b6f5f] transition-all duration-300 cursor-pointer"
+            >
+              <option value="distance">Nearest First</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="name">Name: A to Z</option>
+            </select>
+          </div>
+
+          {/* Filter Panel */}
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="mt-4 overflow-hidden"
+              >
                 <div className="flex flex-wrap gap-4">
                   {['all', 'dresses', 'tops', 'bottoms', 'accessories'].map(
                     (option) => (
@@ -214,39 +207,26 @@ export default function BrowsePage() {
                     )
                   )}
                 </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
 
-        {/* Items Grid */}
-        <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: {},
-            visible: { transition: { staggerChildren: 0.1 } },
-          }}
-        >
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {filteredAndSortedItems.map((item) => (
             <motion.div
               key={item.id}
-              className="group relative"
-              variants={{
-                hidden: { opacity: 0, y: 30 },
-                visible: {
-                  opacity: 1,
-                  y: 0,
-                  transition: { type: 'spring', stiffness: 120, damping: 20 },
-                },
-              }}
+              className="bg-white rounded-xl border border-neutral-100 overflow-hidden group"
+              whileHover={{ y: -4 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             >
-              <motion.div
-                className="relative bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/20 transition-all duration-300 group-hover:border-transparent group-hover:shadow-[0_8px_40px_-12px_rgba(0,0,0,0.1)]"
-                whileHover={{ y: -5 }}
-              >
-                {/* Image Container */}
+              {/* Product image */}
+              <div className="relative aspect-square">
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-tr from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  whileHover={{ opacity: 1 }}
+                />
                 <div className="relative w-full h-60 overflow-hidden">
                   <Image
                     src={item.image}
@@ -254,73 +234,55 @@ export default function BrowsePage() {
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
+              </div>
+
+              {/* Product details */}
+              <div className="p-4">
+                <h3 className="text-lg font-light text-neutral-900">
+                  {item.name}
+                </h3>
+                <div className="text-sm text-neutral-600 font-light">
+                  {item.storeName}
                 </div>
 
-                {/* Details */}
-                <div className="p-4 space-y-2">
-                  <h2 className="text-lg font-semibold text-gray-800 group-hover:text-[#8b6f5f] transition-colors duration-300">
-                    {item.name}
-                  </h2>
-                  <p className="text-sm text-gray-500">{item.storeName}</p>
-
-                  {/* Distance */}
+                {/* Distance info - Fixed nested p tags */}
+                <div className="mt-2">
                   {item.distanceMiles != null ? (
                     <div className="flex items-center text-xs text-gray-500">
                       <FaMapMarkerAlt className="mr-1 text-[#8b6f5f]" />
-                      {item.distanceMiles.toFixed(1)} mi away
+                      <span>{item.distanceMiles.toFixed(1)} mi away</span>
                     </div>
                   ) : (
-                    <p className="text-xs text-gray-400">Distance unknown</p>
+                    <div className="text-xs text-gray-400">
+                      Distance unknown
+                    </div>
                   )}
-
-                  {/* Price */}
-                  <p className="text-base font-medium bg-clip-text text-transparent bg-gradient-to-r from-[#8b6f5f] to-[#d4c4bc]">
-                    ${item.price.toFixed(2)}
-                  </p>
-
-                  {/* Add to Cart Button */}
-                  <motion.button
-                    onClick={() => {
-                      add(item);
-                      triggerToast(`${item.name} added to cart`);
-                    }}
-                    className="w-full px-4 py-2 bg-white text-[#8b6f5f] border border-[#8b6f5f] rounded-lg hover:bg-[#8b6f5f] hover:text-white transition-all duration-300"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    Add to Cart
-                  </motion.button>
                 </div>
 
-                {/* Hover Accent */}
-                <motion.div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none"
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="absolute top-0 left-0 w-20 h-20">
-                    <div
-                      className="absolute inset-0"
-                      style={{
-                        background:
-                          'radial-gradient(circle at 0 0, rgba(139,111,95,0.1), transparent 70%)',
-                      }}
-                    />
-                  </div>
-                  <div className="absolute bottom-0 right-0 w-20 h-20">
-                    <div
-                      className="absolute inset-0"
-                      style={{
-                        background:
-                          'radial-gradient(circle at 100% 100%, rgba(212,196,188,0.1), transparent 70%)',
-                      }}
-                    />
-                  </div>
-                </motion.div>
-              </motion.div>
+                {/* Price - Fixed nested p tags */}
+                <div className="mt-2">
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#8b6f5f] to-[#d4c4bc]">
+                    ${item.price.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Add to Cart Button */}
+              <motion.button
+                onClick={() => {
+                  add(item);
+                  triggerToast(`${item.name} added to cart`);
+                }}
+                className="w-full px-4 py-2 bg-white text-[#8b6f5f] border border-[#8b6f5f] rounded-lg hover:bg-[#8b6f5f] hover:text-white transition-all duration-300"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Add to Cart
+              </motion.button>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
 
       {/* Toast Notification */}

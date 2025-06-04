@@ -73,119 +73,119 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative bg-[#f4efe9] py-16 px-6 md:px-12 rounded-b-3xl overflow-hidden">
-      {/* Background elements */}
-      <div className="absolute inset-0 overflow-hidden">
+    <section className="relative bg-[#fafafa] py-24 overflow-hidden">
+      {/* Tech-inspired background */}
+      <div className="absolute inset-0">
         <motion.div
-          className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#8b6f5f]/5 to-transparent"
+          className="absolute inset-0"
           animate={{
-            y: [0, 800, 0],
+            background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(0,0,0,0.02), transparent 50%)`,
           }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-        />
-        <motion.div
-          className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#8b6f5f]/3 to-transparent"
-          animate={{
-            y: [800, 0, 800],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
+          transition={{ type: 'spring', stiffness: 50, damping: 20 }}
         />
 
+        {/* Subtle tech pattern */}
         <motion.div
-          className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[#8b6f5f]/5 to-transparent blur-3xl"
-          animate={{
-            x: mousePosition.x * 0.02,
-            y: mousePosition.y * 0.02,
-            scale: [1, 1.05, 1],
-          }}
-          transition={{
-            scale: {
-              duration: 4,
-              repeat: Infinity,
-              repeatType: 'reverse',
-              ease: 'easeInOut',
-            },
-            x: { type: 'spring', stiffness: 50, damping: 30 },
-            y: { type: 'spring', stiffness: 50, damping: 30 },
-          }}
-        />
-        <motion.div
-          className="absolute -bottom-40 -left-40 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-[#8b6f5f]/5 to-transparent blur-3xl"
-          animate={{
-            x: mousePosition.x * -0.02,
-            y: mousePosition.y * -0.02,
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            scale: {
-              duration: 5,
-              repeat: Infinity,
-              repeatType: 'reverse',
-              ease: 'easeInOut',
-            },
-            x: { type: 'spring', stiffness: 50, damping: 30 },
-            y: { type: 'spring', stiffness: 50, damping: 30 },
+          className="absolute inset-0 opacity-5"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.03 }}
+          transition={{ duration: 1 }}
+          style={{
+            backgroundImage: `radial-gradient(circle at center, rgba(0,0,0,0.1) 1px, transparent 1px)`,
+            backgroundSize: '24px 24px',
           }}
         />
       </div>
 
-      <div className="relative max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12">
+      <div className="relative max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-16">
         {/* Text content */}
         <motion.div
-          className="md:w-1/2 text-center md:text-left space-y-6"
+          className="md:w-1/2 text-center md:text-left"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <motion.h1
-            className="text-4xl md:text-5xl font-extrabold leading-tight text-gray-900"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <span className="inline-block">Discover</span>{' '}
-            <span className="inline-block">Local Fashion,</span>{' '}
-            <span className="inline-block bg-clip-text text-transparent bg-gradient-to-r from-[#8b6f5f] to-[#a58d7f]">
-              Reimagined
-            </span>
-          </motion.h1>
+          <div className="space-y-6">
+            <motion.h1 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-[-0.02em] text-neutral-900 leading-[1.1]">
+              <div className="overflow-hidden">
+                <motion.span className="block">Discover</motion.span>
+              </div>
+              <div className="overflow-hidden">
+                <motion.span className="block">Local Fashion,</motion.span>
+              </div>
+              <div className="overflow-hidden">
+                <motion.span
+                  className="block bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent font-normal"
+                  initial={{ y: 40 }}
+                  animate={{
+                    y: 0,
+                    backgroundPosition: ['200% 0', '-200% 0'],
+                  }}
+                  transition={{
+                    y: { duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] },
+                    backgroundPosition: {
+                      duration: 10,
+                      repeat: Infinity,
+                      ease: 'linear',
+                    },
+                  }}
+                >
+                  Reimagined
+                </motion.span>
+              </div>
+            </motion.h1>
 
-          <motion.p
-            className="text-lg text-gray-700"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
-            AI-driven style & fit matching, real-time boutique inventory, and
-            instant click-to-collect. All in one app.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-          >
-            <motion.a
-              href="#waitlist"
-              className="group relative inline-block bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold px-8 py-3 rounded-full shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+            <motion.p
+              className="text-[1.1rem] text-neutral-800 font-light leading-[1.6] max-w-[32rem]"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
             >
-              <span className="relative z-10">Join the Waitlist</span>
-              <motion.div
-                className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                initial={false}
-              />
-            </motion.a>
-          </motion.div>
+              AI-driven style & fit matching, real-time boutique inventory, and
+              instant click-to-collect. All in one app.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.7 }}
+              className="mt-10"
+            >
+              <motion.a
+                href="#waitlist"
+                className="group relative inline-flex items-center bg-neutral-900 text-white/95 font-light px-6 py-2.5 rounded-lg transition-all duration-300 overflow-hidden"
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-indigo-400/30 via-purple-400/30 to-indigo-400/30 bg-[length:200%_100%]"
+                  animate={{
+                    backgroundPosition: ['200% 0', '-200% 0'],
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: 'linear',
+                  }}
+                />
+                <span className="relative z-10">Join Waitlist</span>
+                <svg
+                  className="w-4 h-4 ml-2 relative z-10 opacity-80"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1 8H15M15 8L8 1M15 8L8 15"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </motion.a>
+            </motion.div>
+          </div>
         </motion.div>
 
         {/* Tech Mockup Showcase */}
