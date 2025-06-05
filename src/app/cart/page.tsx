@@ -109,28 +109,28 @@ export default function CartPage() {
                                   Math.max(1, item.quantity - 1)
                                 )
                               }
-                              className="p-1 hover:bg-neutral-100 rounded"
+                              className="p-1 hover:bg-indigo-50 rounded transition-colors"
                             >
-                              <FaMinus className="w-3 h-3" />
+                              <FaMinus className="w-3 h-3 text-indigo-600" />
                             </button>
                             <span>{item.quantity}</span>
                             <button
                               onClick={() =>
                                 updateQuantity(item.id, item.quantity + 1)
                               }
-                              className="p-1 hover:bg-neutral-100 rounded"
+                              className="p-1 hover:bg-indigo-50 rounded transition-colors"
                             >
-                              <FaPlus className="w-3 h-3" />
+                              <FaPlus className="w-3 h-3 text-indigo-600" />
                             </button>
                           </div>
-                          <span className="text-neutral-900">
+                          <span className="text-indigo-600 font-medium">
                             ${(item.price * item.quantity).toFixed(2)}
                           </span>
                         </div>
                       </div>
                       <button
                         onClick={() => remove(item.id)}
-                        className="text-neutral-400 hover:text-neutral-600 transition-colors"
+                        className="text-neutral-400 hover:text-indigo-600 transition-colors"
                       >
                         <FaTrash />
                       </button>
@@ -144,7 +144,7 @@ export default function CartPage() {
                   </div>
                   <Link
                     href="/browse"
-                    className="inline-flex items-center gap-2 text-[#8b6f5f] mt-4"
+                    className="inline-flex items-center gap-2 text-neutral-600 hover:text-neutral-900 transition-colors mt-4"
                   >
                     <FaArrowLeft />
                     Continue Shopping
@@ -168,24 +168,38 @@ export default function CartPage() {
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-neutral-600 font-light">
                   <span>Subtotal</span>
-                  <span>$99.99</span>
+                  <span className="text-indigo-600">
+                    ${subtotal.toFixed(2)}
+                  </span>
                 </div>
                 <div className="flex justify-between text-neutral-600 font-light">
-                  <span>Tax</span>
-                  <span>$9.99</span>
+                  <span>Shipping</span>
+                  <span className="text-indigo-600">
+                    ${shipping.toFixed(2)}
+                  </span>
                 </div>
                 <div className="flex justify-between text-neutral-900 font-medium pt-4 border-t border-neutral-100">
                   <span>Total</span>
-                  <span>$109.98</span>
+                  <span className="text-indigo-600">${total.toFixed(2)}</span>
                 </div>
               </div>
 
               <motion.button
-                className="w-full bg-neutral-900 text-white/95 px-6 py-3 rounded-xl font-light relative overflow-hidden group"
+                className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white/95 px-6 py-3 rounded-xl font-light relative overflow-hidden group"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <motion.div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-indigo-400/30 via-purple-400/30 to-indigo-400/30 bg-[length:200%_100%]"
+                  animate={{
+                    backgroundPosition: ['200% 0', '-200% 0'],
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: 'linear',
+                  }}
+                />
                 <span className="relative z-10">Proceed to Checkout</span>
               </motion.button>
             </motion.div>

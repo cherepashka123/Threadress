@@ -30,8 +30,7 @@ export default function Features() {
           />
         </svg>
       ),
-      gradient: 'from-purple-500 to-indigo-500',
-      accent: 'purple',
+      gradient: 'from-violet-600 to-indigo-600',
     },
     {
       title: 'Seamless Checkout',
@@ -53,8 +52,7 @@ export default function Features() {
           />
         </svg>
       ),
-      gradient: 'from-fuchsia-500 to-pink-500',
-      accent: 'fuchsia',
+      gradient: 'from-violet-600 to-indigo-600',
     },
     {
       title: 'Sustainable Shopping',
@@ -76,8 +74,7 @@ export default function Features() {
           />
         </svg>
       ),
-      gradient: 'from-violet-500 to-purple-500',
-      accent: 'violet',
+      gradient: 'from-violet-600 to-indigo-600',
     },
     {
       title: 'AI-Powered Match',
@@ -99,8 +96,7 @@ export default function Features() {
           />
         </svg>
       ),
-      gradient: 'from-indigo-500 to-purple-500',
-      accent: 'indigo',
+      gradient: 'from-violet-600 to-indigo-600',
     },
   ];
 
@@ -114,9 +110,9 @@ export default function Features() {
   return (
     <section
       ref={containerRef}
-      className="relative py-24 bg-[#fafafa] overflow-hidden"
+      className="relative py-24 bg-gradient-to-b from-[#fafafa] to-white overflow-hidden"
     >
-      {/* Tech-inspired background */}
+      {/* Minimalist background */}
       <div className="absolute inset-0">
         <motion.div
           className="absolute inset-0"
@@ -124,12 +120,29 @@ export default function Features() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
         >
-          {/* Subtle dot pattern */}
-          <div
-            className="absolute inset-0 opacity-[0.03]"
-            style={{
-              backgroundImage: `radial-gradient(circle at center, rgba(0,0,0,0.1) 1px, transparent 1px)`,
-              backgroundSize: '24px 24px',
+          {/* Subtle gradient orbs */}
+          <motion.div
+            className="absolute top-0 left-0 w-[800px] h-[800px] bg-gradient-to-r from-violet-600/5 to-indigo-600/5 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.1, 1],
+              opacity: [0.5, 0.3, 0.5],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          />
+          <motion.div
+            className="absolute bottom-0 right-0 w-[800px] h-[800px] bg-gradient-to-r from-indigo-600/5 to-violet-600/5 rounded-full blur-3xl"
+            animate={{
+              scale: [1.1, 1, 1.1],
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: 'easeInOut',
             }}
           />
         </motion.div>
@@ -150,6 +163,24 @@ export default function Features() {
           </p>
         </motion.div>
 
+        {/* Subtle flow animation for the entire section */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none"
+          initial={false}
+          animate={{
+            background: [
+              'radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.03) 0%, transparent 50%)',
+              'radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.03) 0%, transparent 50%)',
+              'radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.03) 0%, transparent 50%)',
+            ],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: 'linear',
+          }}
+        />
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
             <motion.div
@@ -157,38 +188,61 @@ export default function Features() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group relative"
+              className="group relative w-full"
             >
-              <div className="relative p-6 bg-white rounded-xl transition-all duration-300 hover:shadow-lg border border-neutral-100">
+              <div className="relative p-8 bg-white/80 rounded-2xl transition-all duration-300 hover:shadow-lg backdrop-blur-sm h-full">
                 {/* Feature icon */}
                 <div
                   className={`
                     relative inline-flex items-center justify-center
-                    w-10 h-10 rounded-lg mb-4
+                    w-12 h-12 rounded-xl mb-6
                     bg-gradient-to-r ${feature.gradient}
                     text-white
+                    group-hover:scale-110 transition-transform duration-300
                   `}
                 >
                   {feature.icon}
                   <motion.div
-                    className="absolute inset-0 rounded-lg bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+                    className="absolute inset-0 rounded-xl bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"
                     whileHover={{ scale: 1.2, opacity: 0 }}
                   />
                 </div>
 
                 {/* Feature content */}
-                <h3 className="text-lg font-medium text-neutral-900 mb-2">
+                <h3 className="text-xl font-light text-neutral-900 mb-3 group-hover:translate-x-1 transition-transform duration-300">
                   {feature.title}
                 </h3>
-                <p className="text-neutral-600 font-light text-sm">
+                <p className="text-neutral-600 font-light leading-relaxed group-hover:translate-x-1 transition-transform duration-300 delay-75">
                   {feature.description}
                 </p>
 
                 {/* Hover effect */}
                 <motion.div
-                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300"
                   style={{
-                    background: `radial-gradient(circle at 50% 50%, rgba(99,102,241,0.03), transparent 70%)`,
+                    background: `linear-gradient(90deg, var(--violet-600), var(--indigo-600))`,
+                    padding: '1px',
+                  }}
+                >
+                  <div className="w-full h-full bg-white/80 backdrop-blur-sm rounded-2xl" />
+                </motion.div>
+
+                {/* Individual feature flow animation */}
+                <motion.div
+                  className="absolute inset-0 pointer-events-none rounded-2xl overflow-hidden"
+                  initial={false}
+                  animate={{
+                    background: [
+                      'radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.02) 0%, transparent 50%)',
+                      'radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.02) 0%, transparent 50%)',
+                      'radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.02) 0%, transparent 50%)',
+                    ],
+                  }}
+                  transition={{
+                    duration: 5,
+                    repeat: Infinity,
+                    ease: 'linear',
+                    delay: index * 0.5,
                   }}
                 />
               </div>

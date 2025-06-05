@@ -4,9 +4,16 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaMapMarkerAlt, FaFilter, FaSort, FaTimes } from 'react-icons/fa';
+import {
+  FaMapMarkerAlt,
+  FaFilter,
+  FaSort,
+  FaTimes,
+  FaMinus,
+  FaPlus,
+} from 'react-icons/fa';
 import { items as rawItems, Item } from '@/data/items';
-import { useCart } from '@/context/CartContext';
+import { useCart, CartItem } from '@/context/CartContext';
 
 type WithDistance = Item & {
   distanceMiles: number | null;
@@ -16,7 +23,7 @@ type SortOption = 'distance' | 'price-low' | 'price-high' | 'name';
 type FilterOption = 'all' | 'dresses' | 'tops' | 'bottoms' | 'accessories';
 
 export default function BrowsePage() {
-  const { add } = useCart();
+  const { add, items: cartItems, updateQuantity } = useCart();
   const [userLat, setUserLat] = useState<number | null>(null);
   const [userLng, setUserLng] = useState<number | null>(null);
   const [itemsWithDistance, setItemsWithDistance] = useState<WithDistance[]>(
@@ -157,7 +164,7 @@ export default function BrowsePage() {
             {/* Filter Toggle Button */}
             <motion.button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-[#8b6f5f]/20 text-[#8b6f5f] hover:bg-[#8b6f5f] hover:text-white transition-all duration-300"
+              className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-neutral-200/50 text-neutral-600 hover:bg-neutral-900 hover:text-white transition-all duration-300"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -169,7 +176,7 @@ export default function BrowsePage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-[#8b6f5f]/20 text-[#8b6f5f] hover:border-[#8b6f5f] transition-all duration-300 cursor-pointer"
+              className="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-neutral-200/50 text-neutral-600 hover:border-neutral-900 transition-all duration-300 cursor-pointer"
             >
               <option value="distance">Nearest First</option>
               <option value="price-low">Price: Low to High</option>
@@ -196,8 +203,8 @@ export default function BrowsePage() {
                         onClick={() => setFilterBy(option as FilterOption)}
                         className={`px-4 py-2 rounded-full transition-all duration-300 ${
                           filterBy === option
-                            ? 'bg-[#8b6f5f] text-white'
-                            : 'bg-white/50 text-[#8b6f5f] hover:bg-[#8b6f5f]/10'
+                            ? 'bg-neutral-900 text-white'
+                            : 'bg-white/50 text-neutral-600 hover:bg-neutral-100'
                         }`}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -262,24 +269,78 @@ export default function BrowsePage() {
 
                 {/* Price - Fixed nested p tags */}
                 <div className="mt-2">
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#8b6f5f] to-[#d4c4bc]">
+                  <span className="text-indigo-600 font-medium">
                     ${item.price.toFixed(2)}
                   </span>
                 </div>
               </div>
 
               {/* Add to Cart Button */}
-              <motion.button
-                onClick={() => {
-                  add(item);
-                  triggerToast(`${item.name} added to cart`);
-                }}
-                className="w-full px-4 py-2 bg-white text-[#8b6f5f] border border-[#8b6f5f] rounded-lg hover:bg-[#8b6f5f] hover:text-white transition-all duration-300"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Add to Cart
-              </motion.button>
+              <motion.div className="p-4 border-t border-neutral-100">
+                <div className="flex items-center justify-between gap-4">
+                  {/* Quantity Controls */}
+                  <div className="flex items-center gap-2">
+                    <motion.button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const existingItem = cartItems.find(
+                          (i: CartItem) => i.id === item.id
+                        );
+                        const currentQuantity = existingItem?.quantity || 0;
+                        if (currentQuantity > 0) {
+                          updateQuantity(item.id, currentQuantity - 1);
+                          triggerToast(`Removed one ${item.name} from cart`);
+                        }
+                      }}
+                      className="p-2 rounded-full hover:bg-indigo-50 transition-colors"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <FaMinus className="w-3 h-3 text-indigo-600" />
+                    </motion.button>
+                    <span className="w-8 text-center">
+                      {cartItems.find((i: CartItem) => i.id === item.id)
+                        ?.quantity || 0}
+                    </span>
+                    <motion.button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        add(item);
+                        triggerToast(`Added one ${item.name} to cart`);
+                      }}
+                      className="p-2 rounded-full hover:bg-indigo-50 transition-colors"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <FaPlus className="w-3 h-3 text-indigo-600" />
+                    </motion.button>
+                  </div>
+
+                  {/* Add to Cart Button */}
+                  <motion.button
+                    onClick={() => {
+                      add(item);
+                      triggerToast(`${item.name} added to cart`);
+                    }}
+                    className="flex-1 bg-gradient-to-r from-violet-600 to-indigo-600 text-white/95 px-4 py-2 rounded-lg transition-all duration-300 relative overflow-hidden group"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-indigo-400/30 via-purple-400/30 to-indigo-400/30 bg-[length:200%_100%]"
+                      animate={{
+                        backgroundPosition: ['200% 0', '-200% 0'],
+                      }}
+                      transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: 'linear',
+                      }}
+                    />
+                    <span className="relative z-10">Add to Cart</span>
+                  </motion.button>
+                </div>
+              </motion.div>
             </motion.div>
           ))}
         </div>

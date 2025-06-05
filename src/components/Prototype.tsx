@@ -101,9 +101,9 @@ export default function Prototype({
             animate={{
               opacity: isHovered ? 1 : 0,
               boxShadow: [
-                '0 0 20px rgba(139,111,95,0.2)',
-                '0 0 30px rgba(139,111,95,0.3)',
-                '0 0 20px rgba(139,111,95,0.2)',
+                '0 0 20px rgba(99, 102, 241, 0.2)',
+                '0 0 30px rgba(99, 102, 241, 0.3)',
+                '0 0 20px rgba(99, 102, 241, 0.2)',
               ],
             }}
             transition={{
@@ -135,7 +135,7 @@ export default function Prototype({
               style={{
                 background: `radial-gradient(circle at ${position.includes('left') ? '0%' : '100%'} ${
                   position.includes('top') ? '0%' : '100%'
-                }, rgba(139,111,95,0.2), transparent)`,
+                }, rgba(99, 102, 241, 0.2), transparent)`,
               }}
             />
           </motion.div>

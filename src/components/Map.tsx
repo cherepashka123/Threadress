@@ -24,13 +24,13 @@ const createMarkerIcon = (isActive: boolean) => {
     html: `<div class="
       w-8 h-8 
       flex items-center justify-center 
-      ${isActive ? 'bg-[#8b6f5f]' : 'bg-white'} 
+      ${isActive ? 'bg-gradient-to-r from-violet-600 to-indigo-600' : 'bg-white'} 
       rounded-full shadow-lg 
       transform transition-all duration-300 
       ${isActive ? 'scale-110' : 'hover:scale-105'}
       border-2 border-white
     ">
-      <div class="${isActive ? 'text-white' : 'text-[#8b6f5f]'} text-sm">
+      <div class="${isActive ? 'text-white' : 'text-indigo-600'} text-sm">
         <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
           <path d="M12 0C7.58 0 4 3.58 4 8c0 5.25 8 13 8 13s8-7.75 8-13c0-4.42-3.58-8-8-8zm0 11c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
         </svg>
@@ -89,7 +89,7 @@ const Map = ({
           activeResults.some((result) => result.id === item.id);
         return (
           <Marker
-            key={item.id}
+            key={`store-marker-${item.id}`}
             position={[item.store.lat, item.store.lng]}
             icon={createMarkerIcon(isActive)}
             eventHandlers={{
@@ -99,7 +99,7 @@ const Map = ({
             <Popup>
               <div className="w-48 p-3 bg-white rounded-lg shadow-lg">
                 <div className="flex items-center space-x-2 mb-2">
-                  <FaStore className="w-4 h-4 text-[#8b6f5f]" />
+                  <FaStore className="w-4 h-4 text-indigo-600" />
                   <span className="text-sm font-medium text-gray-900">
                     {item.store.name}
                   </span>
@@ -113,7 +113,7 @@ const Map = ({
                       <FaMapMarkerAlt className="w-3 h-3 mr-1" />
                       <span>0.5 mi away</span>
                     </div>
-                    <span className="text-[#8b6f5f] font-medium">
+                    <span className="text-indigo-600 font-medium">
                       ${item.price.toFixed(2)}
                     </span>
                   </div>

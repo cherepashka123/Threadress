@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Navbar from '../components/Navbar';
 import { CartProvider } from '@/context/CartContext';
+import { Inter } from 'next/font/google';
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
 const geistMono = Geist_Mono({
@@ -12,9 +13,11 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+const inter = Inter({ subsets: ['latin'] });
+
 export const metadata: Metadata = {
-  title: 'Threadress',
-  description: 'AI-powered local fashion discovery and click-to-collect',
+  title: 'Threadress - Smart Fashion Discovery',
+  description: 'Discover fashion that matches your unique style',
 };
 
 export default function RootLayout({
@@ -25,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900 ${inter.className}`}
       >
         {/* Navbar appears on every route */}
         <Navbar />

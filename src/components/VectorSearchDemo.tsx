@@ -626,7 +626,7 @@ const calculateSimilarity = (v1: number[], v2: number[]): number => {
 
 const VectorSearchDemo = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [results, setResults] = useState<SearchItem[]>(sampleData);
+  const [results, setResults] = useState<SearchItem[]>(sampleData.slice(0, 6)); // Show initial items
   const [isSearching, setIsSearching] = useState(false);
   const [activeStore, setActiveStore] = useState<number | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -635,125 +635,309 @@ const VectorSearchDemo = () => {
   // Handle search input changes
   const handleSearchInput = (value: string) => {
     setSearchTerm(value);
-    if (value.length > 0) {
-      const filtered = searchSuggestions.filter((suggestion) =>
-        suggestion.toLowerCase().includes(value.toLowerCase())
-      );
-      setFilteredSuggestions(filtered);
-      setShowSuggestions(true);
-    } else {
+
+    // Clear results if search is empty
+    if (value.length === 0) {
+      setResults(sampleData.slice(0, 6)); // Show initial items when search is cleared
       setShowSuggestions(false);
-      setResults(sampleData); // Reset to show all items when search is cleared
+      return;
     }
+
+    // Show suggestions for non-empty search
+    const filtered = searchSuggestions.filter((suggestion) =>
+      suggestion.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredSuggestions(filtered);
+    setShowSuggestions(true);
+
+    // Perform instant search as user types
+    const termLower = value.toLowerCase();
+    const searchResults = sampleData
+      .filter((item) => {
+        const searchableText =
+          `${item.text} ${item.color || ''} ${item.material || ''} ${item.occasion || ''} ${item.category} ${item.store.name}`.toLowerCase();
+        return searchableText.includes(termLower);
+      })
+      .map((item) => ({
+        ...item,
+        similarity: calculateRelevanceScore(termLower, item),
+      }))
+      .sort((a, b) => (b.similarity ?? 0) - (a.similarity ?? 0));
+
+    setResults(
+      searchResults.length > 0 ? searchResults : sampleData.slice(0, 6)
+    );
   };
 
-  // Handle suggestion click
-  const handleSuggestionClick = (suggestion: string) => {
-    setSearchTerm(suggestion);
-    setShowSuggestions(false);
-    handleSearch(suggestion);
+  // Enhanced relevance scoring
+  const calculateRelevanceScore = (
+    searchTerm: string,
+    item: SearchItem
+  ): number => {
+    const terms = searchTerm.split(' ').filter((term) => term.length > 0);
+    let score = 0;
+
+    terms.forEach((term) => {
+      // Check exact matches in different fields with different weights
+      if (item.text.toLowerCase().includes(term)) score += 0.5;
+      if (item.category.toLowerCase() === term) score += 0.3;
+      if (item.color?.toLowerCase() === term) score += 0.2;
+      if (item.material?.toLowerCase() === term) score += 0.2;
+      if (item.occasion?.toLowerCase().includes(term)) score += 0.2;
+
+      // Calculate embedding similarity
+      const termVector = getTermVector(term);
+      score += calculateSimilarity(termVector, item.embedding) * 0.4;
+    });
+
+    return Math.min(score, 1); // Normalize to 0-1 range
   };
 
-  // Update the handleSearch function to better match search terms
-  const handleSearch = (term: string = searchTerm) => {
-    setIsSearching(true);
-    setShowSuggestions(false);
-
-    // Create different vectors based on search terms
-    let queryVector;
+  // Get vector representation for search terms
+  const getTermVector = (term: string): number[] => {
     const termLower = term.toLowerCase();
-
     if (termLower.includes('summer') || termLower.includes('casual')) {
-      queryVector = [0.9, 0.8, 0.6]; // Summer/casual vector
+      return [0.9, 0.8, 0.6];
     } else if (
       termLower.includes('evening') ||
       termLower.includes('cocktail')
     ) {
-      queryVector = [0.7, 0.9, 0.9]; // Evening/cocktail vector
+      return [0.7, 0.9, 0.9];
     } else if (termLower.includes('work') || termLower.includes('business')) {
-      queryVector = [0.8, 0.7, 0.9]; // Work/business vector
-    } else {
-      queryVector = [0.85, 0.85, 0.85]; // Default vector
+      return [0.8, 0.7, 0.9];
     }
+    return [0.85, 0.85, 0.85];
+  };
 
-    // Calculate similarities and filter based on search term
-    const searchResults = sampleData
-      .map((item) => ({
-        ...item,
-        similarity: calculateSimilarity(queryVector, item.embedding),
-      }))
-      .filter((item) => {
-        const searchableText =
-          `${item.text} ${item.occasion} ${item.category}`.toLowerCase();
-        return searchableText.includes(termLower);
-      })
-      .sort((a, b) => (b.similarity ?? 0) - (a.similarity ?? 0));
+  // Handle suggestion click with immediate search
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchTerm(suggestion);
+    setShowSuggestions(false);
+    setIsSearching(true);
 
+    // Simulate AI processing
     setTimeout(() => {
-      setResults(searchResults.length > 0 ? searchResults : sampleData);
+      const results = sampleData
+        .filter((item) => {
+          const searchableText =
+            `${item.text} ${item.color || ''} ${item.material || ''} ${item.occasion || ''} ${item.category} ${item.store.name}`.toLowerCase();
+          return searchableText.includes(suggestion.toLowerCase());
+        })
+        .map((item) => ({
+          ...item,
+          similarity: calculateRelevanceScore(suggestion.toLowerCase(), item),
+        }))
+        .sort((a, b) => (b.similarity ?? 0) - (a.similarity ?? 0));
+
+      setResults(results.length > 0 ? results : sampleData.slice(0, 6));
       setIsSearching(false);
     }, 800);
   };
 
+  // Handle search button click
+  const handleSearch = () => {
+    if (!searchTerm) return;
+
+    setIsSearching(true);
+    setShowSuggestions(false);
+
+    // Simulate AI processing
+    setTimeout(() => {
+      const results = sampleData
+        .filter((item) => {
+          const searchableText =
+            `${item.text} ${item.color || ''} ${item.material || ''} ${item.occasion || ''} ${item.category} ${item.store.name}`.toLowerCase();
+          return searchableText.includes(searchTerm.toLowerCase());
+        })
+        .map((item) => ({
+          ...item,
+          similarity: calculateRelevanceScore(searchTerm.toLowerCase(), item),
+        }))
+        .sort((a, b) => (b.similarity ?? 0) - (a.similarity ?? 0));
+
+      setResults(results.length > 0 ? results : sampleData.slice(0, 6));
+      setIsSearching(false);
+    }, 800);
+  };
+
+  // Handle keyboard events for search
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto">
+      {/* Enhanced Search Section */}
       <div className="relative mb-12">
+        {/* Tech-inspired background elements */}
+        <motion.div
+          className="absolute inset-0 -z-10"
+          initial={false}
+          animate={{
+            background: [
+              'radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.03) 0%, transparent 50%)',
+              'radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.03) 0%, transparent 50%)',
+              'radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.03) 0%, transparent 50%)',
+            ],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: 'linear',
+          }}
+        />
+
+        {/* Search Stats */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-8">
+            <div className="flex items-center gap-2">
+              <motion.div
+                className="w-2 h-2 rounded-full bg-green-500"
+                animate={{
+                  scale: [1, 1.2, 1],
+                  opacity: [1, 0.7, 1],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                }}
+              />
+              <span className="text-sm text-gray-600">AI Engine Active</span>
+            </div>
+            <div className="text-sm text-gray-600">
+              <span className="font-medium text-indigo-600">
+                {sampleData.length}
+              </span>{' '}
+              items indexed
+            </div>
+            <div className="text-sm text-gray-600">
+              <span className="font-medium text-indigo-600">12</span> boutiques
+              connected
+            </div>
+          </div>
+          <motion.div
+            className="text-sm text-gray-600 flex items-center gap-2"
+            animate={{
+              opacity: [1, 0.7, 1],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+            }}
+          >
+            <span className="w-1 h-1 rounded-full bg-indigo-600" />
+            Last updated 2 minutes ago
+          </motion.div>
+        </div>
+
         <div className="flex gap-3">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => handleSearchInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-            className="flex-1 px-6 py-4 rounded-xl bg-white border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-neutral-900 placeholder-neutral-400"
-            placeholder="Try searching: summer dress, business casual, vintage..."
-          />
+          <div className="flex-1 relative">
+            <motion.div
+              className="absolute -inset-1 rounded-xl bg-gradient-to-r from-violet-500/20 to-indigo-500/20 blur opacity-0 transition-opacity duration-300"
+              animate={{
+                opacity: searchTerm ? 0.5 : 0,
+              }}
+            />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => handleSearchInput(e.target.value)}
+              onKeyPress={handleKeyPress}
+              className="w-full px-6 py-4 rounded-xl bg-white border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-neutral-900 placeholder-neutral-400"
+              placeholder="Try searching: summer dress, business casual, vintage..."
+            />
+
+            {/* Enhanced Search Suggestions */}
+            {showSuggestions && filteredSuggestions.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="absolute z-50 left-0 right-0 mt-2 bg-white rounded-xl border border-neutral-100 shadow-lg overflow-hidden"
+              >
+                {filteredSuggestions.map((suggestion, index) => (
+                  <motion.div
+                    key={`filtered-suggestion-${suggestion.toLowerCase().replace(/\s+/g, '-')}-${index}`}
+                    className="group px-4 py-3 hover:bg-neutral-50 cursor-pointer transition-colors border-b border-neutral-100 last:border-0"
+                    whileHover={{ x: 4 }}
+                    onClick={() => handleSuggestionClick(suggestion)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-neutral-600 group-hover:text-neutral-900 transition-colors">
+                        {suggestion}
+                      </span>
+                      <motion.div
+                        className="text-xs text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                        animate={{ x: [0, 3, 0] }}
+                        transition={{
+                          duration: 1.5,
+                          repeat: Infinity,
+                          ease: 'easeInOut',
+                        }}
+                      >
+                        Try this →
+                      </motion.div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </div>
           <motion.button
             onClick={() => handleSearch()}
-            className="min-w-[120px] py-4 bg-neutral-900 text-white/95 rounded-xl font-light relative overflow-hidden group"
+            className="min-w-[120px] py-4 bg-gradient-to-r from-violet-600 to-indigo-600 text-white/95 rounded-xl font-light relative overflow-hidden group"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <motion.div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-violet-400/30 via-indigo-400/30 to-violet-400/30 bg-[length:200%_100%]"
+              animate={{
+                backgroundPosition: ['200% 0', '-200% 0'],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: 'linear',
+              }}
+            />
             <span className="relative z-10">Search</span>
           </motion.button>
         </div>
 
-        {/* Search Suggestions */}
-        {showSuggestions && filteredSuggestions.length > 0 && (
-          <div className="absolute z-50 left-0 right-[132px] mt-2 bg-white rounded-xl border border-neutral-100">
-            {filteredSuggestions.map((suggestion, index) => (
-              <motion.div
-                key={index}
-                className="px-4 py-2 hover:bg-neutral-50 cursor-pointer transition-colors text-neutral-600"
-                whileHover={{ x: 4 }}
+        {/* Popular Searches with enhanced styling */}
+        <div className="mt-4">
+          <div className="text-xs text-gray-500 mb-2">Popular Searches</div>
+          <div className="flex flex-wrap gap-2">
+            {searchSuggestions.slice(0, 5).map((suggestion, index) => (
+              <motion.button
+                key={`popular-suggestion-${suggestion.toLowerCase().replace(/\s+/g, '-')}-${index}`}
                 onClick={() => handleSuggestionClick(suggestion)}
+                className="text-sm px-3 py-1.5 rounded-full bg-white border border-neutral-100 text-neutral-600 hover:border-indigo-500/20 hover:bg-indigo-50/50 transition-colors relative group overflow-hidden"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                {suggestion}
-              </motion.div>
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-violet-500/5 to-indigo-500/5"
+                  initial={{ x: '-100%' }}
+                  whileHover={{ x: '100%' }}
+                  transition={{
+                    duration: 0.6,
+                    ease: 'easeInOut',
+                  }}
+                />
+                <span className="relative">{suggestion}</span>
+              </motion.button>
             ))}
           </div>
-        )}
-
-        {/* Popular Searches */}
-        <div className="mt-3 flex flex-wrap gap-2">
-          {searchSuggestions.slice(0, 5).map((suggestion, index) => (
-            <motion.button
-              key={index}
-              onClick={() => handleSuggestionClick(suggestion)}
-              className="text-sm px-3 py-1.5 rounded-full bg-white border border-neutral-100 text-neutral-600 hover:bg-neutral-50 transition-colors"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {suggestion}
-            </motion.button>
-          ))}
         </div>
       </div>
 
       <div className="space-y-6">
-        {/* Map */}
+        {/* Map with enhanced styling */}
         <motion.div
-          className="h-[400px] rounded-xl overflow-hidden bg-white border border-neutral-100"
+          className="relative h-[400px] rounded-xl overflow-hidden bg-white border border-neutral-100"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -764,76 +948,163 @@ const VectorSearchDemo = () => {
             activeStore={activeStore}
             onStoreClick={setActiveStore}
           />
+
+          {/* Map Stats Overlay */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-xl p-3 border border-white/40 shadow-sm"
+          >
+            <div className="text-xs text-gray-600 space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="w-1 h-1 rounded-full bg-green-500" />
+                <span>Real-time inventory</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1 h-1 rounded-full bg-indigo-500" />
+                <span>AI-powered matching</span>
+              </div>
+            </div>
+          </motion.div>
         </motion.div>
 
-        {/* Results */}
+        {/* Results with enhanced styling */}
         <div className="space-y-4">
-          <AnimatePresence>
-            {results.map((result, index) => (
+          <AnimatePresence mode="popLayout">
+            {isSearching ? (
               <motion.div
-                key={result.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ delay: index * 0.1 }}
-                className={`p-6 rounded-xl border ${
-                  activeStore === result.id
-                    ? 'bg-white border-indigo-500/20'
-                    : 'bg-white border-neutral-100'
-                }`}
-                onClick={() => setActiveStore(result.id)}
-                whileHover={{ y: -4 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center justify-center py-12"
               >
-                <div className="flex items-center gap-6">
-                  <div className="w-24 h-32 rounded-lg overflow-hidden bg-gray-100">
-                    <Image
-                      src={result.imageUrl}
-                      alt={result.text}
-                      width={96}
-                      height={128}
-                      className="w-full h-full object-cover"
-                      unoptimized
-                      onError={(e) => {
-                        e.currentTarget.src =
-                          'https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99';
-                      }}
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold">{result.text}</h3>
-                    <p className="text-sm text-gray-500 mb-2">
-                      ${result.price}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mb-2">
-                      {result.color && (
-                        <span className="text-xs px-2 py-1 bg-[#8b6f5f]/10 text-[#8b6f5f] font-medium rounded-full">
-                          {result.color}
-                        </span>
-                      )}
-                      {result.material && (
-                        <span className="text-xs px-2 py-1 bg-[#8b6f5f]/10 text-[#8b6f5f] font-medium rounded-full">
-                          {result.material}
-                        </span>
-                      )}
-                      {result.occasion && (
-                        <span className="text-xs px-2 py-1 bg-[#8b6f5f]/10 text-[#8b6f5f] font-medium rounded-full">
-                          {result.occasion}
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-sm">
-                      <p className="font-medium">{result.store.name}</p>
-                      <p className="text-gray-500">{result.store.address}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-sm font-mono bg-[#8b6f5f] text-white px-3 py-1.5 rounded-full">
-                      {((result.similarity ?? 0) * 100).toFixed(1)}% match
-                    </span>
-                  </div>
+                <div className="text-center">
+                  <motion.div
+                    className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-violet-500/20 to-indigo-500/20 flex items-center justify-center"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      rotate: [0, 180, 360],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                    }}
+                  >
+                    <svg
+                      className="w-8 h-8 text-indigo-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
+                    </svg>
+                  </motion.div>
+                  <p className="text-gray-600">Searching with AI...</p>
                 </div>
               </motion.div>
-            ))}
+            ) : (
+              results.map((result, index) => (
+                <motion.div
+                  key={`search-result-${result.id}-${index}`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ delay: index * 0.1 }}
+                  className={`p-6 rounded-xl border ${
+                    activeStore === result.id
+                      ? 'bg-white border-indigo-500/20 shadow-lg'
+                      : 'bg-white border-neutral-100 hover:border-indigo-500/20'
+                  } transition-all duration-300 cursor-pointer relative group`}
+                  onClick={() => setActiveStore(result.id)}
+                  whileHover={{ y: -4 }}
+                >
+                  {/* Tech lines effect */}
+                  <motion.div
+                    className="absolute inset-0 pointer-events-none"
+                    initial={false}
+                    animate={{
+                      background: [
+                        'linear-gradient(to right, rgba(99,102,241,0.03) 0%, transparent 100%)',
+                        'linear-gradient(to right, transparent 0%, rgba(99,102,241,0.03) 50%, transparent 100%)',
+                        'linear-gradient(to right, transparent 0%, rgba(99,102,241,0.03) 100%)',
+                      ],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: 'linear',
+                    }}
+                  />
+
+                  <div className="flex items-center gap-6">
+                    <motion.div
+                      className="relative w-24 h-32 rounded-lg overflow-hidden bg-gray-100 group-hover:shadow-lg transition-shadow duration-300"
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <Image
+                        src={result.imageUrl}
+                        alt={result.text}
+                        width={96}
+                        height={128}
+                        className="w-full h-full object-cover"
+                        unoptimized
+                        onError={(e) => {
+                          e.currentTarget.src =
+                            'https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99';
+                        }}
+                      />
+                      <motion.div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </motion.div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-lg font-semibold group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-violet-600 group-hover:to-indigo-600 transition-all duration-300">
+                          {result.text}
+                        </h3>
+                        <motion.span
+                          className="text-sm font-mono bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-3 py-1.5 rounded-full"
+                          whileHover={{ scale: 1.05 }}
+                        >
+                          {((result.similarity ?? 0) * 100).toFixed(1)}% match
+                        </motion.span>
+                      </div>
+                      <p className="text-lg font-medium text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-indigo-500 mb-3">
+                        ${result.price.toFixed(2)}
+                      </p>
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {result.color && (
+                          <span className="text-xs px-2 py-1 bg-indigo-500/10 text-indigo-600 font-medium rounded-full">
+                            {result.color}
+                          </span>
+                        )}
+                        {result.material && (
+                          <span className="text-xs px-2 py-1 bg-indigo-500/10 text-indigo-600 font-medium rounded-full">
+                            {result.material}
+                          </span>
+                        )}
+                        {result.occasion && (
+                          <span className="text-xs px-2 py-1 bg-indigo-500/10 text-indigo-600 font-medium rounded-full">
+                            {result.occasion}
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-sm">
+                        <p className="font-medium text-gray-900">
+                          {result.store.name}
+                        </p>
+                        <p className="text-gray-500">{result.store.address}</p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))
+            )}
           </AnimatePresence>
         </div>
       </div>

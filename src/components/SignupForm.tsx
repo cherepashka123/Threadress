@@ -14,10 +14,10 @@ import { GiDress, GiHighHeel } from 'react-icons/gi';
 
 // Fashion item icons array
 const fashionIcons = [
-  { icon: FaTshirt, color: '#8b6f5f' },
-  { icon: GiDress, color: '#d4c4bc' },
-  { icon: FaShoppingBag, color: '#8b6f5f' },
-  { icon: GiHighHeel, color: '#d4c4bc' },
+  { icon: FaTshirt, color: '#6366f1' },
+  { icon: GiDress, color: '#8b5cf6' },
+  { icon: FaShoppingBag, color: '#6366f1' },
+  { icon: GiHighHeel, color: '#8b5cf6' },
 ];
 
 export default function SignupForm() {
@@ -82,8 +82,8 @@ export default function SignupForm() {
             transition={{ type: 'spring', stiffness: 400, damping: 17 }}
           >
             {/* Decorative elements */}
-            <div className="absolute -top-8 -left-8 w-32 h-32 bg-gradient-to-br from-[#d4c4bc]/30 to-purple-100 rounded-full blur-3xl opacity-60 -z-10" />
-            <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-gradient-to-br from-pink-100 to-indigo-100 rounded-full blur-3xl opacity-60 -z-10" />
+            <div className="absolute -top-8 -left-8 w-32 h-32 bg-gradient-to-br from-indigo-100/30 to-violet-100 rounded-full blur-3xl opacity-60 -z-10" />
+            <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-gradient-to-br from-violet-100 to-indigo-100 rounded-full blur-3xl opacity-60 -z-10" />
 
             {/* Form container with glass effect */}
             <motion.div
@@ -121,12 +121,12 @@ export default function SignupForm() {
                       />
                     </div>
                   ))}
-                  <div className="w-8 h-8 rounded-full border-2 border-white bg-[#d4c4bc] flex items-center justify-center text-white text-xs">
+                  <div className="w-8 h-8 rounded-full border-2 border-white bg-gradient-to-r from-violet-600 to-indigo-600 flex items-center justify-center text-white text-xs">
                     +{waitlistCount - fashionIcons.length}
                   </div>
                 </div>
                 <p className="text-sm text-gray-600 flex items-center gap-1.5">
-                  <FaUserFriends className="text-[#d4c4bc]" />
+                  <FaUserFriends className="text-indigo-600" />
                   <span>{waitlistCount} fashion enthusiasts joined</span>
                 </p>
               </motion.div>
@@ -137,13 +137,13 @@ export default function SignupForm() {
                   <motion.div
                     className={`absolute inset-0 rounded-2xl transition-colors duration-300 ${
                       isFocused
-                        ? 'border-2 border-[#d4c4bc]/30'
+                        ? 'border-2 border-indigo-600/30'
                         : 'border border-neutral-200'
                     }`}
                     animate={{
                       boxShadow: isFocused
-                        ? '0 0 20px rgba(212, 196, 188, 0.2)'
-                        : '0 0 0px rgba(212, 196, 188, 0)',
+                        ? '0 0 20px rgba(99, 102, 241, 0.2)'
+                        : '0 0 0px rgba(99, 102, 241, 0)',
                     }}
                   />
                   <input
