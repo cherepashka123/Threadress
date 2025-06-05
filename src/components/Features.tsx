@@ -181,7 +181,7 @@ export default function Features() {
           }}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
@@ -190,7 +190,7 @@ export default function Features() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="group relative w-full"
             >
-              <div className="relative p-8 bg-white/80 rounded-2xl transition-all duration-300 hover:shadow-lg backdrop-blur-sm h-full">
+              <div className="relative p-6 sm:p-8 bg-white/80 rounded-2xl transition-all duration-300 hover:shadow-lg backdrop-blur-sm h-full">
                 {/* Feature icon */}
                 <div
                   className={`

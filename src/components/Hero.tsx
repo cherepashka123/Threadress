@@ -178,12 +178,12 @@ export default function Hero() {
 
         {/* Interactive mockups */}
         <motion.div
-          className="w-full md:w-1/2 relative"
+          className="w-full md:w-1/2 relative px-4 sm:px-6 md:px-0"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <div className="relative w-full max-w-[400px] mx-auto aspect-square">
+          <div className="relative w-full max-w-[280px] sm:max-w-[320px] md:max-w-[400px] mx-auto aspect-square">
             <AnimatePresence mode="popLayout">
               {mockups.map((mockup, index) => {
                 const pos = getPosition(index);

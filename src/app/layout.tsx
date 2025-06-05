@@ -35,7 +35,7 @@ export default function RootLayout({
         <Navbar />
 
         {/* Main content with padding for fixed navbar */}
-        <div className="pt-[72px] md:pt-[88px]">
+        <div className="pt-[64px] sm:pt-[72px] md:pt-[88px]">
           {/* Provide CartContext to all pages */}
           <CartProvider>{children}</CartProvider>
         </div>
