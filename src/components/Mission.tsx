@@ -159,32 +159,19 @@ export default function Mission() {
           </div>
 
           {/* Mission Content */}
-          <div className="max-w-4xl mx-auto relative">
+          <div className="max-w-4xl mx-auto relative px-4 md:px-0">
             {/* Interactive card */}
             <motion.div
-              className="relative p-5 rounded-2xl backdrop-blur-sm bg-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100"
-              whileHover={{ y: -5 }}
-              transition={{ type: 'spring', stiffness: 300 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              className="relative bg-white rounded-2xl p-6 md:p-10 lg:p-12 shadow-lg border border-neutral-100"
             >
-              <motion.div
-                className="absolute inset-0 rounded-2xl opacity-0 hover:opacity-100 transition-opacity duration-300"
-                style={{
-                  background:
-                    'radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(120, 119, 198, 0.1) 0%, transparent 60%)',
-                }}
-                onMouseMove={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const x = ((e.clientX - rect.left) / rect.width) * 100;
-                  const y = ((e.clientY - rect.top) / rect.height) * 100;
-                  e.currentTarget.style.setProperty('--mouse-x', `${x}%`);
-                  e.currentTarget.style.setProperty('--mouse-y', `${y}%`);
-                }}
-              />
               <motion.p
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.3 }}
-                className="text-base text-gray-600 leading-relaxed"
+                className="text-base md:text-lg text-gray-600 leading-relaxed md:leading-relaxed"
               >
                 Our mission is to build the local on-demand e-commerce
                 marketplace, creating a synergy between online and offline
@@ -236,7 +223,7 @@ export default function Mission() {
 
           {/* Interactive CTAs */}
           <motion.div
-            className="mt-6 flex justify-center gap-3"
+            className="mt-8 md:mt-10 flex flex-col md:flex-row justify-center gap-3 px-4 md:px-0"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}

@@ -371,13 +371,13 @@ export default function Search({ isFullPage = false }: SearchProps) {
   // If not full page, render enhanced landing page search
   if (!isFullPage) {
     return (
-      <div className="relative space-y-4">
+      <div className="relative">
         {/* Animated insights banner */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
           transition={{ duration: 0.5 }}
-          className="bg-gradient-to-r from-indigo-50 to-violet-50 rounded-xl px-4 py-3"
+          className="bg-gradient-to-r from-indigo-50 to-violet-50 rounded-lg px-4 py-3 mb-6"
         >
           <motion.div
             key={activeInsight}
@@ -408,11 +408,11 @@ export default function Search({ isFullPage = false }: SearchProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="relative"
+          className="relative mb-6"
         >
           <div className="relative flex items-center justify-center">
             <motion.div
-              className="absolute -inset-px rounded-xl bg-gradient-to-r from-indigo-200 to-violet-200 opacity-0"
+              className="absolute -inset-px rounded-lg bg-gradient-to-r from-indigo-200 to-violet-200 opacity-0"
               animate={{
                 opacity: [0, 0.5, 0],
               }}
@@ -422,7 +422,7 @@ export default function Search({ isFullPage = false }: SearchProps) {
                 repeatType: 'reverse',
               }}
             />
-            <div className="relative flex w-full bg-white rounded-xl shadow-sm border border-gray-200 focus-within:border-indigo-300 transition-colors">
+            <div className="relative flex w-full bg-white rounded-lg shadow-sm border border-gray-200 focus-within:border-indigo-300 transition-colors">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
                 <svg
                   className="w-5 h-5"
@@ -445,81 +445,7 @@ export default function Search({ isFullPage = false }: SearchProps) {
                 placeholder="Search styles, designers, or trends..."
                 className="w-full pl-12 pr-4 py-4 bg-transparent text-gray-900 placeholder-gray-400 focus:outline-none text-lg"
               />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="p-2 hover:bg-gray-50 rounded-full mr-2 transition-colors"
-                >
-                  <svg
-                    className="w-5 h-5 text-gray-400"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-              )}
             </div>
-          </div>
-        </motion.div>
-
-        {/* Quick filters */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="space-y-3"
-        >
-          <h3 className="text-sm font-medium text-gray-500">Quick Filters</h3>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category, index) => (
-              <motion.button
-                key={category.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
-                onClick={() =>
-                  setSelectedCategory(
-                    category.id === selectedCategory ? '' : category.id
-                  )
-                }
-                className={`
-                  group relative px-3 py-1.5 rounded-lg text-sm transition-all
-                  ${
-                    category.id === selectedCategory
-                      ? 'bg-indigo-600 text-white shadow-sm'
-                      : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
-                  }
-                `}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <span className="flex items-center gap-1.5">
-                  <span>{category.icon}</span>
-                  <span>{category.name}</span>
-                  <span className="text-xs opacity-75">({category.count})</span>
-                </span>
-
-                {/* Insight tooltip */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  whileHover={{ opacity: 1, y: 0 }}
-                  className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap"
-                >
-                  {category.aiInsight}
-                  <svg
-                    className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 text-gray-900"
-                    viewBox="0 0 8 8"
-                  >
-                    <path fill="currentColor" d="M4 8L0 0h8z" />
-                  </svg>
-                </motion.div>
-              </motion.button>
-            ))}
           </div>
         </motion.div>
 

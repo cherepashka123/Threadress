@@ -2,108 +2,178 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
-    <nav className="w-full flex items-center justify-between py-6 px-8 bg-white shadow-md">
+    <nav className="fixed top-0 left-0 right-0 z-50 w-full flex items-center justify-between py-4 px-4 md:py-6 md:px-8 bg-white/80 backdrop-blur-md shadow-sm">
       {/* Left: Logo/Brand */}
-      <div className="text-2xl font-bold">
+      <div className="text-xl md:text-2xl font-bold">
         <Link href="/">Threadress</Link>
       </div>
 
       {/* Center: Primary links (hidden on mobile, shown on lg+) */}
       <div className="hidden lg:flex flex-none space-x-6">
-        <Link href="/browse" className="hover:text-indigo-600">
+        <Link
+          href="/browse"
+          className="hover:text-indigo-600 transition-colors"
+        >
           Browse
         </Link>
-        <Link href="/cart" className="hover:text-indigo-600">
+        <Link href="/cart" className="hover:text-indigo-600 transition-colors">
           Cart
         </Link>
-        {/* New Map link */}
-        <Link href="/map" className="hover:text-indigo-600">
+        <Link href="/map" className="hover:text-indigo-600 transition-colors">
           Find Boutiques
         </Link>
-        <Link href="/vector-search" className="hover:text-indigo-600">
+        <Link
+          href="/vector-search"
+          className="hover:text-indigo-600 transition-colors"
+        >
           Smart Search
         </Link>
-        <Link href="#features" className="hover:text-indigo-600">
+        <Link
+          href="#features"
+          className="hover:text-indigo-600 transition-colors"
+        >
           Features
         </Link>
-        <Link href="#how-it-works" className="hover:text-indigo-600">
+        <Link
+          href="#how-it-works"
+          className="hover:text-indigo-600 transition-colors"
+        >
           How It Works
         </Link>
-        <Link href="#demo" className="hover:text-indigo-600">
-          Demo
-        </Link>
-        <Link href="#contact" className="hover:text-indigo-600">
+        <Link
+          href="#contact"
+          className="hover:text-indigo-600 transition-colors"
+        >
           Contact
         </Link>
       </div>
 
       {/* Right: "Join Waitlist" + Mobile menu */}
-      <div className="flex-none flex items-center space-x-4">
-        {/* Join Waitlist button */}
+      <div className="flex items-center gap-4">
         <Link
           href="#waitlist"
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+          className="hidden md:inline-flex px-4 py-2 bg-neutral-900 text-white rounded-lg hover:bg-neutral-800 transition-colors"
         >
           Join Waitlist
         </Link>
 
-        {/* Mobile dropdown (shown only on < lg) */}
-        <div className="dropdown lg:hidden">
-          <label tabIndex={0} className="btn btn-ghost btn-circle">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-neutral-700"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
+        {/* Mobile menu button */}
+        <button
+          className="lg:hidden p-2 hover:bg-neutral-100 rounded-lg transition-colors"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            {isMenuOpen ? (
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth="2"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            ) : (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
                 d="M4 6h16M4 12h16M4 18h16"
               />
-            </svg>
-          </label>
-          <ul
-            tabIndex={0}
-            className="dropdown-content menu p-2 shadow bg-white rounded-box w-52 mt-3"
-          >
-            <li>
-              <Link href="/browse">Browse</Link>
-            </li>
-            <li>
-              <Link href="/cart">Cart</Link>
-            </li>
-            <li>
-              <Link href="/map">Find Boutiques</Link>
-            </li>
-            <li>
-              <Link href="/vector-search">Smart Search</Link>
-            </li>
-            <li>
-              <Link href="#features">Features</Link>
-            </li>
-            <li>
-              <Link href="#how-it-works">How It Works</Link>
-            </li>
-            <li>
-              <Link href="#demo">Demo</Link>
-            </li>
-            <li>
-              <Link href="#contact">Contact</Link>
-            </li>
-            <li className="mt-2">
-              <Link href="#waitlist" className="btn btn-primary btn-sm w-full">
-                Join Waitlist
-              </Link>
-            </li>
-          </ul>
-        </div>
+            )}
+          </svg>
+        </button>
       </div>
+
+      {/* Mobile menu overlay */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+              onClick={() => setIsMenuOpen(false)}
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 20 }}
+              className="fixed top-0 right-0 bottom-0 w-[280px] bg-white shadow-xl z-50 p-6"
+            >
+              <div className="flex flex-col space-y-4">
+                <Link
+                  href="/browse"
+                  className="px-4 py-2 hover:bg-neutral-50 rounded-lg transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Browse
+                </Link>
+                <Link
+                  href="/cart"
+                  className="px-4 py-2 hover:bg-neutral-50 rounded-lg transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Cart
+                </Link>
+                <Link
+                  href="/map"
+                  className="px-4 py-2 hover:bg-neutral-50 rounded-lg transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Find Boutiques
+                </Link>
+                <Link
+                  href="/vector-search"
+                  className="px-4 py-2 hover:bg-neutral-50 rounded-lg transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Smart Search
+                </Link>
+                <Link
+                  href="#features"
+                  className="px-4 py-2 hover:bg-neutral-50 rounded-lg transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Features
+                </Link>
+                <Link
+                  href="#how-it-works"
+                  className="px-4 py-2 hover:bg-neutral-50 rounded-lg transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  How It Works
+                </Link>
+                <Link
+                  href="#contact"
+                  className="px-4 py-2 hover:bg-neutral-50 rounded-lg transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Contact
+                </Link>
+                <Link
+                  href="#waitlist"
+                  className="mt-4 px-4 py-2 bg-neutral-900 text-white rounded-lg text-center hover:bg-neutral-800 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Join Waitlist
+                </Link>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }

@@ -3,6 +3,7 @@
 
 import { motion, useAnimation, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 export default function Hero() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -97,16 +98,16 @@ export default function Hero() {
         />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-16">
+      <div className="relative max-w-7xl mx-auto px-4 md:px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-16">
         {/* Text content */}
         <motion.div
-          className="md:w-1/2 text-center md:text-left"
+          className="w-full md:w-1/2 text-center md:text-left"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <div className="space-y-6">
-            <motion.h1 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-[-0.02em] text-neutral-900 leading-[1.1]">
+          <div className="space-y-4 md:space-y-6">
+            <motion.h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-[-0.02em] text-neutral-900 leading-[1.2]">
               <div className="overflow-hidden">
                 <motion.span className="block">Discover</motion.span>
               </div>
@@ -136,66 +137,53 @@ export default function Hero() {
             </motion.h1>
 
             <motion.p
-              className="text-[1.1rem] text-neutral-800 font-light leading-[1.6] max-w-[32rem]"
+              className="text-base md:text-lg text-neutral-600 max-w-xl mx-auto md:mx-0"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
             >
-              AI-driven style & fit matching, real-time boutique inventory, and
-              instant click-to-collect. All in one app.
+              Experience the future of local fashion discovery. Find unique
+              pieces from boutiques near you, powered by AI.
             </motion.p>
 
             <motion.div
+              className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 mt-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.7 }}
-              className="mt-10"
+              transition={{ duration: 0.8, delay: 0.4 }}
             >
-              <motion.a
-                href="#waitlist"
-                className="group relative inline-flex items-center bg-neutral-900 text-white/95 font-light px-6 py-2.5 rounded-lg transition-all duration-300 overflow-hidden"
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-indigo-400/30 via-purple-400/30 to-indigo-400/30 bg-[length:200%_100%]"
-                  animate={{
-                    backgroundPosition: ['200% 0', '-200% 0'],
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: 'linear',
-                  }}
-                />
-                <span className="relative z-10">Join Waitlist</span>
-                <svg
-                  className="w-4 h-4 ml-2 relative z-10 opacity-80"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
+              <Link href="#waitlist">
+                <motion.button
+                  className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-lg relative overflow-hidden group"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <path
-                    d="M1 8H15M15 8L8 1M15 8L8 15"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-indigo-400/30 via-purple-400/30 to-indigo-400/30 bg-[length:200%_100%]"
+                    animate={{
+                      backgroundPosition: ['200% 0', '-200% 0'],
+                    }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: 'linear',
+                    }}
                   />
-                </svg>
-              </motion.a>
+                  <span className="relative z-10">Join the Waitlist</span>
+                </motion.button>
+              </Link>
             </motion.div>
           </div>
         </motion.div>
 
-        {/* Tech Mockup Showcase */}
+        {/* Interactive mockups */}
         <motion.div
-          className="md:w-1/2 flex justify-center relative h-[600px] perspective-[1200px]"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
+          className="w-full md:w-1/2 relative"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <div className="relative w-full max-w-[400px] h-full flex items-center justify-center">
+          <div className="relative w-full max-w-[400px] mx-auto aspect-square">
             <AnimatePresence mode="popLayout">
               {mockups.map((mockup, index) => {
                 const pos = getPosition(index);
@@ -309,6 +297,105 @@ export default function Hero() {
             ))}
           </div>
         </motion.div>
+      </div>
+
+      {/* Flowing text section */}
+      <div className="relative bg-gradient-to-b from-[#fafafa] to-white overflow-hidden py-6">
+        {/* Tech pattern background */}
+        <motion.div
+          className="absolute inset-0 opacity-5"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.03 }}
+          transition={{ duration: 1 }}
+          style={{
+            backgroundImage: `radial-gradient(circle at center, rgba(0,0,0,0.1) 1px, transparent 1px)`,
+            backgroundSize: '24px 24px',
+          }}
+        />
+
+        {/* Flowing line */}
+        <motion.div
+          className="absolute top-1/2 left-0 w-full h-px"
+          style={{
+            background:
+              'linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.2), transparent)',
+            backgroundSize: '200% 100%',
+          }}
+          animate={{
+            backgroundPosition: ['100% 0%', '-100% 0%'],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: 'linear',
+          }}
+        />
+
+        {/* Moving text container */}
+        <div className="max-w-[100vw] overflow-hidden">
+          <div className="flex whitespace-nowrap">
+            {[...Array(2)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="flex items-center gap-16 px-8"
+                animate={{
+                  x: [0, -1920],
+                }}
+                transition={{
+                  duration: 30,
+                  repeat: Infinity,
+                  ease: 'linear',
+                }}
+                style={{ x: 0 }}
+              >
+                <span className="text-neutral-400 font-light tracking-[0.2em] text-lg">
+                  DISCOVER
+                </span>
+                <span className="text-indigo-600 font-light tracking-[0.2em] text-lg">
+                  CONNECT
+                </span>
+                <span className="text-neutral-400 font-light tracking-[0.2em] text-lg">
+                  STYLE
+                </span>
+                <span className="text-indigo-600 font-light tracking-[0.2em] text-lg">
+                  INNOVATE
+                </span>
+                <span className="text-neutral-400 font-light tracking-[0.2em] text-lg">
+                  FUTURE
+                </span>
+                <span className="text-indigo-600 font-light tracking-[0.2em] text-lg">
+                  FASHION
+                </span>
+                <span className="text-neutral-400 font-light tracking-[0.2em] text-lg">
+                  LOCAL
+                </span>
+                <span className="text-indigo-600 font-light tracking-[0.2em] text-lg">
+                  SUSTAINABLE
+                </span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Tech circuit lines */}
+        <div className="absolute inset-0 pointer-events-none">
+          <motion.div
+            className="absolute left-0 w-full h-px"
+            style={{
+              background:
+                'linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent)',
+            }}
+            animate={{
+              y: ['0%', '100%'],
+              opacity: [0, 1, 0],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: 'linear',
+            }}
+          />
+        </div>
       </div>
     </section>
   );

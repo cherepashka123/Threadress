@@ -11,6 +11,9 @@ import {
   FaTimes,
   FaMinus,
   FaPlus,
+  FaSearch,
+  FaStore,
+  FaTag,
 } from 'react-icons/fa';
 import { items as rawItems, Item } from '@/data/items';
 import { useCart, CartItem } from '@/context/CartContext';
@@ -34,6 +37,7 @@ export default function BrowsePage() {
   const [sortBy, setSortBy] = useState<SortOption>('distance');
   const [filterBy, setFilterBy] = useState<FilterOption>('all');
   const [showFilters, setShowFilters] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Haversine formula for miles
   function haversineDistance(
@@ -104,9 +108,16 @@ export default function BrowsePage() {
     setTimeout(() => setShowToast(false), 3000);
   }
 
-  // Sort and filter items
+  // Filter and sort items
   const filteredAndSortedItems = [...itemsWithDistance]
-    .filter((item) => filterBy === 'all' || item.category === filterBy)
+    .filter((item) => {
+      const matchesFilter = filterBy === 'all' || item.category === filterBy;
+      const matchesSearch =
+        searchTerm === '' ||
+        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.storeName.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchesFilter && matchesSearch;
+    })
     .sort((a, b) => {
       switch (sortBy) {
         case 'distance':
@@ -137,7 +148,7 @@ export default function BrowsePage() {
         />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -152,15 +163,29 @@ export default function BrowsePage() {
           </p>
         </motion.div>
 
-        {/* Filters Section */}
+        {/* Search and Filters Section */}
         <motion.div
           className="bg-white rounded-xl p-6 border border-neutral-100 mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
+          {/* Search Bar */}
+          <div className="mb-6">
+            <div className="relative">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search items or stores..."
+                className="w-full px-4 py-3 pl-10 rounded-xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+              />
+              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+            </div>
+          </div>
+
           {/* Filters and Sort Bar */}
-          <div className="mb-8 flex flex-wrap gap-4 justify-between items-center">
+          <div className="flex flex-wrap gap-4 justify-between items-center">
             {/* Filter Toggle Button */}
             <motion.button
               onClick={() => setShowFilters(!showFilters)}
@@ -220,11 +245,11 @@ export default function BrowsePage() {
         </motion.div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
           {filteredAndSortedItems.map((item) => (
             <motion.div
               key={item.id}
-              className="bg-white rounded-xl border border-neutral-100 overflow-hidden group"
+              className="bg-white rounded-xl border border-neutral-100 overflow-hidden group hover:shadow-lg transition-all duration-300"
               whileHover={{ y: -4 }}
               transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             >
@@ -234,7 +259,7 @@ export default function BrowsePage() {
                   className="absolute inset-0 bg-gradient-to-tr from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   whileHover={{ opacity: 1 }}
                 />
-                <div className="relative w-full h-60 overflow-hidden">
+                <div className="relative w-full h-full overflow-hidden">
                   <Image
                     src={item.image}
                     alt={item.name}
@@ -246,14 +271,17 @@ export default function BrowsePage() {
 
               {/* Product details */}
               <div className="p-4">
-                <h3 className="text-lg font-light text-neutral-900">
+                <h3 className="text-lg font-light text-neutral-900 group-hover:text-indigo-600 transition-colors">
                   {item.name}
                 </h3>
-                <div className="text-sm text-neutral-600 font-light">
-                  {item.storeName}
+                <div className="flex items-center gap-2 mt-2">
+                  <FaStore className="w-3 h-3 text-neutral-400" />
+                  <span className="text-sm text-neutral-600 font-light">
+                    {item.storeName}
+                  </span>
                 </div>
 
-                {/* Distance info - Fixed nested p tags */}
+                {/* Distance info */}
                 <div className="mt-2">
                   {item.distanceMiles != null ? (
                     <div className="flex items-center text-xs text-gray-500">
@@ -267,16 +295,17 @@ export default function BrowsePage() {
                   )}
                 </div>
 
-                {/* Price - Fixed nested p tags */}
-                <div className="mt-2">
+                {/* Price */}
+                <div className="mt-3 flex items-center gap-2">
+                  <FaTag className="w-3 h-3 text-indigo-600" />
                   <span className="text-indigo-600 font-medium">
                     ${item.price.toFixed(2)}
                   </span>
                 </div>
               </div>
 
-              {/* Add to Cart Button */}
-              <motion.div className="p-4 border-t border-neutral-100">
+              {/* Add to Cart Section */}
+              <motion.div className="p-4 border-t border-neutral-100 bg-neutral-50">
                 <div className="flex items-center justify-between gap-4">
                   {/* Quantity Controls */}
                   <div className="flex items-center gap-2">

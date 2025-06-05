@@ -215,7 +215,7 @@ export default function HomePage() {
                         Find What You Need
                       </h3>
                       <motion.div
-                        className="bg-white rounded-xl border border-neutral-200/50 shadow-sm overflow-hidden h-[480px]"
+                        className="bg-white rounded-xl border border-neutral-200/50 shadow-sm overflow-hidden h-[480px] p-6"
                         whileHover={{ y: -4 }}
                         transition={{
                           type: 'spring',

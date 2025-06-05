@@ -18,6 +18,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Threadress - Smart Fashion Discovery',
   description: 'Discover fashion that matches your unique style',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
 };
 
 export default function RootLayout({
@@ -26,15 +27,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900 ${inter.className}`}
       >
         {/* Navbar appears on every route */}
         <Navbar />
 
-        {/* Provide CartContext to all pages */}
-        <CartProvider>{children}</CartProvider>
+        {/* Main content with padding for fixed navbar */}
+        <div className="pt-[72px] md:pt-[88px]">
+          {/* Provide CartContext to all pages */}
+          <CartProvider>{children}</CartProvider>
+        </div>
       </body>
     </html>
   );

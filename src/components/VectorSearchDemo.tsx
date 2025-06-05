@@ -847,6 +847,10 @@ const VectorSearchDemo = () => {
               onKeyPress={handleKeyPress}
               className="w-full px-6 py-4 rounded-xl bg-white border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-neutral-900 placeholder-neutral-400"
               placeholder="Try searching: summer dress, business casual, vintage..."
+              aria-label="Search fashion items"
+              autoComplete="off"
+              role="searchbox"
+              style={{ WebkitAppearance: 'none' }}
             />
 
             {/* Enhanced Search Suggestions */}
@@ -855,7 +859,7 @@ const VectorSearchDemo = () => {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="absolute z-50 left-0 right-0 mt-2 bg-white rounded-xl border border-neutral-100 shadow-lg overflow-hidden"
+                className="absolute z-50 left-0 right-0 mt-2 bg-white rounded-xl border border-neutral-100 shadow-lg overflow-hidden max-h-[300px] overflow-y-auto"
               >
                 {filteredSuggestions.map((suggestion, index) => (
                   <motion.div
@@ -869,7 +873,7 @@ const VectorSearchDemo = () => {
                         {suggestion}
                       </span>
                       <motion.div
-                        className="text-xs text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="text-xs text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity hidden md:block"
                         animate={{ x: [0, 3, 0] }}
                         transition={{
                           duration: 1.5,
@@ -887,7 +891,7 @@ const VectorSearchDemo = () => {
           </div>
           <motion.button
             onClick={() => handleSearch()}
-            className="min-w-[120px] py-4 bg-gradient-to-r from-violet-600 to-indigo-600 text-white/95 rounded-xl font-light relative overflow-hidden group"
+            className="min-w-[100px] md:min-w-[120px] py-4 bg-gradient-to-r from-violet-600 to-indigo-600 text-white/95 rounded-xl font-light relative overflow-hidden group whitespace-nowrap px-4 md:px-6"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -914,7 +918,7 @@ const VectorSearchDemo = () => {
               <motion.button
                 key={`popular-suggestion-${suggestion.toLowerCase().replace(/\s+/g, '-')}-${index}`}
                 onClick={() => handleSuggestionClick(suggestion)}
-                className="text-sm px-3 py-1.5 rounded-full bg-white border border-neutral-100 text-neutral-600 hover:border-indigo-500/20 hover:bg-indigo-50/50 transition-colors relative group overflow-hidden"
+                className="text-sm px-3 py-1.5 rounded-full bg-white border border-neutral-100 text-neutral-600 hover:border-indigo-500/20 hover:bg-indigo-50/50 transition-colors relative group overflow-hidden flex-shrink-0 max-w-[200px] truncate"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -937,7 +941,7 @@ const VectorSearchDemo = () => {
       <div className="space-y-6">
         {/* Map with enhanced styling */}
         <motion.div
-          className="relative h-[400px] rounded-xl overflow-hidden bg-white border border-neutral-100"
+          className="relative h-[300px] md:h-[400px] rounded-xl overflow-hidden bg-white border border-neutral-100"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -954,7 +958,7 @@ const VectorSearchDemo = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-xl p-3 border border-white/40 shadow-sm"
+            className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-xl p-3 border border-white/40 shadow-sm hidden md:block"
           >
             <div className="text-xs text-gray-600 space-y-1">
               <div className="flex items-center gap-2">
@@ -1043,9 +1047,9 @@ const VectorSearchDemo = () => {
                     }}
                   />
 
-                  <div className="flex items-center gap-6">
+                  <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
                     <motion.div
-                      className="relative w-24 h-32 rounded-lg overflow-hidden bg-gray-100 group-hover:shadow-lg transition-shadow duration-300"
+                      className="relative w-full md:w-24 h-48 md:h-32 rounded-lg overflow-hidden bg-gray-100 group-hover:shadow-lg transition-shadow duration-300"
                       whileHover={{ scale: 1.05 }}
                     >
                       <Image
@@ -1062,13 +1066,13 @@ const VectorSearchDemo = () => {
                       />
                       <motion.div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </motion.div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-2">
+                    <div className="flex-1 w-full md:w-auto">
+                      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2 md:gap-4 mb-2">
                         <h3 className="text-lg font-semibold group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-violet-600 group-hover:to-indigo-600 transition-all duration-300">
                           {result.text}
                         </h3>
                         <motion.span
-                          className="text-sm font-mono bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-3 py-1.5 rounded-full"
+                          className="text-sm font-mono bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-3 py-1.5 rounded-full whitespace-nowrap"
                           whileHover={{ scale: 1.05 }}
                         >
                           {((result.similarity ?? 0) * 100).toFixed(1)}% match

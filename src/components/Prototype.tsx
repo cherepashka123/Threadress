@@ -16,29 +16,25 @@ export default function Prototype({
   const [isHovered, setIsHovered] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-
-  const rotateX = useTransform(mouseY, [-300, 300], [5, -5]);
-  const rotateY = useTransform(mouseX, [-300, 300], [-5, 5]);
-
-  const springConfig = { stiffness: 100, damping: 30 };
-  const springRotateX = useSpring(rotateX, springConfig);
-  const springRotateY = useSpring(rotateY, springConfig);
+  const springRotateX = useSpring(0, { stiffness: 200, damping: 20 });
+  const springRotateY = useSpring(0, { stiffness: 200, damping: 20 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-    mouseX.set(e.clientX - centerX);
-    mouseY.set(e.clientY - centerY);
+    const rotateX = (e.clientY - centerY) / 20;
+    const rotateY = (e.clientX - centerX) / 20;
+
+    springRotateX.set(-rotateX);
+    springRotateY.set(rotateY);
   };
 
   return (
-    <div className="flex justify-center my-8 perspective-[2000px]">
+    <div className="flex justify-center my-4 md:my-8 perspective-[2000px]">
       <motion.div
-        className="relative rounded-2xl overflow-hidden"
+        className="relative rounded-2xl overflow-hidden w-full max-w-[90vw] md:max-w-[1000px] aspect-[5/3]"
         style={{
-          width,
-          height,
           rotateX: springRotateX,
           rotateY: springRotateY,
         }}
@@ -51,6 +47,8 @@ export default function Prototype({
           setIsHovered(false);
           mouseX.set(0);
           mouseY.set(0);
+          springRotateX.set(0);
+          springRotateY.set(0);
         }}
       >
         {/* Main image with hover effect */}
@@ -123,7 +121,7 @@ export default function Prototype({
         ].map((position, index) => (
           <motion.div
             key={index}
-            className={`absolute w-16 h-16 ${position} pointer-events-none`}
+            className={`absolute w-8 md:w-16 h-8 md:h-16 ${position} pointer-events-none`}
             animate={{
               opacity: isHovered ? 1 : 0,
               scale: isHovered ? 1 : 0.8,
