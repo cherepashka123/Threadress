@@ -9,49 +9,42 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 w-full flex items-center justify-between py-4 px-4 md:py-6 md:px-8 bg-white/80 backdrop-blur-md shadow-sm">
+    <nav className="fixed top-0 left-0 right-0 z-50 w-full flex items-center justify-between py-4 px-4 md:py-6 md:px-8 bg-[#fafafa] hover:bg-white transition-all duration-300">
       {/* Left: Logo/Brand */}
       <div className="text-xl md:text-2xl font-bold">
-        <Link href="/">Threadress</Link>
+        <Link
+          href="/"
+          className="text-neutral-900 hover:text-neutral-800 transition-colors"
+        >
+          Threadress
+        </Link>
       </div>
 
       {/* Center: Primary links (hidden on mobile, shown on lg+) */}
       <div className="hidden lg:flex flex-none space-x-6">
         <Link
           href="/browse"
-          className="hover:text-indigo-600 transition-colors"
+          className="text-neutral-900 hover:text-indigo-600 transition-colors"
         >
           Browse
         </Link>
-        <Link href="/cart" className="hover:text-indigo-600 transition-colors">
+        <Link
+          href="/cart"
+          className="text-neutral-900 hover:text-indigo-600 transition-colors"
+        >
           Cart
         </Link>
-        <Link href="/map" className="hover:text-indigo-600 transition-colors">
+        <Link
+          href="/map"
+          className="text-neutral-900 hover:text-indigo-600 transition-colors"
+        >
           Find Boutiques
         </Link>
         <Link
-          href="/vector-search"
-          className="hover:text-indigo-600 transition-colors"
+          href="/smart-search"
+          className="text-neutral-900 hover:text-indigo-600 transition-colors"
         >
           Smart Search
-        </Link>
-        <Link
-          href="#features"
-          className="hover:text-indigo-600 transition-colors"
-        >
-          Features
-        </Link>
-        <Link
-          href="#how-it-works"
-          className="hover:text-indigo-600 transition-colors"
-        >
-          How It Works
-        </Link>
-        <Link
-          href="#contact"
-          className="hover:text-indigo-600 transition-colors"
-        >
-          Contact
         </Link>
       </div>
 
@@ -59,14 +52,14 @@ export default function Navbar() {
       <div className="flex items-center gap-4">
         <Link
           href="#waitlist"
-          className="inline-flex px-3 py-1.5 sm:px-4 sm:py-2 bg-neutral-900 text-white text-sm sm:text-base rounded-lg hover:bg-neutral-800 transition-colors"
+          className="inline-flex px-3 py-1.5 sm:px-4 sm:py-2 bg-neutral-900 text-white text-sm sm:text-base rounded-lg hover:bg-neutral-800 transition-all"
         >
           Join Waitlist
         </Link>
 
         {/* Mobile menu button */}
         <button
-          className="lg:hidden p-2 hover:bg-neutral-100 rounded-lg transition-colors"
+          className="lg:hidden p-2 hover:bg-neutral-100 rounded-lg transition-colors text-neutral-900"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           <svg
@@ -158,32 +151,11 @@ export default function Navbar() {
                       Find Boutiques
                     </Link>
                     <Link
-                      href="/vector-search"
+                      href="/smart-search"
                       className="px-4 py-2 hover:bg-neutral-50 rounded-lg transition-colors"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Smart Search
-                    </Link>
-                    <Link
-                      href="#features"
-                      className="px-4 py-2 hover:bg-neutral-50 rounded-lg transition-colors"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Features
-                    </Link>
-                    <Link
-                      href="#how-it-works"
-                      className="px-4 py-2 hover:bg-neutral-50 rounded-lg transition-colors"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      How It Works
-                    </Link>
-                    <Link
-                      href="#contact"
-                      className="px-4 py-2 hover:bg-neutral-50 rounded-lg transition-colors"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Contact
                     </Link>
                   </div>
                 </nav>

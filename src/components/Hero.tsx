@@ -44,7 +44,6 @@ export default function Hero() {
 
     if (diff === 0)
       return {
-        // Active
         x: 0,
         y: 0,
         scale: 1,
@@ -54,7 +53,6 @@ export default function Hero() {
       };
     if (diff === 1)
       return {
-        // Right
         x: '40%',
         y: '5%',
         scale: 0.9,
@@ -63,7 +61,6 @@ export default function Hero() {
         opacity: 0.8,
       };
     return {
-      // Left
       x: '-40%',
       y: '5%',
       scale: 0.9,
@@ -74,7 +71,7 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative bg-[#fafafa] py-24 overflow-hidden">
+    <section className="relative bg-[#fafafa] pt-0 pb-24 overflow-hidden">
       {/* Tech-inspired background */}
       <div className="absolute inset-0">
         <motion.div
@@ -98,7 +95,7 @@ export default function Hero() {
         />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 md:px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-16">
+      <div className="relative max-w-7xl mx-auto px-4 md:px-6 pt-32 pb-8 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-16">
         {/* Text content */}
         <motion.div
           className="w-full md:w-1/2 text-center md:text-left"
@@ -109,21 +106,35 @@ export default function Hero() {
           <div className="space-y-4 md:space-y-6">
             <motion.h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-[-0.02em] text-neutral-900 leading-[1.2]">
               <div className="overflow-hidden">
-                <motion.span className="block">Discover</motion.span>
+                <motion.span
+                  className="block"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  Discover
+                </motion.span>
               </div>
               <div className="overflow-hidden">
-                <motion.span className="block">Local Fashion,</motion.span>
+                <motion.span
+                  className="block"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.7 }}
+                >
+                  Local Fashion,
+                </motion.span>
               </div>
               <div className="overflow-hidden">
                 <motion.span
                   className="block bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent font-normal"
-                  initial={{ y: 40 }}
+                  initial={{ opacity: 0 }}
                   animate={{
-                    y: 0,
+                    opacity: 1,
                     backgroundPosition: ['200% 0', '-200% 0'],
                   }}
                   transition={{
-                    y: { duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] },
+                    opacity: { duration: 0.5, delay: 1.2 },
                     backgroundPosition: {
                       duration: 10,
                       repeat: Infinity,
@@ -137,14 +148,52 @@ export default function Hero() {
             </motion.h1>
 
             <motion.p
-              className="text-base md:text-lg text-neutral-600 max-w-xl mx-auto md:mx-0"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-base md:text-lg text-neutral-600 max-w-xl mx-auto md:mx-0 relative md:pr-12"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 1.7 }}
             >
-              Experience the future of local fashion discovery. Find unique
-              pieces from boutiques near you, powered by AI.
+              <motion.span
+                initial={{ display: 'inline' }}
+                className="typing-text"
+              >
+                Experience the future of fashion discovery. Find unique pieces,
+                connect with local boutiques, and get personalized
+                recommendations in one app.
+              </motion.span>
             </motion.p>
+
+            <style jsx>{`
+              .typing-text {
+                display: inline-block;
+                border-right: 2px solid transparent;
+                animation:
+                  typing 3s steps(40, end),
+                  blink-caret 0.75s step-end infinite;
+                white-space: pre-wrap;
+                overflow: hidden;
+                max-width: 0;
+              }
+
+              @keyframes typing {
+                from {
+                  max-width: 0;
+                }
+                to {
+                  max-width: 100%;
+                }
+              }
+
+              @keyframes blink-caret {
+                from,
+                to {
+                  border-color: transparent;
+                }
+                50% {
+                  border-color: #6366f1;
+                }
+              }
+            `}</style>
 
             <motion.div
               className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 mt-8"

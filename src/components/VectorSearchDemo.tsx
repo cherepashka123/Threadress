@@ -845,12 +845,11 @@ const VectorSearchDemo = () => {
               value={searchTerm}
               onChange={(e) => handleSearchInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="w-full px-6 py-4 rounded-xl bg-white border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-neutral-900 placeholder-neutral-400"
+              className="w-full px-6 py-4 rounded-xl bg-white border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-neutral-900 placeholder-neutral-400 relative z-50"
               placeholder="Try searching: summer dress, business casual, vintage..."
               aria-label="Search fashion items"
               autoComplete="off"
               role="searchbox"
-              style={{ WebkitAppearance: 'none' }}
             />
 
             {/* Enhanced Search Suggestions */}
