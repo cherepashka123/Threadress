@@ -11,9 +11,9 @@ export default function Hero() {
   const controls = useAnimation();
 
   const mockups = [
-    { src: '/mockup.png', alt: 'Threadress app main screen' },
-    { src: '/3.png', alt: 'Threadress app features' },
-    { src: '/5.png', alt: 'Threadress app experience' },
+    { src: '/3.png', alt: 'Threadress app main screen' },
+    { src: '/5.png', alt: 'Threadress app interface' },
+    { src: '/1.png', alt: 'Threadress app experience' },
   ];
 
   useEffect(() => {
@@ -31,16 +31,16 @@ export default function Hero() {
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveIndex((current) => (current + 1) % mockups.length);
-    }, 5000);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, []);
 
-  // Calculate positions for the tech stack effect
+  // Calculate positions for the tech stack effect - more spread out
   const getPosition = (index: number) => {
     const isActive = index === activeIndex;
     const diff = (index - activeIndex + mockups.length) % mockups.length;
-    const baseRotate = -15; // Base rotation angle
+    const baseRotate = -12; // Reduced rotation for cleaner look
 
     if (diff === 0)
       return {
@@ -53,20 +53,20 @@ export default function Hero() {
       };
     if (diff === 1)
       return {
-        x: '40%',
-        y: '5%',
-        scale: 0.9,
+        x: '60%',
+        y: '8%',
+        scale: 0.85,
         zIndex: 20,
         rotate: baseRotate,
-        opacity: 0.8,
+        opacity: 0.7,
       };
     return {
-      x: '-40%',
-      y: '5%',
-      scale: 0.9,
+      x: '-60%',
+      y: '8%',
+      scale: 0.85,
       zIndex: 10,
       rotate: -baseRotate,
-      opacity: 0.8,
+      opacity: 0.7,
     };
   };
 
@@ -232,7 +232,7 @@ export default function Hero() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <div className="relative w-full max-w-[280px] sm:max-w-[320px] md:max-w-[400px] mx-auto aspect-square">
+          <div className="relative w-full max-w-[320px] sm:max-w-[360px] md:max-w-[400px] mx-auto">
             <AnimatePresence mode="popLayout">
               {mockups.map((mockup, index) => {
                 const pos = getPosition(index);
@@ -251,74 +251,136 @@ export default function Hero() {
                     }}
                     transition={{
                       type: 'spring',
-                      stiffness: 300,
-                      damping: 30,
-                      mass: 1,
+                      stiffness: 400,
+                      damping: 40,
+                      mass: 0.8,
                     }}
                     onClick={() => setActiveIndex(index)}
                     style={{
                       transformStyle: 'preserve-3d',
                     }}
                     whileHover={{
-                      scale: pos.scale * 1.05,
-                      transition: { duration: 0.2 },
+                      scale: pos.scale * 1.03,
+                      transition: { duration: 0.3 },
                     }}
                   >
                     <motion.div
                       className="relative group"
                       animate={{
-                        y: [-2, 2, -2],
+                        y: [-1, 1, -1],
                       }}
                       transition={{
-                        duration: 4,
+                        duration: 6,
                         repeat: Infinity,
                         ease: 'easeInOut',
                       }}
                     >
-                      {/* Glowing effect */}
+                      {/* Professional glow effect */}
                       <motion.div
-                        className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl opacity-20 blur-xl group-hover:opacity-30 transition-opacity"
+                        className="absolute -inset-2 bg-gradient-to-r from-indigo-500/30 via-purple-500/30 to-indigo-500/30 rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500"
                         animate={{
-                          scale: [1, 1.05, 1],
+                          scale: [1, 1.02, 1],
                         }}
                         transition={{
-                          duration: 4,
+                          duration: 3,
                           repeat: Infinity,
                           repeatType: 'reverse',
                         }}
                       />
 
-                      {/* Tech lines effect */}
+                      {/* Tech scan lines effect */}
                       <motion.div
-                        className="absolute inset-0 rounded-xl overflow-hidden"
+                        className="absolute inset-0 rounded-3xl overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                         style={{
-                          background: `linear-gradient(90deg, transparent 0%, rgba(139,111,95,0.03) 50%, transparent 100%)`,
+                          background: `linear-gradient(90deg, transparent 0%, rgba(99, 102, 241, 0.1) 50%, transparent 100%)`,
                         }}
                         animate={{
                           x: ['-100%', '200%'],
                         }}
                         transition={{
-                          duration: 3,
+                          duration: 2,
                           repeat: Infinity,
                           ease: 'linear',
                         }}
                       />
 
-                      {/* Main image */}
-                      <img
-                        src={mockup.src}
-                        alt={mockup.alt}
-                        className="relative w-full rounded-xl shadow-xl transition-transform duration-300"
-                        style={{
-                          transform: `perspective(1000px) rotateY(${pos.rotate}deg)`,
-                          backfaceVisibility: 'hidden',
-                        }}
-                      />
+                      {/* Modern iPhone mockup */}
+                      <div className="relative w-full">
+                        {/* iPhone frame - modern and thin */}
+                        <div className="relative w-full aspect-[9/19.5] bg-black rounded-[2.5rem] p-1 shadow-2xl">
+                          {/* iPhone screen bezel - very thin */}
+                          <div className="w-full h-full bg-black rounded-[2.25rem] p-0.5">
+                            {/* iPhone screen */}
+                            <div className="w-full h-full bg-white rounded-[2rem] overflow-hidden relative">
+                              {/* Dynamic Island - modern size */}
+                              <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-20 h-4 bg-black rounded-full z-10"></div>
 
-                      {/* Interactive highlight */}
+                              {/* Screen content */}
+                              <div className="w-full h-full relative pt-6">
+                                <img
+                                  src={mockup.src}
+                                  alt={mockup.alt}
+                                  className="w-full h-full object-contain bg-white"
+                                  style={{
+                                    backfaceVisibility: 'hidden',
+                                  }}
+                                />
+
+                                {/* Screen reflection */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none"></div>
+
+                                {/* Screen glow effect */}
+                                <motion.div
+                                  className="absolute inset-0 bg-gradient-to-br from-indigo-500/15 via-transparent to-purple-500/15 pointer-events-none"
+                                  animate={{
+                                    opacity: [0.2, 0.4, 0.2],
+                                  }}
+                                  transition={{
+                                    duration: 4,
+                                    repeat: Infinity,
+                                    ease: 'easeInOut',
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* iPhone buttons - very subtle */}
+                          <div className="absolute right-0 top-1/4 w-0.5 h-6 bg-gray-800 rounded-l-full"></div>
+                          <div className="absolute right-0 top-1/3 w-0.5 h-4 bg-gray-800 rounded-l-full"></div>
+                          <div className="absolute left-0 top-1/2 w-0.5 h-8 bg-gray-800 rounded-r-full"></div>
+
+                          {/* iPhone camera module - modern design */}
+                          <div className="absolute top-3 right-3 w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center">
+                            <div className="w-3 h-3 bg-gray-600 rounded-full"></div>
+                          </div>
+
+                          {/* iPhone frame highlight - subtle */}
+                          <div className="absolute inset-0 rounded-[2.5rem] bg-gradient-to-br from-gray-300/10 via-transparent to-gray-700/10 pointer-events-none"></div>
+                        </div>
+
+                        {/* iPhone shadow */}
+                        <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-4/5 h-4 bg-black/20 rounded-full blur-xl"></div>
+
+                        {/* Tech glow effect */}
+                        <motion.div
+                          className="absolute -inset-3 bg-gradient-to-r from-indigo-500/15 via-purple-500/15 to-indigo-500/15 rounded-[3rem] blur-xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                          animate={{
+                            opacity: [0.2, 0.4, 0.2],
+                            scale: [1, 1.02, 1],
+                          }}
+                          transition={{
+                            duration: 4,
+                            repeat: Infinity,
+                            ease: 'easeInOut',
+                          }}
+                        />
+                      </div>
+
+                      {/* Professional highlight */}
                       <motion.div
-                        className="absolute inset-0 rounded-xl bg-gradient-to-tr from-white/0 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        whileHover={{ scale: 1.02 }}
+                        className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        whileHover={{ scale: 1.01 }}
                       />
                     </motion.div>
                   </motion.div>
@@ -327,19 +389,19 @@ export default function Hero() {
             </AnimatePresence>
           </div>
 
-          {/* Tech indicators */}
-          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex space-x-3">
+          {/* Professional indicators */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
             {mockups.map((_, index) => (
               <motion.button
                 key={index}
-                className={`relative h-1.5 rounded-full transition-all duration-300 ${
+                className={`relative h-1 rounded-full transition-all duration-300 ${
                   activeIndex === index
-                    ? 'w-8 bg-[#8b6f5f]'
-                    : 'w-4 bg-[#8b6f5f]/20'
+                    ? 'w-6 bg-indigo-600'
+                    : 'w-3 bg-neutral-300 hover:bg-neutral-400'
                 }`}
                 onClick={() => setActiveIndex(index)}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.2 }}
+                whileTap={{ scale: 0.9 }}
               >
                 <motion.div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full opacity-0 hover:opacity-30 transition-opacity" />
               </motion.button>

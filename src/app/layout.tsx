@@ -4,7 +4,6 @@ import '../styles/globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Navbar from '../components/Navbar';
-import { CartProvider } from '@/context/CartContext';
 import { Inter } from 'next/font/google';
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
@@ -40,10 +39,7 @@ export default function RootLayout({
         <Navbar />
 
         {/* Main content with padding for fixed navbar */}
-        <div className="pt-[64px] sm:pt-[72px] md:pt-[88px]">
-          {/* Provide CartContext to all pages */}
-          <CartProvider>{children}</CartProvider>
-        </div>
+        <div className="pt-[64px] sm:pt-[72px] md:pt-[88px]">{children}</div>
       </body>
     </html>
   );

@@ -8,10 +8,8 @@ export default function Footer() {
     {
       title: 'Navigation',
       links: [
-        { label: 'Browse', href: '/browse' },
         { label: 'Find Boutiques', href: '/map' },
-        { label: 'Smart Search', href: '/vector-search' },
-        { label: 'Cart', href: '/cart' },
+        { label: 'About Us', href: '/' },
       ],
     },
     {

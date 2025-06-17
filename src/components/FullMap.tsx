@@ -208,8 +208,7 @@ export default function FullMap() {
                           </div>
                         </div>
 
-                        <Link
-                          href="/browse"
+                        <button
                           className="block w-full text-center px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm rounded-lg hover:opacity-90 transition-all duration-200 relative overflow-hidden group"
                           onClick={handleLinkClick}
                         >
@@ -228,7 +227,7 @@ export default function FullMap() {
                           <span className="relative z-10 text-white/95 font-medium">
                             View Details
                           </span>
-                        </Link>
+                        </button>
                       </div>
                     </motion.div>
                   </Popup>

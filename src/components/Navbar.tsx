@@ -29,28 +29,16 @@ export default function Navbar() {
           🎨 Prototype
         </Link>
         <Link
-          href="/browse"
-          className="text-neutral-900 hover:text-indigo-600 transition-colors"
-        >
-          Browse
-        </Link>
-        <Link
-          href="/cart"
-          className="text-neutral-900 hover:text-indigo-600 transition-colors"
-        >
-          Cart
-        </Link>
-        <Link
           href="/map"
           className="text-neutral-900 hover:text-indigo-600 transition-colors"
         >
           Find Boutiques
         </Link>
         <Link
-          href="/smart-search"
+          href="/"
           className="text-neutral-900 hover:text-indigo-600 transition-colors"
         >
-          Smart Search
+          About Us
         </Link>
       </div>
 
@@ -143,20 +131,6 @@ export default function Navbar() {
                       🎨 Prototype
                     </Link>
                     <Link
-                      href="/browse"
-                      className="px-4 py-2 hover:bg-neutral-50 rounded-lg transition-colors"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Browse
-                    </Link>
-                    <Link
-                      href="/cart"
-                      className="px-4 py-2 hover:bg-neutral-50 rounded-lg transition-colors"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Cart
-                    </Link>
-                    <Link
                       href="/map"
                       className="px-4 py-2 hover:bg-neutral-50 rounded-lg transition-colors"
                       onClick={() => setIsMenuOpen(false)}
@@ -164,11 +138,11 @@ export default function Navbar() {
                       Find Boutiques
                     </Link>
                     <Link
-                      href="/smart-search"
+                      href="/"
                       className="px-4 py-2 hover:bg-neutral-50 rounded-lg transition-colors"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Smart Search
+                      About Us
                     </Link>
                   </div>
                 </nav>

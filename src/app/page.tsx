@@ -164,7 +164,7 @@ export default function HomePage() {
       <StitchDivider />
       <HowItWorks />
       <StitchDivider />
-      <section id="browse-preview" className="relative bg-[#fafafa] py-24">
+      <section id="discovery-preview" className="relative bg-[#fafafa] py-24">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -263,7 +263,7 @@ export default function HomePage() {
                         Local Discovery
                       </div>
                       <h3 className="text-xl font-medium text-neutral-900 mb-4">
-                        Browse Nearby
+                        Find Boutiques Near You
                       </h3>
                       <Link href="/map" className="block">
                         <motion.div

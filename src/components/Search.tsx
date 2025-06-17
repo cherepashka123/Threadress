@@ -390,7 +390,8 @@ export default function Search({ isFullPage = false }: SearchProps) {
 
   const handleSearchFocus = () => {
     if (!isFullPage) {
-      router.push('/smart-search');
+      setSearchFocused(true);
+      setShowTrends(true);
       return;
     }
     setSearchFocused(true);
