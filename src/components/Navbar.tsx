@@ -23,6 +23,12 @@ export default function Navbar() {
       {/* Center: Primary links (hidden on mobile, shown on lg+) */}
       <div className="hidden lg:flex flex-none space-x-6">
         <Link
+          href="/threadress"
+          className="text-neutral-900 hover:text-purple-600 transition-colors font-medium"
+        >
+          🎨 Prototype
+        </Link>
+        <Link
           href="/browse"
           className="text-neutral-900 hover:text-indigo-600 transition-colors"
         >
@@ -129,6 +135,13 @@ export default function Navbar() {
                 </div>
                 <nav className="flex-1 overflow-y-auto p-4">
                   <div className="flex flex-col space-y-4">
+                    <Link
+                      href="/threadress"
+                      className="px-4 py-2 hover:bg-purple-50 rounded-lg transition-colors font-medium text-purple-700"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      🎨 Prototype
+                    </Link>
                     <Link
                       href="/browse"
                       className="px-4 py-2 hover:bg-neutral-50 rounded-lg transition-colors"

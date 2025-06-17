@@ -40,20 +40,23 @@ function StitchDivider() {
   const opacity = useTransform(smoothProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
   return (
-    <div ref={ref} className="relative w-full h-16 overflow-visible my-6">
+    <div
+      ref={ref}
+      className="relative w-full h-16 overflow-visible my-6 bg-white"
+    >
       <motion.div
         className="absolute left-1/2 top-0 -translate-x-1/2 h-full flex flex-col items-center"
         style={{ opacity }}
       >
         {/* Thread shadow for depth */}
         <motion.div
-          className="absolute top-0 w-[2px] blur-[0.5px] bg-gradient-to-b from-gray-300/40 via-gray-300/60 to-gray-300/40"
+          className="absolute top-0 w-[2px] blur-[0.5px] bg-gradient-to-b from-gray-400/60 via-gray-500/80 to-gray-400/60"
           style={{ height: lineProgress.get() + '%' }}
         />
 
         {/* Main thread line */}
         <motion.div
-          className="absolute top-0 w-[1.5px] bg-gradient-to-b from-gray-500/80 via-gray-600 to-gray-500/80"
+          className="absolute top-0 w-[2px] bg-gradient-to-b from-gray-700 via-gray-800 to-gray-700"
           style={{ height: lineProgress.get() + '%' }}
         />
 
@@ -73,7 +76,7 @@ function StitchDivider() {
           >
             {/* Stitch shadow */}
             <motion.div
-              className="absolute inset-0 h-[1.5px] w-full bg-gray-300/40 blur-[0.5px]"
+              className="absolute inset-0 h-[2px] w-full bg-gray-400/60 blur-[0.5px]"
               style={{
                 scaleX: useTransform(
                   smoothProgress,
@@ -86,7 +89,7 @@ function StitchDivider() {
 
             {/* Main stitch line */}
             <motion.div
-              className="h-[1.5px] w-full bg-gray-600"
+              className="h-[2px] w-full bg-gray-800"
               style={{
                 scaleX: useTransform(
                   smoothProgress,
@@ -115,7 +118,7 @@ function StitchDivider() {
           }}
         >
           <motion.div
-            className="w-[1.5px] h-full bg-gradient-to-b from-gray-700 via-gray-600 to-transparent"
+            className="w-[2px] h-full bg-gradient-to-b from-gray-800 via-gray-700 to-transparent"
             animate={{
               y: [0, 8, 0],
               opacity: [1, 0.6, 1],
@@ -134,14 +137,14 @@ function StitchDivider() {
           style={{
             top: useTransform(smoothProgress, [0, 1], ['0%', '100%']),
             background:
-              'linear-gradient(to right, transparent, rgb(75 85 99 / 0.4), transparent)',
+              'linear-gradient(to right, transparent, rgb(55 65 81 / 0.4), transparent)',
             opacity: useTransform(smoothProgress, [0, 0.5, 1], [0, 0.4, 0]),
           }}
         />
 
         {/* Subtle glow effect */}
         <motion.div
-          className="absolute top-0 w-[4px] blur-[2px] bg-gradient-to-b from-gray-400/10 via-gray-400/20 to-gray-400/10"
+          className="absolute top-0 w-[6px] blur-[2px] bg-gradient-to-b from-gray-600/20 via-gray-700/30 to-gray-600/20"
           style={{
             height: lineProgress.get() + '%',
             opacity: useTransform(smoothProgress, [0, 0.5, 1], [0, 0.3, 0]),
@@ -154,7 +157,7 @@ function StitchDivider() {
 
 export default function HomePage() {
   return (
-    <main className="relative">
+    <main className="relative bg-white min-h-screen">
       <Hero />
       <StitchDivider />
       <Mission />
