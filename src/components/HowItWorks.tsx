@@ -67,7 +67,10 @@ export default function HowItWorks() {
   });
 
   return (
-    <section className="relative bg-[#fafafa] py-24" ref={containerRef}>
+    <section
+      ref={containerRef}
+      className="relative py-24 overflow-hidden bg-white"
+    >
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -187,18 +190,18 @@ export default function HowItWorks() {
                               transition={{ duration: 0.5 }}
                             >
                               <motion.div
-                                className="w-4 h-4 rounded-full bg-gradient-to-r from-violet-400 to-indigo-400"
+                                className="w-4 h-4 rounded-full bg-purple-400"
                                 animate={{ scale: [1, 1.2, 1] }}
                                 transition={{ duration: 1, repeat: Infinity }}
                               />
                               <motion.div
-                                className="ml-3 h-4 flex-1 bg-violet-100 rounded-full overflow-hidden"
+                                className="ml-3 h-4 flex-1 bg-purple-100 rounded-full overflow-hidden"
                                 initial={{ width: 0 }}
                                 animate={{ width: '100%' }}
                                 transition={{ duration: 1, delay: 0.5 }}
                               >
                                 <motion.div
-                                  className="h-full w-full bg-gradient-to-r from-violet-200 to-indigo-200"
+                                  className="h-full w-full bg-purple-200"
                                   animate={{ x: ['-100%', '100%'] }}
                                   transition={{ duration: 2, repeat: Infinity }}
                                 />
@@ -210,7 +213,7 @@ export default function HowItWorks() {
                               (term, i) => (
                                 <motion.div
                                   key={term}
-                                  className="absolute bg-white/90 px-3 py-1 rounded-full text-xs text-violet-600 shadow-sm"
+                                  className="absolute bg-white/90 px-3 py-1 rounded-full text-xs text-purple-500 shadow-sm"
                                   initial={{ opacity: 0, scale: 0 }}
                                   animate={{
                                     opacity: 1,
@@ -243,7 +246,7 @@ export default function HowItWorks() {
                                 {[...Array(8)].map((_, i) => (
                                   <motion.div
                                     key={i}
-                                    className="absolute w-2 h-2 rounded-full bg-violet-400"
+                                    className="absolute w-2 h-2 rounded-full bg-purple-400"
                                     style={{
                                       top: '50%',
                                       left: '50%',
@@ -262,7 +265,7 @@ export default function HowItWorks() {
                                 ))}
                               </motion.div>
                               <motion.div
-                                className="absolute w-32 h-32 rounded-full bg-gradient-to-r from-violet-400 to-indigo-400 opacity-20"
+                                className="absolute w-32 h-32 rounded-full bg-purple-400/20"
                                 animate={{ scale: [1, 1.2, 1] }}
                                 transition={{ duration: 2, repeat: Infinity }}
                               />
@@ -458,7 +461,7 @@ export default function HowItWorks() {
                                   animate={{ scale: 1 }}
                                   transition={{ delay: 0.5 }}
                                 >
-                                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-violet-500 to-indigo-500 flex items-center justify-center text-white text-2xl">
+                                  <div className="w-16 h-16 rounded-full bg-purple-400 flex items-center justify-center text-white text-2xl">
                                     ✨
                                   </div>
                                 </motion.div>
@@ -469,7 +472,7 @@ export default function HowItWorks() {
 
                         {/* Step Progress Indicator */}
                         <motion.div
-                          className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-sm border border-violet-100"
+                          className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-sm border border-purple-100"
                           initial={{ y: 20, opacity: 0 }}
                           animate={{ y: 0, opacity: 1 }}
                           transition={{ delay: 0.5 }}
@@ -480,8 +483,8 @@ export default function HowItWorks() {
                                 key={s.id}
                                 className={`w-2 h-2 rounded-full ${
                                   s.id === step.id
-                                    ? 'bg-violet-500'
-                                    : 'bg-violet-200'
+                                    ? 'bg-purple-500'
+                                    : 'bg-purple-200'
                                 }`}
                                 animate={{
                                   scale: s.id === step.id ? [1, 1.2, 1] : 1,
@@ -511,10 +514,10 @@ export default function HowItWorks() {
         >
           <a
             href="#waitlist"
-            className="inline-flex items-center bg-neutral-900 text-white/95 font-light px-8 py-3 rounded-lg transition-all duration-300 overflow-hidden group relative"
+            className="inline-flex items-center bg-gradient-to-r from-purple-500 to-purple-400 text-white font-light px-8 py-3 rounded-lg transition-all duration-300 overflow-hidden group relative"
           >
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-indigo-400/30 via-purple-400/30 to-indigo-400/30 bg-[length:200%_100%]"
+              className="absolute inset-0 bg-gradient-to-r from-purple-400/30 via-purple-400/30 to-purple-400/30 bg-[length:200%_100%]"
               animate={{
                 backgroundPosition: ['200% 0', '-200% 0'],
               }}

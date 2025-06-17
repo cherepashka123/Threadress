@@ -12,7 +12,7 @@ export default function SectionDivider() {
       transition={{ duration: 0.8 }}
     >
       <motion.div
-        className="h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 rounded-full w-0"
+        className="h-1 bg-gradient-to-r from-purple-400 via-purple-400 to-purple-400 rounded-full w-0"
         whileInView={{ width: '60%' }}
         viewport={{ once: true, amount: 0.4 }}
         transition={{ duration: 1.2, ease: 'easeOut' }}

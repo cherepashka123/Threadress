@@ -164,7 +164,7 @@ export default function HomePage() {
       <StitchDivider />
       <HowItWorks />
       <StitchDivider />
-      <section id="discovery-preview" className="relative bg-[#fafafa] py-24">
+      <section id="discovery-preview" className="relative bg-white py-24">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

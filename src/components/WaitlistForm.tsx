@@ -14,7 +14,7 @@ export default function WaitlistForm() {
   };
 
   return (
-    <section className="relative py-24 overflow-hidden bg-gradient-to-b from-[#fafafa] to-white">
+    <section id="waitlist" className="relative py-24 overflow-hidden bg-white">
       {/* Tech-inspired background */}
       <div className="absolute inset-0">
         <motion.div
@@ -142,12 +142,12 @@ export default function WaitlistForm() {
 
                 <motion.button
                   type="submit"
-                  className="w-full bg-neutral-900 text-white py-3 px-6 rounded-lg relative overflow-hidden group"
+                  className="w-full bg-gradient-to-r from-purple-500 to-purple-400 text-white py-3 px-6 rounded-lg relative overflow-hidden group font-medium"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-indigo-500/30 via-purple-500/30 to-indigo-500/30 bg-[length:200%_100%]"
+                    className="absolute inset-0 bg-gradient-to-r from-purple-300/30 via-purple-400/30 to-purple-300/30 bg-[length:200%_100%]"
                     animate={{
                       backgroundPosition: ['200% 0', '-200% 0'],
                     }}
@@ -253,13 +253,13 @@ export default function WaitlistForm() {
             >
               <div className="absolute inset-0 bg-gradient-to-br from-violet-50 to-indigo-50 opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center text-white mb-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-400 flex items-center justify-center text-white mb-4">
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-medium text-neutral-900 mb-2">
+                <h3 className="text-xl font-medium text-neutral-900 mb-2 font-sans">
                   {feature.title}
                 </h3>
-                <p className="text-neutral-600 text-sm">
+                <p className="text-neutral-600 text-sm font-light">
                   {feature.description}
                 </p>
               </div>

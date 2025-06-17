@@ -30,7 +30,7 @@ export default function Features() {
           />
         </svg>
       ),
-      gradient: 'from-violet-600 to-indigo-600',
+      gradient: 'from-purple-400 to-purple-400',
     },
     {
       title: 'Seamless Checkout',
@@ -52,7 +52,7 @@ export default function Features() {
           />
         </svg>
       ),
-      gradient: 'from-violet-600 to-indigo-600',
+      gradient: 'from-purple-400 to-purple-400',
     },
     {
       title: 'Sustainable Shopping',
@@ -74,7 +74,7 @@ export default function Features() {
           />
         </svg>
       ),
-      gradient: 'from-violet-600 to-indigo-600',
+      gradient: 'from-purple-400 to-purple-400',
     },
     {
       title: 'AI-Powered Match',
@@ -96,7 +96,7 @@ export default function Features() {
           />
         </svg>
       ),
-      gradient: 'from-violet-600 to-indigo-600',
+      gradient: 'from-purple-400 to-purple-400',
     },
   ];
 
@@ -110,7 +110,7 @@ export default function Features() {
   return (
     <section
       ref={containerRef}
-      className="relative py-24 bg-gradient-to-b from-[#fafafa] to-white overflow-hidden"
+      className="relative py-24 bg-white overflow-hidden"
     >
       {/* Minimalist background */}
       <div className="absolute inset-0">
@@ -122,7 +122,7 @@ export default function Features() {
         >
           {/* Subtle gradient orbs */}
           <motion.div
-            className="absolute top-0 left-0 w-[800px] h-[800px] bg-gradient-to-r from-violet-600/5 to-indigo-600/5 rounded-full blur-3xl"
+            className="absolute top-0 left-0 w-[800px] h-[800px] bg-gradient-to-r from-purple-400/10 to-purple-400/5 rounded-full blur-3xl"
             animate={{
               scale: [1, 1.1, 1],
               opacity: [0.5, 0.3, 0.5],
@@ -134,7 +134,7 @@ export default function Features() {
             }}
           />
           <motion.div
-            className="absolute bottom-0 right-0 w-[800px] h-[800px] bg-gradient-to-r from-indigo-600/5 to-violet-600/5 rounded-full blur-3xl"
+            className="absolute bottom-0 right-0 w-[800px] h-[800px] bg-gradient-to-r from-purple-400/5 to-purple-400/10 rounded-full blur-3xl"
             animate={{
               scale: [1.1, 1, 1.1],
               opacity: [0.3, 0.5, 0.3],
@@ -220,7 +220,7 @@ export default function Features() {
                 <motion.div
                   className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300"
                   style={{
-                    background: `linear-gradient(90deg, var(--violet-600), var(--indigo-600))`,
+                    background: `linear-gradient(90deg, #a78bfa, #a78bfa)`,
                     padding: '1px',
                   }}
                 >
@@ -233,9 +233,9 @@ export default function Features() {
                   initial={false}
                   animate={{
                     background: [
-                      'radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.02) 0%, transparent 50%)',
-                      'radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.02) 0%, transparent 50%)',
-                      'radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.02) 0%, transparent 50%)',
+                      'radial-gradient(circle at 0% 0%, #a78bfa11 0%, transparent 50%)',
+                      'radial-gradient(circle at 100% 100%, #a78bfa11 0%, transparent 50%)',
+                      'radial-gradient(circle at 0% 0%, #a78bfa11 0%, transparent 50%)',
                     ],
                   }}
                   transition={{

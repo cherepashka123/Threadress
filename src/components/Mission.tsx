@@ -80,7 +80,7 @@ export default function Mission() {
     <section
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="relative min-h-[60vh] py-12 overflow-hidden bg-gradient-to-b from-white to-gray-50"
+      className="relative min-h-[60vh] py-12 overflow-hidden bg-white"
     >
       {/* Interactive background gradient */}
       <motion.div
@@ -132,7 +132,7 @@ export default function Mission() {
                     repeatDelay: words.length * 0.8,
                   }}
                 >
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-indigo-500 text-lg font-light">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-400 text-lg font-light">
                     {word}
                   </span>
                 </motion.div>
@@ -146,10 +146,10 @@ export default function Mission() {
               initial={{ width: 0 }}
               whileInView={{ width: '120%' }}
               transition={{ duration: 1, delay: 0.2 }}
-              className="absolute -left-[10%] top-[50%] h-px bg-gradient-to-r from-transparent via-violet-200 to-transparent"
+              className="absolute -left-[10%] top-[50%] h-px bg-gradient-to-r from-transparent via-purple-200 to-transparent"
             />
             <motion.h2
-              className="text-4xl font-[500] tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-indigo-600"
+              className="text-4xl font-[500] tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-600"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
@@ -193,7 +193,7 @@ export default function Mission() {
             {/* Decorative elements */}
             <div className="absolute -left-6 -top-6 w-12 h-12">
               <motion.div
-                className="w-full h-full rounded-full border border-violet-200"
+                className="w-full h-full rounded-full border border-purple-200"
                 animate={{
                   scale: [1, 1.2, 1],
                   opacity: [0.3, 0.1, 0.3],
@@ -207,7 +207,7 @@ export default function Mission() {
             </div>
             <div className="absolute -right-3 -bottom-3 w-6 h-6">
               <motion.div
-                className="w-full h-full rounded-full border border-indigo-200"
+                className="w-full h-full rounded-full border border-purple-200"
                 animate={{
                   scale: [1, 1.3, 1],
                   opacity: [0.3, 0.1, 0.3],
@@ -232,7 +232,7 @@ export default function Mission() {
               <motion.button
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-6 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-full cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300"
+                className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-600 text-white rounded-full cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 Discover Boutiques
               </motion.button>

@@ -377,7 +377,7 @@ export default function MapPreview() {
               whileHover={{ scale: 1.05 }}
             >
               <motion.div
-                className="w-2 h-2 rounded-full bg-gradient-to-r from-violet-500 to-indigo-500"
+                className="w-2 h-2 rounded-full bg-purple-400"
                 animate={{
                   scale: [1, 1.2, 1],
                   opacity: [1, 0.7, 1],
@@ -391,7 +391,7 @@ export default function MapPreview() {
               <span>{rawItems.length} boutiques nearby</span>
             </motion.div>
             <motion.div
-              className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-medium text-indigo-600 shadow-sm flex items-center gap-2"
+              className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-medium text-purple-500 shadow-sm flex items-center gap-2"
               whileHover={{ scale: 1.05 }}
             >
               <span>Click to explore</span>
