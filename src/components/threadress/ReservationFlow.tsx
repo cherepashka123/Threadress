@@ -25,6 +25,10 @@ const ReservationFlow: React.FC<ReservationFlowProps> = ({
   const [phone, setPhone] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const canProceed = () => {
+    return email.trim() !== '' && phone.trim() !== '';
+  };
+
   // Step 1: Minimal form
   if (step === 1) {
     return (
@@ -317,7 +321,13 @@ const ReservationFlow: React.FC<ReservationFlowProps> = ({
                 </button>
               ) : (
                 <button
-                  onClick={handleSubmitReservation}
+                  onClick={() => {
+                    setIsSubmitting(true);
+                    setTimeout(() => {
+                      setIsSubmitting(false);
+                      setStep(3);
+                    }, 1000);
+                  }}
                   disabled={!canProceed() || isSubmitting}
                   className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center space-x-2"
                 >
@@ -360,41 +370,6 @@ const ReservationFlow: React.FC<ReservationFlowProps> = ({
                   </p>
                 </div>
               </div>
-
-              {/* Selected Options */}
-              {(selectedSize || selectedColor) && (
-                <div className="border-t border-gray-100 pt-4">
-                  <h5 className="text-sm font-medium text-gray-700 mb-2">
-                    Selected Options:
-                  </h5>
-                  <div className="space-y-1 text-sm text-gray-600">
-                    {selectedSize && <div>Size: {selectedSize}</div>}
-                    {selectedColor && <div>Color: {selectedColor}</div>}
-                  </div>
-                </div>
-              )}
-
-              {/* Pickup Info */}
-              {pickupTime && (
-                <div className="border-t border-gray-100 pt-4">
-                  <h5 className="text-sm font-medium text-gray-700 mb-2">
-                    Pickup Details:
-                  </h5>
-                  <div className="space-y-1 text-sm text-gray-600">
-                    <div>
-                      {new Date(pickupTime).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit',
-                      })}
-                    </div>
-                    <div>{product.boutique}</div>
-                    <div>📍 {product.boutiqueLocation}</div>
-                  </div>
-                </div>
-              )}
 
               {/* Boutique Info */}
               <div className="border-t border-gray-100 pt-4">
