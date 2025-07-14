@@ -105,149 +105,58 @@ export default function Features() {
     threshold: 0.1,
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
-
   return (
     <section
       ref={containerRef}
-      className="relative py-24 bg-white overflow-hidden"
+      className="py-24 bg-white overflow-hidden"
+      style={{ fontFamily: 'Playfair Display, serif' }}
     >
-      {/* Minimalist background */}
-      <div className="absolute inset-0">
-        <motion.div
-          className="absolute inset-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
+      <div className="max-w-6xl mx-auto px-6">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-4xl md:text-5xl font-light text-gray-900 mb-16 font-serif text-center"
+          style={{ fontFamily: 'Playfair Display, serif' }}
         >
-          {/* Subtle gradient orbs */}
+          Key Features
+        </motion.h2>
+
+        {/* Horizontal scrolling features */}
+        <div className="relative">
           <motion.div
-            className="absolute top-0 left-0 w-[800px] h-[800px] bg-gradient-to-r from-purple-400/10 to-purple-400/5 rounded-full blur-3xl"
-            animate={{
-              scale: [1, 1.1, 1],
-              opacity: [0.5, 0.3, 0.5],
-            }}
+            className="flex gap-8"
+            animate={{ x: [0, -1000] }}
             transition={{
-              duration: 8,
+              duration: 20,
               repeat: Infinity,
-              ease: 'easeInOut',
+              ease: 'linear',
             }}
-          />
-          <motion.div
-            className="absolute bottom-0 right-0 w-[800px] h-[800px] bg-gradient-to-r from-purple-400/5 to-purple-400/10 rounded-full blur-3xl"
-            animate={{
-              scale: [1.1, 1, 1.1],
-              opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-        </motion.div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-6 relative">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-          className="text-center mb-20"
-        >
-          <h2 className="text-3xl md:text-4xl font-light tracking-[-0.02em] text-neutral-900 mb-4">
-            Key Features
-          </h2>
-          <p className="text-neutral-600 font-light max-w-xl mx-auto">
-            Experience the future of local fashion discovery
-          </p>
-        </motion.div>
-
-        {/* Subtle flow animation for the entire section */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          initial={false}
-          animate={{
-            background: [
-              'radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.03) 0%, transparent 50%)',
-              'radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.03) 0%, transparent 50%)',
-              'radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.03) 0%, transparent 50%)',
-            ],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-        />
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {features.map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group relative w-full"
-            >
-              <div className="relative p-6 sm:p-8 bg-white/80 rounded-2xl transition-all duration-300 hover:shadow-lg backdrop-blur-sm h-full">
-                {/* Feature icon */}
-                <div
-                  className={`
-                    relative inline-flex items-center justify-center
-                    w-12 h-12 rounded-xl mb-6
-                    bg-gradient-to-r ${feature.gradient}
-                    text-white
-                    group-hover:scale-110 transition-transform duration-300
-                  `}
+          >
+            {/* Duplicate features for seamless loop */}
+            {[...features, ...features].map((feature, index) => (
+              <motion.div
+                key={`${feature.title}-${index}`}
+                className="bg-white rounded-xl p-8 border border-gray-100 text-center min-w-[320px] flex-shrink-0"
+                whileHover={{ y: -4 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="mb-4 text-3xl">{feature.icon}</div>
+                <h3
+                  className="text-2xl font-semibold mb-2 font-serif"
+                  style={{ fontFamily: 'Playfair Display, serif' }}
                 >
-                  {feature.icon}
-                  <motion.div
-                    className="absolute inset-0 rounded-xl bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"
-                    whileHover={{ scale: 1.2, opacity: 0 }}
-                  />
-                </div>
-
-                {/* Feature content */}
-                <h3 className="text-xl font-light text-neutral-900 mb-3 group-hover:translate-x-1 transition-transform duration-300">
                   {feature.title}
                 </h3>
-                <p className="text-neutral-600 font-light leading-relaxed group-hover:translate-x-1 transition-transform duration-300 delay-75">
+                <p
+                  className="text-lg text-gray-700 font-serif"
+                  style={{ fontFamily: 'Playfair Display, serif' }}
+                >
                   {feature.description}
                 </p>
-
-                {/* Hover effect */}
-                <motion.div
-                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300"
-                  style={{
-                    background: `linear-gradient(90deg, #a78bfa, #a78bfa)`,
-                    padding: '1px',
-                  }}
-                >
-                  <div className="w-full h-full bg-white/80 backdrop-blur-sm rounded-2xl" />
-                </motion.div>
-
-                {/* Individual feature flow animation */}
-                <motion.div
-                  className="absolute inset-0 pointer-events-none rounded-2xl overflow-hidden"
-                  initial={false}
-                  animate={{
-                    background: [
-                      'radial-gradient(circle at 0% 0%, #a78bfa11 0%, transparent 50%)',
-                      'radial-gradient(circle at 100% 100%, #a78bfa11 0%, transparent 50%)',
-                      'radial-gradient(circle at 0% 0%, #a78bfa11 0%, transparent 50%)',
-                    ],
-                  }}
-                  transition={{
-                    duration: 5,
-                    repeat: Infinity,
-                    ease: 'linear',
-                    delay: index * 0.5,
-                  }}
-                />
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </div>
     </section>

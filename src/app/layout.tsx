@@ -4,7 +4,8 @@ import '../styles/globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Navbar from '../components/Navbar';
-import { Inter } from 'next/font/google';
+import { Inter, Raleway } from 'next/font/google';
+import { LoadingProvider } from '../context/LoadingContext';
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
 const geistMono = Geist_Mono({
@@ -13,6 +14,11 @@ const geistMono = Geist_Mono({
 });
 
 const inter = Inter({ subsets: ['latin'] });
+const raleway = Raleway({
+  subsets: ['latin'],
+  weight: ['700'],
+  variable: '--font-raleway',
+});
 
 export const metadata: Metadata = {
   title: 'Threadress - Smart Fashion Discovery',
@@ -32,14 +38,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth bg-white">
+      <head>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-gray-900 ${inter.className}`}
+        className={`${geistSans.variable} ${geistMono.variable} ${raleway.variable} antialiased bg-white text-gray-900 ${inter.className}`}
       >
-        {/* Navbar appears on every route */}
-        <Navbar />
+        <LoadingProvider>
+          {/* Navbar appears on every route */}
+          <Navbar />
 
-        {/* Main content with padding for fixed navbar */}
-        <div className="pt-[64px] sm:pt-[72px] md:pt-[88px]">{children}</div>
+          {/* Main content with padding for fixed navbar */}
+          <div className="pt-[64px] sm:pt-[72px] md:pt-[88px]">{children}</div>
+        </LoadingProvider>
       </body>
     </html>
   );

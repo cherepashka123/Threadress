@@ -2,6 +2,7 @@
 'use client';
 
 import Link from 'next/link';
+import Logo from './Logo';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -11,22 +12,20 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 w-full flex items-center justify-between py-4 px-4 md:py-6 md:px-8 bg-[#fafafa] hover:bg-white transition-all duration-300">
       {/* Left: Logo/Brand */}
-      <div className="text-xl md:text-2xl font-bold">
-        <Link
-          href="/"
-          className="text-neutral-900 hover:text-neutral-800 transition-colors"
-        >
-          Threadress
+      <div className="flex items-center space-x-2">
+        <Link href="/" className="flex items-center group">
+          <Logo size={36} />
+          <span className="sr-only">Threadress</span>
         </Link>
       </div>
 
       {/* Center: Primary links (hidden on mobile, shown on lg+) */}
-      <div className="hidden lg:flex flex-none space-x-6">
+      <div className="hidden lg:flex flex-1 justify-center items-center space-x-10">
         <Link
           href="/threadress"
           className="text-neutral-900 hover:text-purple-600 transition-colors font-medium"
         >
-          🎨 Prototype
+          Prototype
         </Link>
         <Link
           href="/map"
@@ -128,7 +127,7 @@ export default function Navbar() {
                       className="px-4 py-2 hover:bg-purple-50 rounded-lg transition-colors font-medium text-purple-700"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      🎨 Prototype
+                      Prototype
                     </Link>
                     <Link
                       href="/map"

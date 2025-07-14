@@ -31,12 +31,17 @@ export default function Prototype({
   };
 
   return (
-    <div className="flex justify-center my-4 md:my-8 perspective-[2000px]">
+    <div
+      className="flex justify-center my-8 bg-white"
+      style={{ fontFamily: 'Playfair Display, serif' }}
+    >
       <motion.div
-        className="relative rounded-2xl overflow-hidden w-full max-w-[90vw] md:max-w-[1000px] aspect-[5/3]"
+        className="relative rounded-2xl overflow-hidden w-full max-w-[90vw] md:max-w-[1000px] aspect-[5/3] bg-white"
         style={{
           rotateX: springRotateX,
           rotateY: springRotateY,
+          boxShadow: 'none', // Remove any shadow
+          border: 'none', // Remove any border
         }}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -51,11 +56,11 @@ export default function Prototype({
           springRotateY.set(0);
         }}
       >
-        {/* Main image with hover effect */}
+        {/* Main image with subtle hover effect */}
         <motion.div
           className="relative w-full h-full"
           animate={{
-            scale: isHovered ? 1.03 : 1,
+            scale: isHovered ? 1.025 : 1,
           }}
           transition={{ duration: 0.4 }}
         >
@@ -63,81 +68,12 @@ export default function Prototype({
             src="/Threadress.png"
             alt="Threadress Prototype"
             fill
-            className="object-cover"
+            className="object-contain bg-white"
             priority
             quality={100}
-          />
-
-          {/* Interactive overlay effects */}
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-tr from-[#8b6f5f]/10 to-transparent opacity-0 transition-opacity duration-300"
-            animate={{
-              opacity: isHovered ? 1 : 0,
-            }}
-          />
-
-          {/* Shine effect */}
-          <motion.div
-            className="absolute inset-0 opacity-0"
-            animate={{
-              opacity: isHovered ? 1 : 0,
-              background: [
-                'linear-gradient(45deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%)',
-                'linear-gradient(45deg, transparent 50%, rgba(255,255,255,0.1) 100%, transparent 100%)',
-              ],
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              repeatType: 'reverse',
-            }}
-          />
-
-          {/* Border glow effect */}
-          <motion.div
-            className="absolute -inset-0.5 rounded-2xl opacity-0"
-            animate={{
-              opacity: isHovered ? 1 : 0,
-              boxShadow: [
-                '0 0 20px #a78bfa33',
-                '0 0 30px #a78bfa55',
-                '0 0 20px #a78bfa33',
-              ],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              repeatType: 'reverse',
-            }}
+            style={{ boxShadow: 'none', border: 'none', background: 'white' }}
           />
         </motion.div>
-
-        {/* Interactive corner accents */}
-        {[
-          'top-0 left-0',
-          'top-0 right-0',
-          'bottom-0 left-0',
-          'bottom-0 right-0',
-        ].map((position, index) => (
-          <motion.div
-            key={index}
-            className={`absolute w-8 md:w-16 h-8 md:h-16 ${position} pointer-events-none`}
-            animate={{
-              opacity: isHovered ? 1 : 0,
-              scale: isHovered ? 1 : 0.8,
-            }}
-            transition={{ duration: 0.3 }}
-          >
-            <div
-              className="absolute inset-0"
-              style={{
-                background: `radial-gradient(circle at ${position.includes('left') ? '0%' : '100%'} ${
-                  position.includes('top') ? '0%' : '100%'
-                }, #a78bfa33, transparent)`,
-              }}
-            />
-          </motion.div>
-        ))}
       </motion.div>
     </div>
   );

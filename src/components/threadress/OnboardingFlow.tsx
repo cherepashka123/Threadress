@@ -138,42 +138,58 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
         <div className="mb-6">
           <button
             onClick={onSkip}
-            className="text-sm text-gray-500 hover:text-gray-700 font-medium"
+            className="text-sm text-purple-500 hover:text-purple-700 font-medium font-serif"
+            style={{ fontFamily: 'Playfair Display, serif' }}
           >
             Skip for now →
           </button>
         </div>
-        <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+        <h2
+          className="text-3xl md:text-4xl font-light text-neutral-900 mb-4 font-serif"
+          style={{ fontFamily: 'Playfair Display, serif' }}
+        >
           Let's personalize your experience
         </h2>
-        <p className="text-gray-600">
+        <p
+          className="text-neutral-600 font-light font-serif"
+          style={{ fontFamily: 'Playfair Display, serif' }}
+        >
           Help us understand your style preferences
         </p>
       </div>
 
       {/* Progress */}
       <div className="mb-8">
-        <div className="flex justify-between text-sm text-gray-500 mb-2">
+        <div
+          className="flex justify-between text-sm text-neutral-400 mb-2 font-serif"
+          style={{ fontFamily: 'Playfair Display, serif' }}
+        >
           <span>Step {currentStep} of 4</span>
           <span>{Math.round((currentStep / 4) * 100)}%</span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-1">
+        <div className="w-full bg-neutral-200 rounded-full h-1">
           <div
-            className="bg-gray-900 h-1 rounded-full transition-all duration-300"
+            className="bg-purple-400 h-1 rounded-full transition-all duration-300"
             style={{ width: `${(currentStep / 4) * 100}%` }}
           />
         </div>
       </div>
 
       {/* Content */}
-      <div className="bg-white rounded-lg border border-gray-200 p-8 mb-8">
+      <div className="bg-white rounded-xl p-8 mb-8 shadow-none border-none">
         {/* Step 1: Style Preferences */}
         {currentStep === 1 && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">
+            <h3
+              className="text-2xl font-light text-neutral-900 mb-6 font-serif"
+              style={{ fontFamily: 'Playfair Display, serif' }}
+            >
               What's your style?
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p
+              className="text-neutral-600 mb-6 font-serif"
+              style={{ fontFamily: 'Playfair Display, serif' }}
+            >
               Select all styles that resonate with you
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -181,11 +197,12 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
                 <button
                   key={style}
                   onClick={() => handleStyleToggle(style)}
-                  className={`p-3 text-sm rounded-lg border-2 transition-all font-medium ${
+                  className={`p-3 text-sm rounded-full border-2 transition-all font-serif font-light ${
                     formData.preferences.style.includes(style)
-                      ? 'border-gray-900 bg-gray-900 text-white'
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                      ? 'border-purple-500 text-purple-700 bg-purple-50'
+                      : 'border-neutral-200 bg-white text-neutral-700 hover:border-purple-200'
                   }`}
+                  style={{ fontFamily: 'Playfair Display, serif' }}
                 >
                   {style}
                 </button>
@@ -197,10 +214,16 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
         {/* Step 2: Sizing */}
         {currentStep === 2 && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">
+            <h3
+              className="text-2xl font-light text-neutral-900 mb-6 font-serif"
+              style={{ fontFamily: 'Playfair Display, serif' }}
+            >
               Size information
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p
+              className="text-neutral-600 mb-6 font-serif"
+              style={{ fontFamily: 'Playfair Display, serif' }}
+            >
               Help us find the right fit (optional)
             </p>
             <div className="space-y-4">
@@ -227,7 +250,10 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
                 },
               ].map((category) => (
                 <div key={category.key}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    className="block text-sm font-medium text-neutral-700 mb-2 font-serif"
+                    style={{ fontFamily: 'Playfair Display, serif' }}
+                  >
                     {category.label}
                   </label>
                   <div className="flex gap-2">
@@ -251,13 +277,14 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
                             },
                           }))
                         }
-                        className={`px-3 py-2 text-sm rounded border transition-all ${
+                        className={`px-4 py-2 text-sm rounded-full border-2 transition-all font-serif font-light ${
                           formData.preferences.sizes[
                             category.key as keyof typeof formData.preferences.sizes
                           ] === size
-                            ? 'border-gray-900 bg-gray-900 text-white'
-                            : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                            ? 'border-purple-500 text-purple-700 bg-purple-50'
+                            : 'border-neutral-200 text-neutral-700 bg-white hover:border-purple-200'
                         }`}
+                        style={{ fontFamily: 'Playfair Display, serif' }}
                       >
                         {size}
                       </button>
@@ -272,10 +299,16 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
         {/* Step 3: Color Preferences */}
         {currentStep === 3 && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">
+            <h3
+              className="text-2xl font-light text-neutral-900 mb-6 font-serif"
+              style={{ fontFamily: 'Playfair Display, serif' }}
+            >
               Favorite colors
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p
+              className="text-neutral-600 mb-6 font-serif"
+              style={{ fontFamily: 'Playfair Display, serif' }}
+            >
               Which colors do you gravitate towards?
             </p>
             <div className="grid grid-cols-4 gap-3">
@@ -283,11 +316,12 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
                 <button
                   key={color}
                   onClick={() => handleColorToggle(color)}
-                  className={`p-3 text-sm rounded-lg border-2 transition-all font-medium ${
+                  className={`p-3 text-sm rounded-full border-2 transition-all font-serif font-light ${
                     formData.preferences.favoriteColors.includes(color)
-                      ? 'border-gray-900 bg-gray-900 text-white'
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                      ? 'border-purple-500 text-purple-700 bg-purple-50'
+                      : 'border-neutral-200 bg-white text-neutral-700 hover:border-purple-200'
                   }`}
+                  style={{ fontFamily: 'Playfair Display, serif' }}
                 >
                   {color}
                 </button>
@@ -299,10 +333,16 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
         {/* Step 4: Budget */}
         {currentStep === 4 && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">
+            <h3
+              className="text-2xl font-light text-neutral-900 mb-6 font-serif"
+              style={{ fontFamily: 'Playfair Display, serif' }}
+            >
               Budget range
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p
+              className="text-neutral-600 mb-6 font-serif"
+              style={{ fontFamily: 'Playfair Display, serif' }}
+            >
               What's your typical spending range for a single piece?
             </p>
             <div className="space-y-3">
@@ -310,17 +350,24 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
                 <button
                   key={budget.label}
                   onClick={() => handleBudgetSelect(budget.range)}
-                  className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
+                  className={`w-full p-4 text-left rounded-full border-2 transition-all font-serif font-light ${
                     formData.preferences.priceRange.min === budget.range.min &&
                     formData.preferences.priceRange.max === budget.range.max
-                      ? 'border-gray-900 bg-gray-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-purple-500 text-purple-700 bg-purple-50'
+                      : 'border-neutral-200 bg-white text-neutral-700 hover:border-purple-200'
                   }`}
+                  style={{ fontFamily: 'Playfair Display, serif' }}
                 >
-                  <div className="font-medium text-gray-900">
+                  <div
+                    className="font-medium text-neutral-900 font-serif"
+                    style={{ fontFamily: 'Playfair Display, serif' }}
+                  >
                     {budget.label}
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div
+                    className="text-sm text-neutral-600 font-serif"
+                    style={{ fontFamily: 'Playfair Display, serif' }}
+                  >
                     ${budget.range.min} - ${budget.range.max}
                   </div>
                 </button>
@@ -331,11 +378,12 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-between">
+      <div className="flex justify-between mt-2">
         <button
           onClick={handleBack}
           disabled={currentStep === 1}
-          className="px-6 py-3 text-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed font-medium"
+          className="px-6 py-3 border-2 border-purple-300 text-purple-700 bg-white rounded-full font-serif font-light hover:bg-purple-50 disabled:text-neutral-300 disabled:border-neutral-200 disabled:bg-white disabled:cursor-not-allowed transition-all"
+          style={{ fontFamily: 'Playfair Display, serif' }}
         >
           ← Previous
         </button>
@@ -343,14 +391,16 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
         <div className="flex space-x-3">
           <button
             onClick={onSkip}
-            className="px-6 py-3 text-gray-600 hover:text-gray-900 font-medium"
+            className="px-6 py-3 border-2 border-purple-300 text-purple-700 bg-white rounded-full font-serif font-light hover:bg-purple-50 transition-all"
+            style={{ fontFamily: 'Playfair Display, serif' }}
           >
             Skip
           </button>
           <button
             onClick={handleNext}
             disabled={!isStepValid()}
-            className="px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed font-medium"
+            className="px-6 py-3 border-2 border-purple-500 text-white bg-purple-500 rounded-full font-serif font-light hover:bg-purple-600 disabled:bg-neutral-200 disabled:text-neutral-400 disabled:border-neutral-200 disabled:cursor-not-allowed transition-all"
+            style={{ fontFamily: 'Playfair Display, serif' }}
           >
             {currentStep === 4 ? 'Complete' : 'Next →'}
           </button>

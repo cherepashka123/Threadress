@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import Logo from './Logo';
 
 export default function Footer() {
   const footerSections = [
@@ -12,21 +13,13 @@ export default function Footer() {
         { label: 'About Us', href: '/' },
       ],
     },
-    {
-      title: 'Legal',
-      links: [
-        { label: 'Privacy Policy', href: '/privacy' },
-        { label: 'Terms of Service', href: '/terms' },
-        { label: 'Cookie Policy', href: '/cookies' },
-        { label: 'GDPR', href: '/gdpr' },
-      ],
-    },
+    // Removed Legal column
   ];
 
   return (
     <footer className="bg-white border-t border-neutral-100">
       <div className="max-w-7xl mx-auto py-12 px-6">
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-8">
           {footerSections.map((section, index) => (
             <motion.div
               key={section.title}
@@ -56,11 +49,9 @@ export default function Footer() {
         <div className="mt-12 pt-8 border-t border-neutral-100">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center space-x-4">
-              <Link
-                href="/"
-                className="text-xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent"
-              >
-                threadress
+              <Link href="/" className="flex items-center group">
+                <Logo size={28} />
+                <span className="sr-only">Threadress</span>
               </Link>
               <span className="text-sm text-neutral-500">
                 © {new Date().getFullYear()} Threadress. All rights reserved.

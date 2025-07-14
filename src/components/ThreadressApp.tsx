@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 import OnboardingFlow from './threadress/OnboardingFlow';
 import SmartSearch from './threadress/SmartSearch';
 import FilterPanel from './threadress/FilterPanel';
@@ -9,11 +10,43 @@ import ReservationFlow from './threadress/ReservationFlow';
 import ExplorePage from './threadress/ExplorePage';
 import { User, Product, Filters, Reservation } from './threadress/types';
 import { FaChevronDown } from 'react-icons/fa';
+import MinimalButton from './MinimalButton';
+
+const BOUTIQUE_LOCATIONS: Record<string, { lat: number; lng: number }> = {
+  'Atelier Nouveau': { lat: 40.724, lng: -74.001 }, // SoHo
+  'Brooklyn Vintage Co.': { lat: 40.714, lng: -73.961 }, // Williamsburg
+  'Madison Couture': { lat: 40.773, lng: -73.963 }, // Upper East Side
+  'Village Thread': { lat: 40.735, lng: -74.003 }, // West Village
+  'Tribeca Moderne': { lat: 40.719, lng: -74.008 }, // Tribeca
+};
+
+function getDistanceMiles(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+) {
+  // Haversine formula
+  const toRad = (v: number) => (v * Math.PI) / 180;
+  const R = 3958.8; // miles
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) *
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
 
 const ThreadressApp: React.FC = () => {
+  const searchParams = useSearchParams();
+
   // App State Management
   const [currentStep, setCurrentStep] = useState<
-    'onboarding' | 'search' | 'results' | 'reservation' | 'explore'
+    'onboarding' | 'search' | 'results' | 'reservation' | 'explore' | 'square'
   >('onboarding');
   const [user, setUser] = useState<User | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -52,10 +85,10 @@ const ThreadressApp: React.FC = () => {
 
   // Sizing quiz state
   const [sizing, setSizing] = useState({
-    height: '',
-    weight: '',
     top: '',
     bottom: '',
+    shoe: '',
+    fit: '',
   });
 
   // Product detail modal state
@@ -72,6 +105,8 @@ const ThreadressApp: React.FC = () => {
 
   // Move allProducts state and useEffect here, after prototypeProducts and mockBoutiques are defined
   const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [squareItems, setSquareItems] = useState<any[]>([]);
+  const [squareLocations, setSquareLocations] = useState<any[]>([]);
   const mockBoutiques = [
     {
       name: 'Atelier Nouveau',
@@ -496,6 +531,32 @@ const ThreadressApp: React.FC = () => {
   const [modalReservationStep, setModalReservationStep] = useState<
     null | 'hold' | 'prepay'
   >(null);
+  const [syncStatus, setSyncStatus] = useState<
+    'idle' | 'syncing' | 'success' | 'error'
+  >('idle');
+
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+
+  useEffect(() => {
+    if (
+      !userLocation &&
+      typeof window !== 'undefined' &&
+      'geolocation' in navigator
+    ) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) =>
+          setUserLocation({
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          }),
+        () => {},
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+  }, [userLocation]);
 
   useEffect(() => {
     setAllProducts(
@@ -519,6 +580,66 @@ const ThreadressApp: React.FC = () => {
     );
   }, []);
 
+  // In useEffect, trigger geolocation request when landingStep === 'main' and currentStep === 'search'
+  useEffect(() => {
+    if (
+      landingStep === 'main' &&
+      currentStep === 'search' &&
+      !userLocation &&
+      typeof window !== 'undefined' &&
+      'geolocation' in navigator
+    ) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) =>
+          setUserLocation({
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          }),
+        (err) => {
+          // Optionally, show a notification or fallback here
+          console.warn('Location access denied or unavailable', err);
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+  }, [landingStep, currentStep, userLocation]);
+
+  // Handle URL parameters on component mount
+  useEffect(() => {
+    const search = searchParams.get('search');
+    const route = searchParams.get('route');
+
+    if (search) {
+      setSearchQuery(search);
+      setLandingStep('main');
+      setCurrentStep('search');
+      // Trigger search after a short delay to ensure component is ready
+      setTimeout(() => {
+        handleSearch(search, filters);
+      }, 100);
+    }
+
+    if (route) {
+      const routeIds = route
+        .split(',')
+        .map((id) => id.trim())
+        .filter((id) => id.length > 0);
+
+      if (routeIds.length > 0) {
+        // Find products from the route
+        const routeProducts = allProducts.filter((product) =>
+          routeIds.includes(product.id)
+        );
+        if (routeProducts.length > 0) {
+          setProducts(routeProducts);
+          setLandingStep('main');
+          setCurrentStep('results');
+          setSearchQuery('Shopping Route');
+        }
+      }
+    }
+  }, [searchParams]);
+
   // Skip onboarding and go straight to search
   const handleSkipOnboarding = () => {
     setCurrentStep('search');
@@ -530,18 +651,141 @@ const ThreadressApp: React.FC = () => {
     setCurrentStep('search');
   };
 
+  // Helper: category and mood keywords
+  const CATEGORY_KEYWORDS = [
+    'dress',
+    'dresses',
+    'top',
+    'tops',
+    'skirt',
+    'skirts',
+    'pants',
+    'jeans',
+    'jacket',
+    'jackets',
+    'coat',
+    'coats',
+    'shorts',
+    'outerwear',
+    'bikini',
+    'swimsuit',
+    'shoes',
+    'heels',
+    'sandals',
+    'bag',
+    'bags',
+    'accessory',
+    'accessories',
+    'blouse',
+    'shirt',
+    'shirts',
+    'clutch',
+    'sneakers',
+    'boots',
+    'scarf',
+    'earrings',
+    'belt',
+    'wallet',
+    'hat',
+    'sunglasses',
+  ];
+  const MOOD_KEYWORDS = [
+    'outfit',
+    'outfits',
+    'look',
+    'looks',
+    'going out',
+    'date',
+    'party',
+    'work',
+    'casual',
+    'vacation',
+    'beach',
+    'brunch',
+    'wedding',
+    'event',
+    'night',
+    'day',
+    'summer',
+    'winter',
+    'spring',
+    'fall',
+    'holiday',
+    'travel',
+    'weekend',
+    'evening',
+    'formal',
+    'cocktail',
+    'festival',
+    'street',
+    'chic',
+    'minimal',
+    'classic',
+    'romantic',
+    'edgy',
+    'bohemian',
+    'luxury',
+    'sporty',
+    'vintage',
+    'contemporary',
+    'preppy',
+    'grunge',
+    'streetwear',
+  ];
+
+  function getCategoryFromQuery(query: string): string | null {
+    const q = query.toLowerCase();
+    for (const cat of CATEGORY_KEYWORDS) {
+      if (q.includes(cat)) {
+        // Normalize plural
+        if (cat.endsWith('s'))
+          return cat.slice(0, -1).charAt(0).toUpperCase() + cat.slice(1, -1);
+        return cat.charAt(0).toUpperCase() + cat.slice(1);
+      }
+    }
+    return null;
+  }
+  function isMoodQuery(query: string): boolean {
+    const q = query.toLowerCase();
+    return MOOD_KEYWORDS.some((mood) => q.includes(mood));
+  }
+
   // Perform smart search with AI-style matching simulation
   const handleSearch = async (query: string, appliedFilters: Filters) => {
     setIsLoading(true);
     setSearchQuery(query);
     setFilters(appliedFilters);
 
-    // Simulate API call delay
+    // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    // Mock search results - in real app this would be AI-powered
-    const mockResults = generateMockResults(query, appliedFilters);
-    setProducts(mockResults);
+    // Generate mock results based on query and filters
+    const results = generateMockResults(query, appliedFilters);
+
+    // If we have Square data, enhance results with real inventory
+    if (squareItems.length > 0) {
+      const squareEnhancedResults = results.map((product, index) => {
+        const squareItem = squareItems[index % squareItems.length];
+        if (squareItem) {
+          const variation = squareItem.item_data.variations[0];
+          return {
+            ...product,
+            id: squareItem.id,
+            price: variation.item_variation_data.price_money.amount / 100,
+            description:
+              squareItem.item_data.description || product.description,
+            // Add Square-specific data
+            squareItemId: squareItem.id,
+            squareVariationId: variation.id,
+          };
+        }
+        return product;
+      });
+      setProducts(squareEnhancedResults);
+    } else {
+      setProducts(results);
+    }
+
     setCurrentStep('results');
     setIsLoading(false);
   };
@@ -555,9 +799,139 @@ const ThreadressApp: React.FC = () => {
   };
 
   // Complete reservation
-  const handleCompleteReservation = (reservationData: Reservation) => {
+  const handleCompleteReservation = async (reservationData: Reservation) => {
     setReservation(reservationData);
-    // Could redirect to confirmation or stay in app
+
+    // Sync inventory change to Square when reservation is made
+    if (selectedProduct && selectedProduct.squareItemId) {
+      setSyncStatus('syncing');
+      try {
+        // Adjust inventory in Square (reduce by 1 for the reservation)
+        const inventoryAdjustment = {
+          idempotencyKey: `reservation-${Date.now()}`,
+          changes: [
+            {
+              type: 'ADJUSTMENT',
+              adjustment: {
+                locationId: squareLocations[0]?.id,
+                catalogObjectId:
+                  selectedProduct.squareVariationId ||
+                  selectedProduct.squareItemId,
+                quantity: '1',
+                occurredAt: new Date().toISOString(),
+                fromState: 'IN_STOCK',
+                toState: 'RESERVED',
+                note: `Reserved by ${reservationData.customerName || 'Threadress user'}`,
+              },
+            },
+          ],
+        };
+
+        const inventoryResponse = await fetch('/api/square/inventory', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(inventoryAdjustment),
+        });
+
+        const inventoryResult = await inventoryResponse.json();
+
+        if (inventoryResult.success) {
+          console.log('✅ Inventory synced to Square for reservation');
+          setSyncStatus('success');
+          // Reset sync status after 3 seconds
+          setTimeout(() => setSyncStatus('idle'), 3000);
+        } else {
+          console.warn(
+            '⚠️ Failed to sync inventory to Square:',
+            inventoryResult
+          );
+          setSyncStatus('error');
+          setTimeout(() => setSyncStatus('idle'), 3000);
+        }
+      } catch (error) {
+        console.error('❌ Error syncing inventory to Square:', error);
+        setSyncStatus('error');
+        setTimeout(() => setSyncStatus('idle'), 3000);
+      }
+    }
+
+    // If we have Square data, create a real order
+    if (
+      selectedProduct &&
+      selectedProduct.squareItemId &&
+      squareLocations.length > 0
+    ) {
+      try {
+        // Create customer first
+        const customerData = {
+          idempotency_key: `customer-${Date.now()}`,
+          given_name: reservationData.customerName?.split(' ')[0] || 'Test',
+          family_name:
+            reservationData.customerName?.split(' ').slice(1).join(' ') ||
+            'Customer',
+          email_address: reservationData.email,
+          phone_number: reservationData.phone,
+          address: {
+            address_line_1: '123 Test St',
+            locality: 'New York',
+            administrative_district_level_1: 'NY',
+            postal_code: '10001',
+            country: 'US',
+          },
+        };
+
+        const customerResponse = await fetch('/api/square/customers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(customerData),
+        });
+
+        const customerResult = await customerResponse.json();
+
+        if (customerResult.success) {
+          // Create order for pickup
+          const orderData = {
+            order: {
+              location_id: squareLocations[0].id,
+              line_items: [
+                {
+                  quantity: '1',
+                  catalog_object_id:
+                    selectedProduct.squareVariationId ||
+                    selectedProduct.squareItemId,
+                  base_price_money: {
+                    amount: selectedProduct.price * 100,
+                    currency: 'USD',
+                  },
+                },
+              ],
+            },
+            idempotency_key: `order-${Date.now()}`,
+          };
+
+          const orderResponse = await fetch('/api/square/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData),
+          });
+
+          const orderResult = await orderResponse.json();
+
+          if (orderResult.success) {
+            console.log('Square order created successfully:', orderResult.data);
+            // You could also create a payment here if it's a prepay reservation
+          } else {
+            console.error('Failed to create Square order:', orderResult);
+          }
+        } else {
+          console.error('Failed to create Square customer:', customerResult);
+        }
+      } catch (error) {
+        console.error('Error creating Square order:', error);
+      }
+    }
+
+    setCurrentStep('reservation');
   };
 
   // Navigate to explore page
@@ -574,18 +948,36 @@ const ThreadressApp: React.FC = () => {
 
   // Generate mock search results
   const generateMockResults = (query: string, filters: Filters): Product[] => {
-    // Filter products based on search query
-    let filteredProducts = prototypeProducts.filter((product) => {
-      const searchTerms = query.toLowerCase().split(' ');
-      const productTerms = product.name.toLowerCase().split(' ');
-      const categoryTerms = product.category.toLowerCase().split(' ');
-      const styleTerms = product.style.toLowerCase().split(' ');
+    const searchTerms = query.toLowerCase().split(' ').filter(Boolean);
+    const categoryFromQuery = getCategoryFromQuery(query);
+    const moodQuery = isMoodQuery(query);
 
+    let filteredProducts = prototypeProducts.filter((product) => {
+      const productName = product.name.toLowerCase();
+      const productCategory = product.category.toLowerCase();
+      const productStyle = product.style.toLowerCase();
+      // Mood query: show all items that match any word
+      if (moodQuery) {
+        return searchTerms.some(
+          (term) =>
+            productName.includes(term) ||
+            productCategory.includes(term) ||
+            productStyle.includes(term)
+        );
+      }
+      // Category query: only show items in that category
+      if (categoryFromQuery) {
+        return (
+          productCategory.includes(categoryFromQuery.toLowerCase()) ||
+          productName.includes(categoryFromQuery.toLowerCase())
+        );
+      }
+      // Fuzzy match as fallback
       return searchTerms.some(
         (term) =>
-          productTerms.some((pt) => pt.includes(term)) ||
-          categoryTerms.some((ct) => ct.includes(term)) ||
-          styleTerms.some((st) => st.includes(term))
+          productName.includes(term) ||
+          productCategory.includes(term) ||
+          productStyle.includes(term)
       );
     });
 
@@ -606,12 +998,37 @@ const ThreadressApp: React.FC = () => {
       }
     }
 
-    // If no products match the search query, return all products
-    const productsToShow =
-      filteredProducts.length > 0 ? filteredProducts : prototypeProducts;
+    // If no products match the search query, return all products (as Product[])
+    if (filteredProducts.length === 0) {
+      return prototypeProducts
+        .map((product, index) => {
+          const boutique = mockBoutiques[index % mockBoutiques.length];
+          return {
+            id: `product-${index}`,
+            name: product.name,
+            price: product.price,
+            boutique: boutique.name,
+            boutiqueLocation: boutique.location,
+            boutiqueStyle: boutique.style,
+            boutiqueRating: boutique.rating,
+            imageUrl: product.imageUrl,
+            matchScore: Math.floor(Math.random() * 20) + 80, // 80-100% match
+            inStock: true,
+            sizes: ['XS', 'S', 'M', 'L', 'XL'],
+            colors: ['Black', 'White', 'Navy'],
+            tags: [product.style.toLowerCase(), product.category.toLowerCase()],
+            category: product.category,
+          };
+        })
+        .filter(
+          (product) =>
+            product.price >= filters.budget.min &&
+            product.price <= filters.budget.max
+        );
+    }
 
     // Map products to the required format and assign to boutiques
-    return productsToShow
+    return filteredProducts
       .map((product, index) => {
         const boutique = mockBoutiques[index % mockBoutiques.length];
         return {
@@ -818,39 +1235,50 @@ const ThreadressApp: React.FC = () => {
         <div className="flex flex-col items-center justify-center min-h-screen bg-white px-4">
           <div className="max-w-md w-full mx-auto flex flex-col items-center">
             <h1
-              className="text-4xl font-bold text-gray-900 mb-6 text-center tracking-tight"
-              style={{ letterSpacing: '-0.02em' }}
+              className="text-5xl md:text-6xl font-light text-neutral-900 mb-6 text-center font-serif"
+              style={{
+                fontFamily: 'Playfair Display, serif',
+                letterSpacing: '-0.02em',
+              }}
             >
               Welcome to Threadress
             </h1>
-            <p className="text-lg text-gray-500 mb-10 text-center">
+            <p
+              className="text-xl text-neutral-600 mb-10 text-center font-serif"
+              style={{ fontFamily: 'Playfair Display, serif' }}
+            >
               Discover and reserve unique fashion pieces at local boutiques.
             </p>
-            <div className="flex flex-col gap-6 w-full">
-              <button
-                className="w-full py-5 text-lg font-semibold bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors"
+            <div className="flex flex-col gap-4 w-full">
+              <MinimalButton
+                className="w-full py-4 text-lg font-semibold"
                 onClick={() => {
                   setLandingStep('main');
                   setCurrentStep('search');
                 }}
               >
                 Start Search
-              </button>
-              <button
-                className="w-full py-5 text-lg font-semibold bg-white border border-gray-900 text-gray-900 rounded-md hover:bg-gray-100 transition-colors"
+              </MinimalButton>
+              <MinimalButton
+                className="w-full py-4 text-lg font-semibold"
                 onClick={() => setLandingStep('quiz')}
               >
                 Take Optional Sizing Quiz
-              </button>
-              <button
-                className="w-full py-2 text-base text-gray-500 underline hover:text-gray-700 bg-transparent border-none"
+              </MinimalButton>
+              <MinimalButton
+                className="w-full py-2 text-base text-neutral-500 underline hover:text-neutral-700 bg-transparent border-none mt-2"
+                style={{
+                  fontFamily: 'Playfair Display, serif',
+                  border: 'none',
+                  background: 'transparent',
+                }}
                 onClick={() => {
                   setLandingStep('main');
                   setCurrentStep('search');
                 }}
               >
                 Skip
-              </button>
+              </MinimalButton>
             </div>
           </div>
         </div>
@@ -868,30 +1296,6 @@ const ThreadressApp: React.FC = () => {
               className="bg-white p-8 rounded-xl shadow-md w-full flex flex-col gap-4"
             >
               <label className="flex flex-col gap-1">
-                <span className="font-medium">Height (cm or in)</span>
-                <input
-                  type="text"
-                  value={sizing.height}
-                  onChange={(e) =>
-                    setSizing({ ...sizing, height: e.target.value })
-                  }
-                  className="border border-gray-300 rounded-md px-4 py-2"
-                  required
-                />
-              </label>
-              <label className="flex flex-col gap-1">
-                <span className="font-medium">Weight (kg or lbs)</span>
-                <input
-                  type="text"
-                  value={sizing.weight}
-                  onChange={(e) =>
-                    setSizing({ ...sizing, weight: e.target.value })
-                  }
-                  className="border border-gray-300 rounded-md px-4 py-2"
-                  required
-                />
-              </label>
-              <label className="flex flex-col gap-1">
                 <span className="font-medium">Top Size</span>
                 <select
                   value={sizing.top}
@@ -907,44 +1311,69 @@ const ThreadressApp: React.FC = () => {
                   <option value="M">M</option>
                   <option value="L">L</option>
                   <option value="XL">XL</option>
-                  <option value="XXL">XXL</option>
                 </select>
               </label>
               <label className="flex flex-col gap-1">
-                <span className="font-medium">Bottom Size</span>
-                <select
+                <span className="font-medium">
+                  Bottom Size (numeric or XS–XL)
+                </span>
+                <input
+                  type="text"
                   value={sizing.bottom}
                   onChange={(e) =>
                     setSizing({ ...sizing, bottom: e.target.value })
                   }
                   className="border border-gray-300 rounded-md px-4 py-2"
                   required
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="font-medium">Shoe Size (optional)</span>
+                <input
+                  type="text"
+                  value={sizing.shoe || ''}
+                  onChange={(e) =>
+                    setSizing({ ...sizing, shoe: e.target.value })
+                  }
+                  className="border border-gray-300 rounded-md px-4 py-2"
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="font-medium">Preferred Fit</span>
+                <select
+                  value={sizing.fit || ''}
+                  onChange={(e) =>
+                    setSizing({ ...sizing, fit: e.target.value })
+                  }
+                  className="border border-gray-300 rounded-md px-4 py-2"
+                  required
                 >
                   <option value="">Select</option>
-                  <option value="XS">XS</option>
-                  <option value="S">S</option>
-                  <option value="M">M</option>
-                  <option value="L">L</option>
-                  <option value="XL">XL</option>
-                  <option value="XXL">XXL</option>
+                  <option value="fitted">Fitted</option>
+                  <option value="loose">Loose</option>
                 </select>
               </label>
-              <button
+              <MinimalButton
                 type="submit"
-                className="w-full py-3 mt-4 bg-gray-900 text-white rounded-md font-semibold text-lg hover:bg-gray-800 transition-colors"
+                className="w-full py-3 mt-4 text-lg font-semibold"
               >
                 Save & Continue
-              </button>
-              <button
+              </MinimalButton>
+              <MinimalButton
                 type="button"
                 className="w-full py-2 text-base text-gray-500 underline hover:text-gray-700 bg-transparent border-none"
+                style={{
+                  fontFamily: 'Playfair Display, serif',
+                  border: 'none',
+                  background: 'transparent',
+                }}
                 onClick={() => {
                   setLandingStep('main');
                   setCurrentStep('search');
                 }}
               >
                 Skip
-              </button>
+              </MinimalButton>
             </form>
           </div>
         </div>
@@ -958,15 +1387,41 @@ const ThreadressApp: React.FC = () => {
             <div className="max-w-screen-2xl mx-auto px-8 py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
-                    <span className="text-white font-medium text-sm">T</span>
-                  </div>
                   <div>
                     <h1 className="text-xl font-semibold text-gray-900">
                       Threadress
                     </h1>
                     <p className="text-sm text-gray-500">Fashion Discovery</p>
                   </div>
+                  {/* Square Sync Status */}
+                  {/* {syncStatus !== 'idle' && (
+                    <div className="flex items-center space-x-2">
+                      {syncStatus === 'syncing' && (
+                        <>
+                          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                          <span className="text-xs text-blue-600">
+                            Syncing to Square...
+                          </span>
+                        </>
+                      )}
+                      {syncStatus === 'success' && (
+                        <>
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span className="text-xs text-green-600">
+                            Synced to Square
+                          </span>
+                        </>
+                      )}
+                      {syncStatus === 'error' && (
+                        <>
+                          <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                          <span className="text-xs text-red-600">
+                            Sync Failed
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  )} */}
                 </div>
                 {currentStep !== 'onboarding' && (
                   <div className="flex items-center space-x-3">
@@ -989,6 +1444,16 @@ const ThreadressApp: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* 1. Add geolocation notification/banner */}
+          {landingStep === 'main' &&
+            currentStep === 'search' &&
+            !userLocation && (
+              <div className="w-full bg-neutral-100 text-black text-center py-2 px-4 font-serif text-sm">
+                Location access is required to show distances to boutiques.
+                Please enable location in your browser for the best experience.
+              </div>
+            )}
 
           <main className="max-w-screen-2xl mx-auto px-8 py-10">
             {currentStep === 'search' && (
@@ -1087,6 +1552,9 @@ const ThreadressApp: React.FC = () => {
                     setReservationType(null);
                     setReservationCountdown(4 * 60 * 60);
                   }}
+                  userLocation={userLocation}
+                  boutiqueLocations={BOUTIQUE_LOCATIONS}
+                  getDistanceMiles={getDistanceMiles}
                 />
 
                 {/* Slide-over Filter Panel and Overlay (always render grid, overlay just dims) */}
@@ -1201,6 +1669,27 @@ const ThreadressApp: React.FC = () => {
                                         <div className="text-gray-900 text-sm font-medium">
                                           ${item.price}
                                         </div>
+                                        <div className="text-xs text-green-700 mt-1">
+                                          Available in your size in store.
+                                        </div>
+                                        {userLocation &&
+                                          BOUTIQUE_LOCATIONS &&
+                                          getDistanceMiles &&
+                                          BOUTIQUE_LOCATIONS[item.boutique] && (
+                                            <div className="text-xs text-gray-500 mt-1">
+                                              {getDistanceMiles(
+                                                userLocation.lat,
+                                                userLocation.lng,
+                                                BOUTIQUE_LOCATIONS[
+                                                  item.boutique
+                                                ].lat,
+                                                BOUTIQUE_LOCATIONS[
+                                                  item.boutique
+                                                ].lng
+                                              ).toFixed(1)}{' '}
+                                              miles away
+                                            </div>
+                                          )}
                                       </div>
                                     </div>
                                   ))}
@@ -1216,7 +1705,11 @@ const ThreadressApp: React.FC = () => {
                             user={user}
                             allProducts={allProducts}
                             onComplete={handleCompleteReservation}
-                            onBack={() => setShowProductModal(false)}
+                            onBack={() => {
+                              setShowProductModal(false);
+                              setModalReservationStep(null);
+                              setCurrentStep('results');
+                            }}
                             reservationType={modalReservationStep}
                           />
                         )}
@@ -1245,6 +1738,9 @@ const ThreadressApp: React.FC = () => {
                 onNavigateToSearch={() => setCurrentStep('search')}
               />
             )}
+
+            {/* Remove Square API Demo button from landing page */}
+            {/* {currentStep === 'square' && <SquareDemo />} */}
           </main>
 
           {/* Minimal Loading Overlay */}

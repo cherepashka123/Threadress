@@ -42,6 +42,9 @@ export interface Product {
   style?: string;
   material?: string;
   care?: string[];
+  // Square integration fields
+  squareItemId?: string;
+  squareVariationId?: string;
 }
 
 export interface Boutique {
@@ -84,6 +87,10 @@ export interface Reservation {
   qrCode: string;
   confirmationNumber: string;
   createdAt: Date;
+  // Customer information for Square integration
+  customerName?: string;
+  email?: string;
+  phone?: string;
 }
 
 export interface SearchResult {

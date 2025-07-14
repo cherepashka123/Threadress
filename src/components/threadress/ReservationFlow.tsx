@@ -129,6 +129,12 @@ const ReservationFlow: React.FC<ReservationFlowProps> = ({
 
   // Step 2: Confirmation with QR code
   if (step === 2) {
+    // Generate Google Maps link
+    const mapsQuery = encodeURIComponent(
+      `${product.boutique}, ${product.boutiqueLocation}`
+    );
+    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
+    const appleMapsUrl = `https://maps.apple.com/?q=${mapsQuery}`;
     return (
       <div className="max-w-lg mx-auto w-full text-center">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -148,6 +154,24 @@ const ReservationFlow: React.FC<ReservationFlowProps> = ({
           <div>
             {product.boutique}, {product.boutiqueLocation}
           </div>
+        </div>
+        <div className="mt-4 flex flex-col items-center gap-2">
+          <a
+            href={googleMapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-indigo-600 underline hover:text-indigo-800"
+          >
+            Open in Google Maps
+          </a>
+          <a
+            href={appleMapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-indigo-600 underline hover:text-indigo-800"
+          >
+            Open in Apple Maps
+          </a>
         </div>
         {reservationType === 'hold' && (
           <div className="text-gray-700 text-center mt-2">

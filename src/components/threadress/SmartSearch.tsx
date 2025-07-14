@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { User, Filters } from './types';
+import MinimalButton from '../MinimalButton';
 
 interface SmartSearchProps {
   user: User | null;
@@ -82,13 +83,28 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div
+      className="max-w-4xl mx-auto px-4 py-8"
+      style={{ fontFamily: 'Playfair Display, serif' }}
+    >
       <div className="text-center mb-12">
-        <h1 className="text-3xl font-light text-gray-900 mb-4">
-          What fashion piece are you searching for?
+        <h1
+          className="text-5xl md:text-6xl font-light text-neutral-900 mb-4 font-serif"
+          style={{
+            fontFamily: 'Playfair Display, serif',
+            letterSpacing: '-0.01em',
+          }}
+        >
+          Describe what you’re looking for
         </h1>
-        <p className="text-gray-600 text-lg">
-          Describe what you want and we'll find it at local boutiques
+        <p
+          className="text-neutral-600 text-xl font-serif mb-2"
+          style={{
+            fontFamily: 'Playfair Display, serif',
+            letterSpacing: '-0.01em',
+          }}
+        >
+          Describe it. We’ll help you find it — nearby, in real-time.
         </p>
       </div>
 
@@ -99,12 +115,14 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder="Search for a specific piece..."
-          className="w-full px-6 py-4 text-lg bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 transition-all duration-200"
+          placeholder="Start typing…"
+          className="w-full px-6 py-4 text-xl bg-white border-2 border-neutral-200 text-neutral-900 rounded-full focus:outline-none focus:ring-2 focus:ring-neutral-300 focus:border-neutral-400 transition-all duration-200 font-serif placeholder:text-neutral-400 placeholder:italic"
+          style={{ fontFamily: 'Playfair Display, serif' }}
         />
         <button
           onClick={handleSearch}
-          className="absolute right-2 top-1/2 -translate-y-1/2 px-6 py-2 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors duration-200"
+          className="absolute right-2 top-1/2 -translate-y-1/2 px-6 py-2 border border-neutral-200 text-neutral-900 bg-white rounded-full hover:border-neutral-400 focus:border-neutral-400 focus:ring-2 focus:ring-neutral-300 transition-colors duration-200 font-serif text-lg"
+          style={{ fontFamily: 'Playfair Display, serif' }}
         >
           Search
         </button>
@@ -112,67 +130,92 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
 
       {/* Search Examples */}
       <div className="mb-12">
-        <p className="text-sm text-gray-500 mb-4">Popular searches:</p>
-        <div className="flex flex-wrap gap-2">
+        <p
+          className="text-base text-neutral-400 mb-4 font-serif"
+          style={{ fontFamily: 'Playfair Display, serif' }}
+        >
+          Popular searches:
+        </p>
+        <div className="flex flex-wrap gap-3">
           {searchExamples.map((example) => (
-            <button
+            <MinimalButton
               key={example}
               onClick={() => handleExampleClick(example)}
-              className="px-4 py-2 text-sm text-gray-900 bg-transparent border-b-2 border-transparent hover:border-gray-900 rounded-none transition-all duration-200 focus:outline-none"
-              style={{ boxShadow: 'none' }}
+              className={`px-6 py-3 text-lg rounded-full font-serif transition-all duration-200 focus:outline-none ${
+                query === example
+                  ? 'border-neutral-900 text-neutral-900 bg-neutral-100'
+                  : 'border-neutral-200 text-neutral-900 bg-neutral-50 hover:bg-neutral-100 hover:border-neutral-400'
+              }`}
+              style={{
+                fontFamily: 'Playfair Display, serif',
+                letterSpacing: '-0.01em',
+                boxShadow: '0 1px 4px 0 rgba(0,0,0,0.03)',
+              }}
             >
               {example}
-            </button>
+            </MinimalButton>
           ))}
         </div>
       </div>
 
       {/* Filters Section - Modern minimalist */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-8">
+      <div className="bg-white rounded-2xl border border-neutral-200 p-6 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Location Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-3">
+            <label
+              className="block text-sm font-medium text-neutral-900 mb-3 font-serif"
+              style={{ fontFamily: 'Playfair Display, serif' }}
+            >
               Location
             </label>
             <div className="flex flex-wrap gap-2">
               {quickLocations.map((location) => (
-                <button
+                <MinimalButton
                   key={location}
                   onClick={() => handleLocationSelect(location)}
-                  className={`px-4 py-2 text-sm bg-transparent border-b-2 border-transparent hover:border-gray-900 rounded-none text-gray-900 transition-all duration-200 focus:outline-none ${
+                  className={`px-4 py-2 text-sm rounded-full font-serif transition-all duration-200 focus:outline-none ${
                     quickFilters.location === location
-                      ? 'border-gray-900 font-semibold'
-                      : ''
+                      ? 'border-neutral-900 text-neutral-900 bg-neutral-100'
+                      : 'border-neutral-200 text-neutral-900 bg-transparent hover:border-neutral-400'
                   }`}
-                  style={{ boxShadow: 'none' }}
+                  style={{
+                    fontFamily: 'Playfair Display, serif',
+                    boxShadow: 'none',
+                  }}
                 >
                   {location}
-                </button>
+                </MinimalButton>
               ))}
             </div>
           </div>
 
           {/* Budget Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-3">
+            <label
+              className="block text-sm font-medium text-neutral-900 mb-3 font-serif"
+              style={{ fontFamily: 'Playfair Display, serif' }}
+            >
               Budget
             </label>
             <div className="flex flex-wrap gap-2">
               {quickBudgets.map((budget) => (
-                <button
+                <MinimalButton
                   key={budget.label}
                   onClick={() => handleBudgetSelect(budget)}
-                  className={`px-4 py-2 text-sm bg-transparent border-b-2 border-transparent hover:border-gray-900 rounded-none text-gray-900 transition-all duration-200 focus:outline-none ${
+                  className={`px-4 py-2 text-sm rounded-full font-serif transition-all duration-200 focus:outline-none ${
                     quickFilters.budget.min === budget.min &&
                     quickFilters.budget.max === budget.max
-                      ? 'border-gray-900 font-semibold'
-                      : ''
+                      ? 'border-neutral-900 text-neutral-900 bg-neutral-100'
+                      : 'border-neutral-200 text-neutral-900 bg-transparent hover:border-neutral-400'
                   }`}
-                  style={{ boxShadow: 'none' }}
+                  style={{
+                    fontFamily: 'Playfair Display, serif',
+                    boxShadow: 'none',
+                  }}
                 >
                   {budget.label}
-                </button>
+                </MinimalButton>
               ))}
             </div>
           </div>
@@ -181,10 +224,13 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
 
       {/* User Preferences - Only shown if user has preferences */}
       {user?.preferences && (
-        <div className="bg-gray-50 rounded-2xl p-4">
+        <div
+          className="bg-neutral-100 rounded-2xl p-4 font-serif"
+          style={{ fontFamily: 'Playfair Display, serif' }}
+        >
           <div className="flex items-center space-x-2">
             <svg
-              className="w-4 h-4 text-gray-600"
+              className="w-4 h-4 text-neutral-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -196,7 +242,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-neutral-700">
               Using your style preferences
             </span>
           </div>
