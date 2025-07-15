@@ -14,9 +14,10 @@ export default function Statistics() {
             yet nearly 70% of sales are digitally influenced.
             <br />
             <span className="font-normal">
-              Threadress connects these worlds by helping you discover local
-              boutiques online with real-time inventory and quick in-store
-              pickup, supporting small businesses and seamless shopping.
+              <strong>Threadress</strong> connects these worlds by helping you
+              discover local boutiques online with real-time inventory and quick
+              in-store pickup, supporting small businesses and seamless
+              shopping.
             </span>
           </p>
         </div>

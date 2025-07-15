@@ -11,6 +11,7 @@ import ExplorePage from './threadress/ExplorePage';
 import { User, Product, Filters, Reservation } from './threadress/types';
 import { FaChevronDown } from 'react-icons/fa';
 import MinimalButton from './MinimalButton';
+import Fuse from 'fuse.js';
 
 const BOUTIQUE_LOCATIONS: Record<string, { lat: number; lng: number }> = {
   'Atelier Nouveau': { lat: 40.724, lng: -74.001 }, // SoHo
@@ -580,6 +581,22 @@ const ThreadressApp: React.FC = () => {
     );
   }, []);
 
+  // Set up Fuse.js options for vector-like fuzzy search
+  const fuseOptions = {
+    keys: ['name', 'style', 'tags', 'category'],
+    threshold: 0.4, // Lower = stricter, higher = fuzzier
+    includeScore: true,
+    minMatchCharLength: 2,
+  };
+  const fuse = useRef<Fuse<any> | null>(null);
+
+  // Set up Fuse instance whenever allProducts changes
+  useEffect(() => {
+    if (allProducts.length > 0) {
+      fuse.current = new Fuse(allProducts, fuseOptions);
+    }
+  }, [allProducts]);
+
   // In useEffect, trigger geolocation request when landingStep === 'main' and currentStep === 'search'
   useEffect(() => {
     if (
@@ -946,110 +963,15 @@ const ThreadressApp: React.FC = () => {
     if (currentStep === 'explore') setCurrentStep('search');
   };
 
-  // Generate mock search results
+  // Replace generateMockResults with Fuse.js-powered search
   const generateMockResults = (query: string, filters: Filters): Product[] => {
-    const searchTerms = query.toLowerCase().split(' ').filter(Boolean);
-    const categoryFromQuery = getCategoryFromQuery(query);
-    const moodQuery = isMoodQuery(query);
-
-    let filteredProducts = prototypeProducts.filter((product) => {
-      const productName = product.name.toLowerCase();
-      const productCategory = product.category.toLowerCase();
-      const productStyle = product.style.toLowerCase();
-      // Mood query: show all items that match any word
-      if (moodQuery) {
-        return searchTerms.some(
-          (term) =>
-            productName.includes(term) ||
-            productCategory.includes(term) ||
-            productStyle.includes(term)
-        );
-      }
-      // Category query: only show items in that category
-      if (categoryFromQuery) {
-        return (
-          productCategory.includes(categoryFromQuery.toLowerCase()) ||
-          productName.includes(categoryFromQuery.toLowerCase())
-        );
-      }
-      // Fuzzy match as fallback
-      return searchTerms.some(
-        (term) =>
-          productName.includes(term) ||
-          productCategory.includes(term) ||
-          productStyle.includes(term)
-      );
-    });
-
-    // Filter by category if set
-    const categoryFilter = filters.category ?? [];
-    if (
-      (Array.isArray(categoryFilter) && categoryFilter.length > 0) ||
-      typeof categoryFilter === 'string'
-    ) {
-      if (Array.isArray(categoryFilter)) {
-        filteredProducts = filteredProducts.filter((product) =>
-          categoryFilter.includes(product.category)
-        );
-      } else if (typeof categoryFilter === 'string') {
-        filteredProducts = filteredProducts.filter(
-          (product) => product.category === categoryFilter
-        );
-      }
-    }
-
-    // If no products match the search query, return all products (as Product[])
-    if (filteredProducts.length === 0) {
-      return prototypeProducts
-        .map((product, index) => {
-          const boutique = mockBoutiques[index % mockBoutiques.length];
-          return {
-            id: `product-${index}`,
-            name: product.name,
-            price: product.price,
-            boutique: boutique.name,
-            boutiqueLocation: boutique.location,
-            boutiqueStyle: boutique.style,
-            boutiqueRating: boutique.rating,
-            imageUrl: product.imageUrl,
-            matchScore: Math.floor(Math.random() * 20) + 80, // 80-100% match
-            inStock: true,
-            sizes: ['XS', 'S', 'M', 'L', 'XL'],
-            colors: ['Black', 'White', 'Navy'],
-            tags: [product.style.toLowerCase(), product.category.toLowerCase()],
-            category: product.category,
-          };
-        })
-        .filter(
-          (product) =>
-            product.price >= filters.budget.min &&
-            product.price <= filters.budget.max
-        );
-    }
-
-    // Map products to the required format and assign to boutiques
-    return filteredProducts
-      .map((product, index) => {
-        const boutique = mockBoutiques[index % mockBoutiques.length];
-        return {
-          id: `product-${index}`,
-          name: product.name,
-          price: product.price,
-          boutique: boutique.name,
-          boutiqueLocation: boutique.location,
-          boutiqueStyle: boutique.style,
-          boutiqueRating: boutique.rating,
-          imageUrl: product.imageUrl,
-          matchScore: Math.floor(Math.random() * 20) + 80, // 80-100% match
-          inStock: true,
-          sizes: ['XS', 'S', 'M', 'L', 'XL'],
-          colors: ['Black', 'White', 'Navy'],
-          tags: [product.style.toLowerCase(), product.category.toLowerCase()],
-          category: product.category,
-        };
-      })
+    if (!query.trim() || !fuse.current) return [];
+    const results = fuse.current.search(query);
+    // Optionally, filter by budget or other filters here
+    return results
+      .map((result: any) => result.item)
       .filter(
-        (product) =>
+        (product: any) =>
           product.price >= filters.budget.min &&
           product.price <= filters.budget.max
       );

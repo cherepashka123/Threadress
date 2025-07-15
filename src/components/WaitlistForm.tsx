@@ -26,6 +26,13 @@ export default function WaitlistForm() {
         >
           Join the Waitlist
         </h2>
+        <p
+          className="text-lg text-gray-500 mb-8 font-serif"
+          style={{ fontFamily: 'Playfair Display, serif' }}
+        >
+          Become part of the Threadress community and be the first to hear about
+          exclusive launches, events, and insider updates.
+        </p>
         <form className="flex flex-col sm:flex-row gap-4 justify-center">
           <input
             className="flex-1 px-6 py-3 border border-gray-300 rounded-full text-lg font-serif"

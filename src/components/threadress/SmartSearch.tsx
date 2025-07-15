@@ -24,11 +24,11 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
   });
 
   const searchExamples = [
-    'maxi denim dress',
-    'white swimsuit',
+    'maxi dress',
+    'one piece swimsuit',
     'ballet flats',
     'printed scarf',
-    'leather sandals',
+    'sandals',
   ];
 
   const quickLocations = [

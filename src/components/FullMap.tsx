@@ -269,20 +269,20 @@ export default function FullMap() {
               L.divIcon({
                 className: 'custom-marker',
                 html: `<div class="
-                w-10 h-10 
-                flex items-center justify-center 
+              w-10 h-10 
+              flex items-center justify-center 
                 ${isActive ? 'bg-black' : isInRoute ? 'bg-purple-600' : 'bg-white'} 
-                rounded-full shadow-lg 
-                transform transition-all duration-300 
-                ${isActive ? 'scale-110' : 'hover:scale-105'}
+              rounded-full shadow-lg 
+              transform transition-all duration-300 
+              ${isActive ? 'scale-110' : 'hover:scale-105'}
                 border-2 ${isActive ? 'border-black' : isInRoute ? 'border-purple-600' : 'border-gray-300'}
                 relative
-              ">
+            ">
                 <div class="${isActive ? 'text-white' : isInRoute ? 'text-white' : 'text-black'} text-sm">
-                  <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-                    <path d="M12 0C7.58 0 4 3.58 4 8c0 5.25 8 13 8 13s8-7.75 8-13c0-4.42-3.58-8-8-8zm0 11c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
-                  </svg>
-                </div>
+                <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                  <path d="M12 0C7.58 0 4 3.58 4 8c0 5.25 8 13 8 13s8-7.75 8-13c0-4.42-3.58-8-8-8zm0 11c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
+                </svg>
+              </div>
                 ${
                   isInRoute && routeIndex !== undefined
                     ? `
@@ -292,7 +292,7 @@ export default function FullMap() {
                 `
                     : ''
                 }
-              </div>`,
+            </div>`,
                 iconSize: [40, 40],
                 iconAnchor: [20, 40],
               });
