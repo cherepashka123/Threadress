@@ -46,79 +46,75 @@ export default function HomePage() {
         </div>
         <div className="relative max-w-4xl mx-auto px-6 z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 32 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <div className="relative inline-block">
-              <h2
-                className="text-4xl md:text-5xl font-light tracking-[-0.02em] text-neutral-900 mb-4 font-serif"
-                style={{ fontFamily: 'Playfair Display, serif' }}
-              >
-                Discover Local Fashion
-              </h2>
-              <motion.div
-                className="absolute left-0 right-0 bottom-0 h-0.5 bg-purple-200 rounded-full"
-                initial={{ scaleX: 0 }}
-                whileInView={{ scaleX: 1 }}
-                transition={{ duration: 1.2, ease: 'easeInOut' }}
-                style={{ originX: 0 }}
-              />
-            </div>
-            <p
-              className="text-xl text-neutral-800 font-light max-w-xl mx-auto font-serif"
+            <motion.h2
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.4, delay: 0.1, ease: 'easeInOut' }}
+              className="text-4xl md:text-5xl font-light tracking-[-0.02em] text-neutral-900 mb-4 font-serif"
+              style={{ fontFamily: 'Playfair Display, serif' }}
+            >
+              Discover Local Fashion
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, delay: 0.3, ease: 'easeInOut' }}
+              className="text-xl text-neutral-800 font-light max-w-xl mx-auto font-serif mb-2"
               style={{ fontFamily: 'Playfair Display, serif' }}
             >
               Explore real-time inventory from local boutiques and discover
               unique pieces near you
-            </p>
+            </motion.p>
           </motion.div>
 
           <div className="flex flex-col sm:flex-row gap-8 justify-center items-center mb-12">
             <motion.div
               initial={{ opacity: 0, y: 32 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
+              transition={{ duration: 1, delay: 0.5, ease: 'easeInOut' }}
             >
               <Link href="/threadress" className="block group relative">
-                <motion.button
-                  className="px-12 py-4 border border-purple-300 text-purple-700 rounded-full font-serif bg-white hover:bg-purple-50 transition-all duration-200 shadow-none focus:outline-none focus:ring-2 focus:ring-purple-200 text-lg relative overflow-hidden"
-                  style={{ fontFamily: 'Playfair Display, serif' }}
-                  whileHover={{ scale: 1.02, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
+                <button
+                  className="px-12 py-4 border border-gray-300 text-gray-900 rounded-full font-serif bg-white hover:bg-gray-50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 shadow-none focus:outline-none focus:ring-2 focus:ring-gray-200 text-lg relative overflow-hidden"
+                  style={{
+                    fontFamily: 'Playfair Display, serif',
+                    background: 'white',
+                  }}
                 >
                   Try Prototype
-                  <span className="absolute left-1/2 -translate-x-1/2 bottom-2 w-0 group-hover:w-3/4 h-0.5 bg-purple-300 transition-all duration-300" />
-                </motion.button>
+                </button>
               </Link>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 32 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.3 }}
+              transition={{ duration: 1, delay: 0.7, ease: 'easeInOut' }}
             >
               <Link href="/map" className="block group relative">
-                <motion.button
-                  className="px-12 py-4 border border-gray-300 text-gray-700 rounded-full font-serif bg-white hover:bg-gray-50 transition-all duration-200 shadow-none focus:outline-none focus:ring-2 focus:ring-gray-200 text-lg relative overflow-hidden"
-                  style={{ fontFamily: 'Playfair Display, serif' }}
-                  whileHover={{ scale: 1.02, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
+                <button
+                  className="px-12 py-4 border border-gray-300 text-gray-900 rounded-full font-serif bg-white hover:bg-gray-50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 shadow-none focus:outline-none focus:ring-2 focus:ring-gray-200 text-lg relative overflow-hidden"
+                  style={{
+                    fontFamily: 'Playfair Display, serif',
+                    background: 'white',
+                  }}
                 >
                   Find Boutiques
-                  <span className="absolute left-1/2 -translate-x-1/2 bottom-2 w-0 group-hover:w-3/4 h-0.5 bg-gray-300 transition-all duration-300" />
-                </motion.button>
+                </button>
               </Link>
             </motion.div>
           </div>
 
-          {/* Big AND divider - perfectly centered between buttons and waitlist */}
-          <div className="w-full flex justify-center mb-0 mt-24">
+          {/* Minimal AND divider - lighter and more minimal */}
+          <div className="w-full flex justify-center mb-8 mt-32">
             <span
               className="font-serif text-[7vw] md:text-[5vw] font-semibold select-none"
               style={{
-                color: 'rgba(0,0,0,0.06)',
+                color: 'rgba(0,0,0,0.03)',
                 fontFamily: 'Playfair Display, serif',
                 letterSpacing: '-0.04em',
                 lineHeight: 1,

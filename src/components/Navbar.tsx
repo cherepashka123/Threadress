@@ -20,7 +20,7 @@ export default function Navbar() {
       </div>
 
       {/* Center: Primary links (hidden on mobile, shown on lg+) */}
-      <div className="hidden lg:flex flex-1 justify-center items-center space-x-10">
+      <div className="hidden lg:flex flex-1 justify-center items-center space-x-10 ml-16">
         <Link
           href="/threadress"
           className="text-neutral-900 hover:text-purple-600 transition-colors font-medium"
