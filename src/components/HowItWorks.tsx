@@ -132,7 +132,7 @@ export default function HowItWorks() {
         scrollSnapType: 'y mandatory',
       }}
     >
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -141,21 +141,21 @@ export default function HowItWorks() {
         >
           <TypingTitle text="How It Works" />
           <p
-            className="text-xl text-neutral-800 font-light max-w-xl font-serif text-left"
+            className="text-base sm:text-xl text-neutral-800 font-light max-w-xl font-serif text-left"
             style={{ fontFamily: 'Playfair Display, serif' }}
           >
             Experience the future of local fashion discovery powered by AI
           </p>
         </motion.div>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-4">
           {steps.map((step, index) => (
             <div
               key={step.id}
               ref={(el) => {
                 stepRefs.current[index] = el;
               }}
-              className={`snap-start min-h-[320px] max-h-[400px] flex flex-col justify-center items-start px-6 py-6 transition-all duration-300 rounded-xl w-full mx-auto
+              className={`snap-start min-h-[220px] sm:min-h-[320px] max-h-[400px] flex flex-col justify-center items-start px-2 sm:px-6 py-4 sm:py-6 transition-all duration-300 rounded-xl w-full mx-auto
                 ${
                   activeStep === step.id
                     ? 'font-semibold text-neutral-900 scale-[1.02] bg-white/70 backdrop-blur-sm border-l-2 border-purple-400 shadow-none'
@@ -164,7 +164,7 @@ export default function HowItWorks() {
                 text-left`}
               style={{
                 fontFamily: 'Playfair Display, serif',
-                fontSize: '1.15rem',
+                fontSize: '1rem',
                 letterSpacing: '0.01em',
                 scrollSnapAlign: 'start',
               }}
@@ -172,9 +172,13 @@ export default function HowItWorks() {
               <div className="mb-1 text-xs tracking-widest uppercase opacity-60 select-none">
                 0{step.id}
               </div>
-              <div className="text-lg md:text-xl mb-1">{step.feature}</div>
-              <div className="text-2xl md:text-3xl mb-2">{step.title}</div>
-              <div className="text-lg text-neutral-700 font-light leading-relaxed">
+              <div className="text-base sm:text-lg md:text-xl mb-1">
+                {step.feature}
+              </div>
+              <div className="text-lg sm:text-2xl md:text-3xl mb-2">
+                {step.title}
+              </div>
+              <div className="text-sm sm:text-lg text-neutral-700 font-light leading-relaxed">
                 {step.description}
               </div>
             </div>

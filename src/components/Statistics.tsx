@@ -6,7 +6,7 @@ export default function Statistics() {
       <div className="max-w-3xl mx-auto px-6 text-center">
         <div className="mb-6">
           <p
-            className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 leading-snug font-serif"
+            className="text-lg sm:text-2xl md:text-4xl font-light text-gray-900 leading-snug font-serif"
             style={{ fontFamily: 'Playfair Display, serif' }}
           >
             54% of apparel shoppers prefer buying in-store,

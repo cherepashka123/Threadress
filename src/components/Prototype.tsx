@@ -32,11 +32,11 @@ export default function Prototype({
 
   return (
     <div
-      className="flex justify-center my-8 bg-white"
+      className="flex justify-center my-4 sm:my-8 bg-white"
       style={{ fontFamily: 'Playfair Display, serif' }}
     >
       <motion.div
-        className="relative rounded-2xl overflow-hidden w-full max-w-[90vw] md:max-w-[1000px] aspect-[5/3] bg-white"
+        className="relative rounded-2xl overflow-hidden w-full max-w-[98vw] sm:max-w-[90vw] md:max-w-[1000px] aspect-[4/3] sm:aspect-[5/3] bg-white"
         style={{
           rotateX: springRotateX,
           rotateY: springRotateY,

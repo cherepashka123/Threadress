@@ -116,7 +116,7 @@ export default function Features() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-4xl md:text-5xl font-light text-gray-900 mb-16 font-serif text-center"
+          className="text-3xl sm:text-4xl md:text-5xl font-light text-gray-900 mb-10 sm:mb-16 font-serif text-center"
           style={{ fontFamily: 'Playfair Display, serif' }}
         >
           Key Features
@@ -124,8 +124,32 @@ export default function Features() {
 
         {/* Horizontal scrolling features */}
         <div className="relative">
+          <div className="sm:hidden flex flex-col gap-4 items-center justify-center">
+            {features.map((feature, index) => (
+              <div
+                key={feature.title}
+                className="bg-white rounded-xl p-5 border border-gray-100 text-center w-full flex-shrink-0"
+              >
+                <div className="mb-3 text-2xl flex items-center justify-center">
+                  {feature.icon}
+                </div>
+                <h3
+                  className="text-lg font-semibold mb-1 font-serif"
+                  style={{ fontFamily: 'Playfair Display, serif' }}
+                >
+                  {feature.title}
+                </h3>
+                <p
+                  className="text-sm text-gray-700 font-serif"
+                  style={{ fontFamily: 'Playfair Display, serif' }}
+                >
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
           <motion.div
-            className="flex gap-8"
+            className="hidden sm:flex gap-8"
             animate={{ x: [0, -1000] }}
             transition={{
               duration: 20,

@@ -59,7 +59,7 @@ export default function Hero() {
             >
               <div className="space-y-2 max-w-2xl mx-auto text-left">
                 <motion.h1
-                  className="text-5xl sm:text-6xl lg:text-7xl font-light tracking-tight text-gray-900 leading-[1.05] font-serif text-left"
+                  className="text-3xl sm:text-5xl lg:text-7xl font-light tracking-tight text-gray-900 leading-[1.05] font-serif text-left"
                   style={{ fontFamily: 'Playfair Display, serif' }}
                   initial={{ opacity: 0, y: 0 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -73,7 +73,7 @@ export default function Hero() {
                 </motion.h1>
 
                 <motion.p
-                  className="text-xl sm:text-2xl text-gray-700 max-w-2xl leading-relaxed font-serif text-left"
+                  className="text-base sm:text-2xl text-gray-700 max-w-2xl leading-relaxed font-serif text-left mt-4 mb-6"
                   style={{ fontFamily: 'Playfair Display, serif' }}
                   initial={{ opacity: 0, y: 0 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -84,7 +84,7 @@ export default function Hero() {
                 </motion.p>
 
                 {/* Demo Video (local, no controls, no overlays) - placed under subheading */}
-                <div className="w-full flex justify-start mt-8">
+                <div className="w-full flex justify-start mt-4 sm:mt-8">
                   <video
                     src="/demo.mp4"
                     autoPlay
@@ -102,14 +102,14 @@ export default function Hero() {
               </div>
 
               <motion.div
-                className="flex flex-col items-center justify-center gap-3 mt-6"
+                className="flex flex-col items-center justify-center gap-3 mt-4 sm:mt-6 w-full"
                 initial={{ opacity: 0, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.5 }}
               >
                 <motion.a
                   href="#waitlist"
-                  className="px-8 py-3 border border-gray-300 text-black rounded-full font-serif bg-white hover:bg-gray-50 transition-colors duration-200 shadow-none focus:outline-none focus:ring-2 focus:ring-gray-200 text-lg cursor-pointer"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 border border-gray-300 text-black rounded-full font-serif bg-white hover:bg-gray-50 transition-colors duration-200 shadow-none focus:outline-none focus:ring-2 focus:ring-gray-200 text-base sm:text-lg cursor-pointer"
                   style={{ fontFamily: 'Playfair Display, serif' }}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}

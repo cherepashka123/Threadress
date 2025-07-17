@@ -54,7 +54,7 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.4, delay: 0.1, ease: 'easeInOut' }}
-              className="text-4xl md:text-5xl font-light tracking-[-0.02em] text-neutral-900 mb-4 font-serif"
+              className="text-3xl sm:text-4xl md:text-5xl font-light tracking-[-0.02em] text-neutral-900 mb-4 font-serif"
               style={{ fontFamily: 'Playfair Display, serif' }}
             >
               Discover Local Fashion
@@ -63,7 +63,7 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, delay: 0.3, ease: 'easeInOut' }}
-              className="text-xl text-neutral-800 font-light max-w-xl mx-auto font-serif mb-2"
+              className="text-base sm:text-xl text-neutral-800 font-light max-w-xl mx-auto font-serif mb-2"
               style={{ fontFamily: 'Playfair Display, serif' }}
             >
               Explore real-time inventory from local boutiques and discover
@@ -71,15 +71,18 @@ export default function HomePage() {
             </motion.p>
           </motion.div>
 
-          <div className="flex flex-col sm:flex-row gap-8 justify-center items-center mb-12">
+          <div className="flex flex-col gap-4 sm:flex-row sm:gap-8 justify-center items-center mb-12 w-full max-w-lg mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 32 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.5, ease: 'easeInOut' }}
             >
-              <Link href="/threadress" className="block group relative">
+              <Link
+                href="/threadress"
+                className="block group relative w-full sm:w-auto"
+              >
                 <button
-                  className="px-12 py-4 border border-gray-300 text-gray-900 rounded-full font-serif bg-white hover:bg-gray-50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 shadow-none focus:outline-none focus:ring-2 focus:ring-gray-200 text-lg relative overflow-hidden"
+                  className="w-full sm:w-auto px-8 sm:px-12 py-4 border border-gray-300 text-gray-900 rounded-full font-serif bg-white hover:bg-gray-50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 shadow-none focus:outline-none focus:ring-2 focus:ring-gray-200 text-lg relative overflow-hidden"
                   style={{
                     fontFamily: 'Playfair Display, serif',
                     background: 'white',
@@ -95,9 +98,12 @@ export default function HomePage() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.7, ease: 'easeInOut' }}
             >
-              <Link href="/map" className="block group relative">
+              <Link
+                href="/map"
+                className="block group relative w-full sm:w-auto"
+              >
                 <button
-                  className="px-12 py-4 border border-gray-300 text-gray-900 rounded-full font-serif bg-white hover:bg-gray-50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 shadow-none focus:outline-none focus:ring-2 focus:ring-gray-200 text-lg relative overflow-hidden"
+                  className="w-full sm:w-auto px-8 sm:px-12 py-4 border border-gray-300 text-gray-900 rounded-full font-serif bg-white hover:bg-gray-50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 shadow-none focus:outline-none focus:ring-2 focus:ring-gray-200 text-lg relative overflow-hidden"
                   style={{
                     fontFamily: 'Playfair Display, serif',
                     background: 'white',
@@ -110,9 +116,9 @@ export default function HomePage() {
           </div>
 
           {/* Minimal AND divider - lighter and more minimal */}
-          <div className="w-full flex justify-center mb-8 mt-32">
+          <div className="w-full flex justify-center mb-8 mt-20 sm:mt-32">
             <span
-              className="font-serif text-[7vw] md:text-[5vw] font-semibold select-none"
+              className="font-serif text-[10vw] sm:text-[7vw] md:text-[5vw] font-semibold select-none"
               style={{
                 color: 'rgba(0,0,0,0.03)',
                 fontFamily: 'Playfair Display, serif',
