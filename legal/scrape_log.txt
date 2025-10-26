@@ -1,0 +1,249 @@
+2025-10-21 23:10:22,811 - INFO - Starting FlyingSolo.nyc scraping...
+2025-10-21 23:10:23,079 - INFO - robots.txt check passed
+2025-10-21 23:10:23,079 - INFO - Fetching sitemap: https://flyingsolo.nyc/sitemap_index.xml
+2025-10-21 23:10:24,044 - ERROR - Error fetching sitemap: 404 Client Error: Not Found for url: https://flyingsolo.nyc/sitemap_index.xml
+2025-10-21 23:10:24,044 - ERROR - No product URLs found
+2025-10-21 23:11:25,128 - INFO - Starting FlyingSolo.nyc scraping...
+2025-10-21 23:11:25,271 - INFO - robots.txt check passed
+2025-10-21 23:11:25,271 - INFO - Trying shop URL: https://flyingsolo.nyc/shop/
+2025-10-21 23:11:27,724 - INFO - Found 100 products from /shop/
+2025-10-21 23:11:27,724 - INFO - Found 100 unique product URLs
+2025-10-21 23:11:27,724 - INFO - Scraping 50 products...
+2025-10-21 23:11:27,724 - INFO - Scraping: https://flyingsolo.nyc/product/house-of-29-x-zoe-chicco-itty-bitty-pave-diamond-fuck-necklace/
+2025-10-21 23:11:28,866 - ERROR - Error scraping https://flyingsolo.nyc/product/house-of-29-x-zoe-chicco-itty-bitty-pave-diamond-fuck-necklace/: find() got multiple values for argument 'name'
+2025-10-21 23:11:30,371 - INFO - Scraping: https://flyingsolo.nyc/product/mara-megelea-the-biarritz-low-wave-ring/
+2025-10-21 23:11:30,539 - ERROR - Error scraping https://flyingsolo.nyc/product/mara-megelea-the-biarritz-low-wave-ring/: find() got multiple values for argument 'name'
+2025-10-21 23:11:32,044 - INFO - Scraping: https://flyingsolo.nyc/product/mara-megelea-the-santa-monica-ring/
+2025-10-21 23:11:32,195 - ERROR - Error scraping https://flyingsolo.nyc/product/mara-megelea-the-santa-monica-ring/: find() got multiple values for argument 'name'
+2025-10-21 23:11:33,700 - INFO - Scraping: https://flyingsolo.nyc/product/iza-by-silvia-davila-grace-malachite-ring/
+2025-10-21 23:11:35,013 - ERROR - Error scraping https://flyingsolo.nyc/product/iza-by-silvia-davila-grace-malachite-ring/: find() got multiple values for argument 'name'
+2025-10-21 23:11:36,518 - INFO - Scraping: https://flyingsolo.nyc/product/iza-by-silvia-davila-frances-25/
+2025-10-21 23:11:37,683 - ERROR - Error scraping https://flyingsolo.nyc/product/iza-by-silvia-davila-frances-25/: find() got multiple values for argument 'name'
+2025-10-21 23:11:39,187 - INFO - Scraping: https://flyingsolo.nyc/product/guidomaggi-shanghai-elevator-boots/
+2025-10-21 23:11:40,326 - ERROR - Error scraping https://flyingsolo.nyc/product/guidomaggi-shanghai-elevator-boots/: find() got multiple values for argument 'name'
+2025-10-21 23:11:41,831 - INFO - Scraping: https://flyingsolo.nyc/product/jade-arcadia-lavender-jade-heart-necklace/
+2025-10-21 23:11:42,035 - ERROR - Error scraping https://flyingsolo.nyc/product/jade-arcadia-lavender-jade-heart-necklace/: find() got multiple values for argument 'name'
+2025-10-21 23:11:43,540 - INFO - Scraping: https://flyingsolo.nyc/product/richard-rochon-kill-your-darlings-50ml-perfume-fragrance/
+2025-10-21 23:11:44,700 - ERROR - Error scraping https://flyingsolo.nyc/product/richard-rochon-kill-your-darlings-50ml-perfume-fragrance/: find() got multiple values for argument 'name'
+2025-10-21 23:11:46,202 - INFO - Scraping: https://flyingsolo.nyc/product/kakera-gold-earrings-2/
+2025-10-21 23:11:47,279 - ERROR - Error scraping https://flyingsolo.nyc/product/kakera-gold-earrings-2/: find() got multiple values for argument 'name'
+2025-10-21 23:11:48,783 - INFO - Scraping: https://flyingsolo.nyc/product/singletree-lane-the-struggle-is-real-wearable-art-top/
+2025-10-21 23:11:49,958 - ERROR - Error scraping https://flyingsolo.nyc/product/singletree-lane-the-struggle-is-real-wearable-art-top/: find() got multiple values for argument 'name'
+2025-10-21 23:11:51,463 - INFO - Scraped 10/50 products
+2025-10-21 23:11:51,463 - INFO - Scraping: https://flyingsolo.nyc/product/les-soeurs-de-noe-parfum-call-me-iris-20-ml/
+2025-10-21 23:11:52,830 - ERROR - Error scraping https://flyingsolo.nyc/product/les-soeurs-de-noe-parfum-call-me-iris-20-ml/: find() got multiple values for argument 'name'
+2025-10-21 23:11:54,335 - INFO - Scraping: https://flyingsolo.nyc/product/seyer-blue-essential-cardholder/
+2025-10-21 23:11:55,491 - ERROR - Error scraping https://flyingsolo.nyc/product/seyer-blue-essential-cardholder/: find() got multiple values for argument 'name'
+2025-10-21 23:11:56,996 - INFO - Scraping: https://flyingsolo.nyc/product/somsara-gold-ruby-pendant/
+2025-10-21 23:11:58,063 - ERROR - Error scraping https://flyingsolo.nyc/product/somsara-gold-ruby-pendant/: find() got multiple values for argument 'name'
+2025-10-21 23:11:59,566 - INFO - Scraping: https://flyingsolo.nyc/product/j-forks-designs-turquoise-necklace-13/
+2025-10-21 23:12:00,723 - ERROR - Error scraping https://flyingsolo.nyc/product/j-forks-designs-turquoise-necklace-13/: find() got multiple values for argument 'name'
+2025-10-21 23:12:02,228 - INFO - Scraping: https://flyingsolo.nyc/product/minna-minna-black-flat-sandals-sandal/
+2025-10-21 23:12:03,668 - ERROR - Error scraping https://flyingsolo.nyc/product/minna-minna-black-flat-sandals-sandal/: find() got multiple values for argument 'name'
+2025-10-21 23:12:05,173 - INFO - Scraping: https://flyingsolo.nyc/product/sevensons-jewelry-silver-earrings-9/
+2025-10-21 23:12:06,289 - ERROR - Error scraping https://flyingsolo.nyc/product/sevensons-jewelry-silver-earrings-9/: find() got multiple values for argument 'name'
+2025-10-21 23:12:07,794 - INFO - Scraping: https://flyingsolo.nyc/product/mahy-grey-lamb-skin-medium-handle/
+2025-10-21 23:12:08,983 - ERROR - Error scraping https://flyingsolo.nyc/product/mahy-grey-lamb-skin-medium-handle/: find() got multiple values for argument 'name'
+2025-10-21 23:12:10,489 - INFO - Scraping: https://flyingsolo.nyc/product/2madison-avenue-signature-black-samantha-in-black-lace/
+2025-10-21 23:12:11,565 - ERROR - Error scraping https://flyingsolo.nyc/product/2madison-avenue-signature-black-samantha-in-black-lace/: find() got multiple values for argument 'name'
+2025-10-21 23:12:13,070 - INFO - Scraping: https://flyingsolo.nyc/product/heart-of-zena-agate-ring/
+2025-10-21 23:12:14,230 - ERROR - Error scraping https://flyingsolo.nyc/product/heart-of-zena-agate-ring/: find() got multiple values for argument 'name'
+2025-10-21 23:12:15,733 - INFO - Scraping: https://flyingsolo.nyc/product/iza-by-silvia-davila-emmy-ring/
+2025-10-21 23:12:16,904 - ERROR - Error scraping https://flyingsolo.nyc/product/iza-by-silvia-davila-emmy-ring/: find() got multiple values for argument 'name'
+2025-10-21 23:12:18,409 - INFO - Scraped 20/50 products
+2025-10-21 23:12:18,410 - INFO - Scraping: https://flyingsolo.nyc/product/pina-colada-outfit-white-sweater-dress/
+2025-10-21 23:12:19,574 - ERROR - Error scraping https://flyingsolo.nyc/product/pina-colada-outfit-white-sweater-dress/: find() got multiple values for argument 'name'
+2025-10-21 23:12:21,079 - INFO - Scraping: https://flyingsolo.nyc/product/lnb-jewellery-lavander-quartz-large-heart-necklace/
+2025-10-21 23:12:22,245 - ERROR - Error scraping https://flyingsolo.nyc/product/lnb-jewellery-lavander-quartz-large-heart-necklace/: find() got multiple values for argument 'name'
+2025-10-21 23:12:23,748 - INFO - Scraping: https://flyingsolo.nyc/product/rough-and-tumble-vintage-orange-evening-dress/
+2025-10-21 23:12:24,804 - ERROR - Error scraping https://flyingsolo.nyc/product/rough-and-tumble-vintage-orange-evening-dress/: find() got multiple values for argument 'name'
+2025-10-21 23:12:26,309 - INFO - Scraping: https://flyingsolo.nyc/product/ilike-organic-skin-care-collagen-moisturizer/
+2025-10-21 23:12:27,390 - ERROR - Error scraping https://flyingsolo.nyc/product/ilike-organic-skin-care-collagen-moisturizer/: find() got multiple values for argument 'name'
+2025-10-21 23:12:28,895 - INFO - Scraping: https://flyingsolo.nyc/product/asco-green-large-handle/
+2025-10-21 23:12:29,994 - ERROR - Error scraping https://flyingsolo.nyc/product/asco-green-large-handle/: find() got multiple values for argument 'name'
+2025-10-21 23:12:31,500 - INFO - Scraping: https://flyingsolo.nyc/product/me-esse-blue-knee-length-skirt/
+2025-10-21 23:12:32,766 - ERROR - Error scraping https://flyingsolo.nyc/product/me-esse-blue-knee-length-skirt/: find() got multiple values for argument 'name'
+2025-10-21 23:12:34,272 - INFO - Scraping: https://flyingsolo.nyc/product/oakbark-chrome-green-gold-canvas-large-luggage/
+2025-10-21 23:12:35,350 - ERROR - Error scraping https://flyingsolo.nyc/product/oakbark-chrome-green-gold-canvas-large-luggage/: find() got multiple values for argument 'name'
+2025-10-21 23:12:36,855 - INFO - Scraping: https://flyingsolo.nyc/product/bynumide-handmade-pottery-checkers-set/
+2025-10-21 23:12:37,015 - ERROR - Error scraping https://flyingsolo.nyc/product/bynumide-handmade-pottery-checkers-set/: find() got multiple values for argument 'name'
+2025-10-21 23:12:38,520 - INFO - Scraping: https://flyingsolo.nyc/product/two-chances-jewellery-vera-necklace/
+2025-10-21 23:12:39,624 - ERROR - Error scraping https://flyingsolo.nyc/product/two-chances-jewellery-vera-necklace/: find() got multiple values for argument 'name'
+2025-10-21 23:12:41,129 - INFO - Scraping: https://flyingsolo.nyc/product/wayoa-tahitian-pearl-necklace-malachite-and-mother-of-pearl/
+2025-10-21 23:12:42,289 - ERROR - Error scraping https://flyingsolo.nyc/product/wayoa-tahitian-pearl-necklace-malachite-and-mother-of-pearl/: find() got multiple values for argument 'name'
+2025-10-21 23:12:43,794 - INFO - Scraped 30/50 products
+2025-10-21 23:12:43,794 - INFO - Scraping: https://flyingsolo.nyc/product/asco-purple-small-shoulder/
+2025-10-21 23:12:44,855 - ERROR - Error scraping https://flyingsolo.nyc/product/asco-purple-small-shoulder/: find() got multiple values for argument 'name'
+2025-10-21 23:12:46,360 - INFO - Scraping: https://flyingsolo.nyc/product/shinaraa-high-waisted-flowy-shorts/
+2025-10-21 23:12:47,525 - ERROR - Error scraping https://flyingsolo.nyc/product/shinaraa-high-waisted-flowy-shorts/: find() got multiple values for argument 'name'
+2025-10-21 23:12:49,031 - INFO - Scraping: https://flyingsolo.nyc/product/secil-akkaya-black-mini-skirt/
+2025-10-21 23:12:50,122 - ERROR - Error scraping https://flyingsolo.nyc/product/secil-akkaya-black-mini-skirt/: find() got multiple values for argument 'name'
+2025-10-21 23:12:51,625 - INFO - Scraping: https://flyingsolo.nyc/product/karen-morris-millinery-brittany-hat/
+2025-10-21 23:12:52,833 - ERROR - Error scraping https://flyingsolo.nyc/product/karen-morris-millinery-brittany-hat/: find() got multiple values for argument 'name'
+2025-10-21 23:12:54,339 - INFO - Scraping: https://flyingsolo.nyc/product/constasy-natural-fluffy-eco-fur-snood/
+2025-10-21 23:12:55,387 - ERROR - Error scraping https://flyingsolo.nyc/product/constasy-natural-fluffy-eco-fur-snood/: find() got multiple values for argument 'name'
+2025-10-21 23:12:56,892 - INFO - Scraping: https://flyingsolo.nyc/product/kakera-green-gold-earrings/
+2025-10-21 23:12:58,056 - ERROR - Error scraping https://flyingsolo.nyc/product/kakera-green-gold-earrings/: find() got multiple values for argument 'name'
+2025-10-21 23:12:59,562 - INFO - Scraping: https://flyingsolo.nyc/product/saint-cruz-hair-goop-all-natural-plant-based-styling-cream/
+2025-10-21 23:13:00,729 - ERROR - Error scraping https://flyingsolo.nyc/product/saint-cruz-hair-goop-all-natural-plant-based-styling-cream/: find() got multiple values for argument 'name'
+2025-10-21 23:13:02,234 - INFO - Scraping: https://flyingsolo.nyc/product/yayoi-solid-perfume-yuzu-honey/
+2025-10-21 23:13:03,287 - ERROR - Error scraping https://flyingsolo.nyc/product/yayoi-solid-perfume-yuzu-honey/: find() got multiple values for argument 'name'
+2025-10-21 23:13:04,792 - INFO - Scraping: https://flyingsolo.nyc/product/re-bytonydrawbridge-clear-lapis-lazuli-ring-black/
+2025-10-21 23:13:06,092 - ERROR - Error scraping https://flyingsolo.nyc/product/re-bytonydrawbridge-clear-lapis-lazuli-ring-black/: find() got multiple values for argument 'name'
+2025-10-21 23:13:07,597 - INFO - Scraping: https://flyingsolo.nyc/product/cera-sine-cera-creamy-dream-oil-perfume-fragrance/
+2025-10-21 23:13:08,682 - ERROR - Error scraping https://flyingsolo.nyc/product/cera-sine-cera-creamy-dream-oil-perfume-fragrance/: find() got multiple values for argument 'name'
+2025-10-21 23:13:10,188 - INFO - Scraped 40/50 products
+2025-10-21 23:13:10,188 - INFO - Scraping: https://flyingsolo.nyc/product/monzlapur-classic-mesh-top-unisex/
+2025-10-21 23:13:11,271 - ERROR - Error scraping https://flyingsolo.nyc/product/monzlapur-classic-mesh-top-unisex/: find() got multiple values for argument 'name'
+2025-10-21 23:13:12,776 - INFO - Scraping: https://flyingsolo.nyc/product/lisette-jewels-multi-color-lapis-lazuli-necklace/
+2025-10-21 23:13:14,040 - ERROR - Error scraping https://flyingsolo.nyc/product/lisette-jewels-multi-color-lapis-lazuli-necklace/: find() got multiple values for argument 'name'
+2025-10-21 23:13:15,545 - INFO - Scraping: https://flyingsolo.nyc/product/stories-parfums-no-01-eau-de-parfum-100ml-fragrance/
+2025-10-21 23:13:16,797 - ERROR - Error scraping https://flyingsolo.nyc/product/stories-parfums-no-01-eau-de-parfum-100ml-fragrance/: find() got multiple values for argument 'name'
+2025-10-21 23:13:18,298 - INFO - Scraping: https://flyingsolo.nyc/product/waves-studio-tan-beige-aura-artwork/
+2025-10-21 23:13:19,567 - ERROR - Error scraping https://flyingsolo.nyc/product/waves-studio-tan-beige-aura-artwork/: find() got multiple values for argument 'name'
+2025-10-21 23:13:21,072 - INFO - Scraping: https://flyingsolo.nyc/product/kakera-gold-aquamarine-necklace/
+2025-10-21 23:13:22,263 - ERROR - Error scraping https://flyingsolo.nyc/product/kakera-gold-aquamarine-necklace/: find() got multiple values for argument 'name'
+2025-10-21 23:13:23,766 - INFO - Scraping: https://flyingsolo.nyc/product/davisage-beaute-sasu-face-xcercise-white-visager-lcd-monitor/
+2025-10-21 23:13:24,872 - ERROR - Error scraping https://flyingsolo.nyc/product/davisage-beaute-sasu-face-xcercise-white-visager-lcd-monitor/: find() got multiple values for argument 'name'
+2025-10-21 23:13:26,374 - INFO - Scraping: https://flyingsolo.nyc/product/lona-studios-blue-aquamarine-necklace-2/
+2025-10-21 23:13:27,559 - ERROR - Error scraping https://flyingsolo.nyc/product/lona-studios-blue-aquamarine-necklace-2/: find() got multiple values for argument 'name'
+2025-10-21 23:13:29,064 - INFO - Scraping: https://flyingsolo.nyc/product/ilike-organic-skin-care-vita-c-toner-with-apple-and-lemon/
+2025-10-21 23:13:30,158 - ERROR - Error scraping https://flyingsolo.nyc/product/ilike-organic-skin-care-vita-c-toner-with-apple-and-lemon/: find() got multiple values for argument 'name'
+2025-10-21 23:13:31,663 - INFO - Scraping: https://flyingsolo.nyc/product/ana-malik-black-blazer-jacket-blazer/
+2025-10-21 23:13:32,771 - ERROR - Error scraping https://flyingsolo.nyc/product/ana-malik-black-blazer-jacket-blazer/: find() got multiple values for argument 'name'
+2025-10-21 23:13:34,273 - INFO - Scraping: https://flyingsolo.nyc/product/modern-natured-store-gen-coll-removable-waist-beads-tribal-print/
+2025-10-21 23:13:35,344 - ERROR - Error scraping https://flyingsolo.nyc/product/modern-natured-store-gen-coll-removable-waist-beads-tribal-print/: find() got multiple values for argument 'name'
+2025-10-21 23:13:36,849 - INFO - Scraped 50/50 products
+2025-10-21 23:13:36,849 - INFO - Saved 0 products to public/data/flyingsolo/products.csv
+2025-10-21 23:13:36,849 - INFO - Scraping completed. Found 0 products.
+
+{
+  "timestamp": "2025-10-21 23:13:36",
+  "site": "FlyingSolo.nyc",
+  "products_scraped": 0,
+  "sitemap_url": "https://flyingsolo.nyc/sitemap_index.xml",
+  "data_directory": "public/data/flyingsolo",
+  "images_directory": "public/data/flyingsolo/images"
+}
+2025-10-21 23:13:55,692 - INFO - Starting FlyingSolo.nyc scraping...
+2025-10-21 23:13:55,890 - INFO - robots.txt check passed
+2025-10-21 23:13:55,890 - INFO - Trying shop URL: https://flyingsolo.nyc/shop/
+2025-10-21 23:13:58,853 - INFO - Found 100 products from /shop/
+2025-10-21 23:13:58,853 - INFO - Found 100 unique product URLs
+2025-10-21 23:13:58,853 - INFO - Scraping 50 products...
+2025-10-21 23:13:58,853 - INFO - Scraping: https://flyingsolo.nyc/product/two-chances-jewellery-aurora-earrings/
+2025-10-21 23:14:00,976 - INFO - Extracted: Two Chances Jewellery Aurora Earrings - $9
+2025-10-21 23:14:02,481 - INFO - Scraping: https://flyingsolo.nyc/product/lona-studios-purple-amethyst-necklace/
+2025-10-21 23:14:03,959 - INFO - Extracted: LONA STUDIOS Purple Amethyst Necklace - $9
+2025-10-21 23:14:05,464 - INFO - Scraping: https://flyingsolo.nyc/product/moody-gray-tahitian-lei-bracelet/
+2025-10-21 23:14:06,933 - INFO - Extracted: MOODY GRAY Tahitian Lei Bracelet - $9
+2025-10-21 23:14:08,436 - INFO - Scraping: https://flyingsolo.nyc/product/scent-of-africa-hage-eau-de-parfum-100-ml/
+2025-10-21 23:14:09,768 - INFO - Extracted: Scent Of Africa Hagé Eau De Parfum 100 ML - $9
+2025-10-21 23:14:11,273 - INFO - Scraping: https://flyingsolo.nyc/product/les-soeurs-de-noe-red-berries-elixir-sample/
+2025-10-21 23:14:12,569 - INFO - Extracted: Les Soeurs de Noé RED BERRIES ELIXIR sample - $9
+2025-10-21 23:14:14,074 - INFO - Scraping: https://flyingsolo.nyc/product/asco-pink-mini-crossbody/
+2025-10-21 23:14:15,354 - INFO - Extracted: ASCO Pink Mini Crossbody - $9
+2025-10-21 23:14:16,859 - INFO - Scraping: https://flyingsolo.nyc/product/modern-natured-gen-coll-e-choke-black/
+2025-10-21 23:14:18,209 - INFO - Extracted: Modern Natured GEN COLL: E-choke, Black - $9
+2025-10-21 23:14:19,714 - INFO - Scraping: https://flyingsolo.nyc/product/infiltrator-strawberry-hat/
+2025-10-21 23:14:21,046 - INFO - Extracted: INFILTRATOR Strawberry Hat - $9
+2025-10-21 23:14:22,547 - INFO - Scraping: https://flyingsolo.nyc/product/les-soeurs-de-noe-parfum-cuir-noir-black-edition-100-ml/
+2025-10-21 23:14:23,872 - INFO - Extracted: Les Soeurs De Noe Parfum Cuir Noir Black Edition 100 Ml - $9
+2025-10-21 23:14:25,373 - INFO - Scraping: https://flyingsolo.nyc/product/elfeya-cosmetics-skincare-4/
+2025-10-21 23:14:26,793 - INFO - Extracted: Elfeya Cosmetics Skincare - $9
+2025-10-21 23:14:28,298 - INFO - Scraped 10/50 products
+2025-10-21 23:14:28,298 - INFO - Scraping: https://flyingsolo.nyc/product/a-shimus-red-work-dress/
+2025-10-21 23:14:29,619 - INFO - Extracted: A.SHIMUS Red Work Dress - $9
+2025-10-21 23:14:31,125 - INFO - Scraping: https://flyingsolo.nyc/product/hiromi-asai-grey-knee-length-shorts/
+2025-10-21 23:14:32,528 - INFO - Extracted: HIROMI ASAI Grey Knee Length Shorts - $9
+2025-10-21 23:14:34,033 - INFO - Scraping: https://flyingsolo.nyc/product/re-bytonydrawbridge-green-acrylic-ring/
+2025-10-21 23:14:35,491 - INFO - Extracted: Re…ByTonyDrawbridge Green Acrylic Ring - $9
+2025-10-21 23:14:36,996 - INFO - Scraping: https://flyingsolo.nyc/product/itu-golf-wear/
+2025-10-21 23:14:38,520 - INFO - Extracted: Itu Golf Wear - $9
+2025-10-21 23:14:40,025 - INFO - Scraping: https://flyingsolo.nyc/product/925-siller-silver-cubic-zirconia-earrings-3/
+2025-10-21 23:14:41,454 - INFO - Extracted: 925 Siller Silver Cubic Zirconia Earrings - $9
+2025-10-21 23:14:42,959 - INFO - Scraping: https://flyingsolo.nyc/product/hautelife-world-zurich-grey/
+2025-10-21 23:14:44,233 - INFO - Extracted: HauteLife World Zurich Grey - $9
+2025-10-21 23:14:45,738 - INFO - Scraping: https://flyingsolo.nyc/product/stories-parfums-no-01-hand-body-wash-500ml/
+2025-10-21 23:14:47,035 - INFO - Extracted: STORIES Parfums No.01 Hand & Body Wash 500ml - $9
+2025-10-21 23:14:48,540 - INFO - Scraping: https://flyingsolo.nyc/product/ilike-organic-skin-care-quaddefense-essence-with-sea-buckthorn/
+2025-10-21 23:14:49,956 - INFO - Extracted: Ilike Organic Skin Care QuadDefense Essence With Sea Buckthorn - $9
+2025-10-21 23:14:51,461 - INFO - Scraping: https://flyingsolo.nyc/product/baszicare-abeo-lux-spot-treatment-20ml/
+2025-10-21 23:14:52,865 - INFO - Extracted: Baszicare ABEO lux spot treatment 20ML - $9
+2025-10-21 23:14:54,367 - INFO - Scraping: https://flyingsolo.nyc/product/house-of-29-x-melinda-maria-serpent-herringbone-collar-16/
+2025-10-21 23:14:54,781 - INFO - Extracted: House Of 29 X Melinda Maria Serpent Herringbone Collar 16″ - $9
+2025-10-21 23:14:56,286 - INFO - Scraped 20/50 products
+2025-10-21 23:14:56,286 - INFO - Scraping: https://flyingsolo.nyc/product/elena-rudenko-black-clinked-convertible-crop-top/
+2025-10-21 23:14:57,858 - INFO - Extracted: ELENA RUDENKO black clinked convertible crop top - $9
+2025-10-21 23:14:59,363 - INFO - Scraping: https://flyingsolo.nyc/product/atelier-mythique-gold-silver-bangle/
+2025-10-21 23:15:00,696 - INFO - Extracted: Atelier Mythique Gold Silver Bangle - $9
+2025-10-21 23:15:02,201 - INFO - Scraping: https://flyingsolo.nyc/product/hn-jewelry-green-jade-ring-2/
+2025-10-21 23:15:03,713 - INFO - Extracted: HN JEWELRY Green Jade Ring - $9
+2025-10-21 23:15:05,219 - INFO - Scraping: https://flyingsolo.nyc/product/fundae-black-high-heel-pump/
+2025-10-21 23:15:07,060 - INFO - Extracted: Fundae Black High Heel Pump - $9
+2025-10-21 23:15:08,565 - INFO - Scraping: https://flyingsolo.nyc/product/daniel-silverstain-x-yabayay-los-muertos-pompom-hoodie/
+2025-10-21 23:15:10,024 - INFO - Extracted: DANIEL SILVERSTAIN x YABAYAY LOS MUERTOS POMPOM HOODIE - $9
+2025-10-21 23:15:11,529 - INFO - Scraping: https://flyingsolo.nyc/product/bettyvonchic-metallic-mini-skirt/
+2025-10-21 23:15:12,100 - INFO - Extracted: BettyVonChic Metallic Mini Skirt - $9
+2025-10-21 23:15:13,605 - INFO - Scraping: https://flyingsolo.nyc/product/sparkle-collection-black-biker-jacket-jacket-blazer-2/
+2025-10-21 23:15:15,019 - INFO - Extracted: Sparkle Collection Black Biker Jacket Jacket/Blazer - $9
+2025-10-21 23:15:16,524 - INFO - Scraping: https://flyingsolo.nyc/product/god-given-talent-ivory-cream-fashion-hat/
+2025-10-21 23:15:18,067 - INFO - Extracted: God Given Talent Ivory/Cream Fashion Hat - $9
+2025-10-21 23:15:19,572 - INFO - Scraping: https://flyingsolo.nyc/product/simeogieme-maxi-mary-dress/
+2025-10-21 23:15:21,038 - INFO - Extracted: SIMEOGIEME Maxi Mary Dress - $9
+2025-10-21 23:15:22,544 - INFO - Scraping: https://flyingsolo.nyc/product/vanimy-wave-faith-coin-medallion-necklace/
+2025-10-21 23:15:23,992 - INFO - Extracted: Vanimy Wave Faith Coin Medallion Necklace - $9
+2025-10-21 23:15:25,498 - INFO - Scraped 30/50 products
+2025-10-21 23:15:25,498 - INFO - Scraping: https://flyingsolo.nyc/product/925-siller-silver-cubic-zirconia-bracelet-2/
+2025-10-21 23:15:26,911 - INFO - Extracted: 925 Siller Silver Cubic Zirconia Bracelet - $9
+2025-10-21 23:15:28,414 - INFO - Scraping: https://flyingsolo.nyc/product/asco-white-waist/
+2025-10-21 23:15:28,864 - INFO - Extracted: ASCO White Waist - $9
+2025-10-21 23:15:30,369 - INFO - Scraping: https://flyingsolo.nyc/product/manufaktur-boscana-gmbh-skirt/
+2025-10-21 23:15:31,972 - INFO - Extracted: Manufaktur Boscana GmbH Skirt - $9
+2025-10-21 23:15:33,477 - INFO - Scraping: https://flyingsolo.nyc/product/lona-studios-clear-crystal-necklace-2/
+2025-10-21 23:15:34,756 - INFO - Extracted: LONA STUDIOS Clear Crystal Necklace - $9
+2025-10-21 23:15:36,262 - INFO - Scraping: https://flyingsolo.nyc/product/singletree-lane-crab-of-the-full-moon-wearable-art-top/
+2025-10-21 23:15:37,737 - INFO - Extracted: SingleTree Lane Crab Of The Full Moon Wearable Art Top - $9
+2025-10-21 23:15:39,242 - INFO - Scraping: https://flyingsolo.nyc/product/rough-and-tumble-vintage-purple-evening-dress-2/
+2025-10-21 23:15:40,620 - INFO - Extracted: Rough And Tumble Vintage Purple Evening Dress - $9
+2025-10-21 23:15:42,125 - INFO - Scraping: https://flyingsolo.nyc/product/horse-spirit-sport-active-bodysuit-white-gold/
+2025-10-21 23:15:43,519 - INFO - Extracted: HORSE Spirit Sport Active Bodysuit White/Gold - $9
+2025-10-21 23:15:45,024 - INFO - Scraping: https://flyingsolo.nyc/product/monzlapur-forrest-satin-wrap-dress-with-crystals-limited-edition/
+2025-10-21 23:15:46,451 - INFO - Extracted: MONZLAPUR – Forrest Satin Wrap Dress with Crystals – Limited Edition - $9
+2025-10-21 23:15:47,956 - INFO - Scraping: https://flyingsolo.nyc/product/jeunesse-doree-paris-saint-honore-white-diamond-necklace/
+2025-10-21 23:15:48,413 - INFO - Extracted: Jeunesse DoréE Paris Saint-Honoré White Diamond Necklace - $9
+2025-10-21 23:15:49,919 - INFO - Scraping: https://flyingsolo.nyc/product/jiwya-bhuro-handmade-unisex-jacket/
+2025-10-21 23:15:51,338 - INFO - Extracted: Jiwya Bhuro Handmade Unisex Jacket - $9
+2025-10-21 23:15:52,838 - INFO - Scraped 40/50 products
+2025-10-21 23:15:52,839 - INFO - Scraping: https://flyingsolo.nyc/product/nubo-baby-deer-embroidered-collar-baby-jumpsuit/
+2025-10-21 23:15:54,294 - INFO - Extracted: Nubo Baby Deer Embroidered Collar Baby Jumpsuit - $9
+2025-10-21 23:15:55,799 - INFO - Scraping: https://flyingsolo.nyc/product/cambaj-beige-resille-thong/
+2025-10-21 23:15:57,309 - INFO - Extracted: Cambaj Beige Resille Thong - $9
+2025-10-21 23:15:58,814 - INFO - Scraping: https://flyingsolo.nyc/product/house-of-29-x-melinda-maria-julian-triple-diamond-bracelet-7-5/
+2025-10-21 23:16:00,253 - INFO - Extracted: House Of 29 X Melinda Maria Julian Triple Diamond Bracelet 7.5″ - $9
+2025-10-21 23:16:01,758 - INFO - Scraping: https://flyingsolo.nyc/product/jeremie-st-croix-bronze-patent-leather-small-crossbody/
+2025-10-21 23:16:03,327 - INFO - Extracted: JEREMIE ST.CROIX Bronze Patent Leather Small Crossbody - $9
+2025-10-21 23:16:04,830 - INFO - Scraping: https://flyingsolo.nyc/product/me-esse-blue-knee-length-skirt/
+2025-10-21 23:16:06,366 - INFO - Extracted: Me Esse Blue Knee Length Skirt - $9
+2025-10-21 23:16:07,872 - INFO - Scraping: https://flyingsolo.nyc/product/axel-hardy-tm-blue-cocktail-dress/
+2025-10-21 23:16:09,289 - INFO - Extracted: AXEL HARDY TM Blue Cocktail Dress - $9
+2025-10-21 23:16:10,795 - INFO - Scraping: https://flyingsolo.nyc/product/kakera-gold-ear-cuff/
+2025-10-21 23:16:12,169 - INFO - Extracted: KAKERA Gold Ear Cuff - $9
+2025-10-21 23:16:13,674 - INFO - Scraping: https://flyingsolo.nyc/product/skinteq-eye-care-skincare/
+2025-10-21 23:16:15,023 - INFO - Extracted: Skinteq puff off eye cream anti-puff anti-wrinkle & dark circles - $9
+2025-10-21 23:16:16,528 - INFO - Scraping: https://flyingsolo.nyc/product/secil-akkaya-white-evening-dress/
+2025-10-21 23:16:18,003 - INFO - Extracted: SEÇİL AKKAYA White Evening Dress - $9
+2025-10-21 23:16:19,508 - INFO - Scraping: https://flyingsolo.nyc/product/iza-by-silvia-davila-abby/
+2025-10-21 23:16:20,847 - INFO - Extracted: IZA BY SILVIA DAVILA – ABBY - $9
+2025-10-21 23:16:22,352 - INFO - Scraped 50/50 products
+2025-10-21 23:16:22,353 - INFO - Saved 50 products to public/data/flyingsolo/products.csv
+2025-10-21 23:16:22,353 - INFO - Scraping completed. Found 50 products.
+
+{
+  "timestamp": "2025-10-21 23:16:22",
+  "site": "FlyingSolo.nyc",
+  "products_scraped": 50,
+  "sitemap_url": "https://flyingsolo.nyc/sitemap_index.xml",
+  "data_directory": "public/data/flyingsolo",
+  "images_directory": "public/data/flyingsolo/images"
+}

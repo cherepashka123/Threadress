@@ -28,6 +28,12 @@ export default function Navbar() {
           Prototype
         </Link>
         <Link
+          href="/lab"
+          className="text-neutral-900 hover:text-indigo-600 transition-colors"
+        >
+          Search Lab
+        </Link>
+        <Link
           href="/map"
           className="text-neutral-900 hover:text-indigo-600 transition-colors"
         >
@@ -128,6 +134,13 @@ export default function Navbar() {
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Prototype
+                    </Link>
+                    <Link
+                      href="/lab"
+                      className="px-4 py-2 hover:bg-indigo-50 rounded-lg transition-colors text-indigo-700"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Search Lab
                     </Link>
                     <Link
                       href="/map"

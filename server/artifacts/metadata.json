@@ -1,0 +1,15 @@
+{
+  "num_products": 130,
+  "text_dim": 384,
+  "img_dim": 512,
+  "weights": {
+    "text": 0.5,
+    "image": 0.3,
+    "keyword": 0.2
+  },
+  "data_sources": [
+    "original",
+    "flyingsolo"
+  ],
+  "flyingsolo_products": 50
+}
