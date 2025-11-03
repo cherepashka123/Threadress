@@ -31,16 +31,25 @@ export async function GET() {
     // headers are row 1
     const headers = rows[0].map((h) => String(h).trim());
     const toObj = (r: string[]) =>
-      headers.reduce((acc, h, i) => {
-        acc[h] = r[i] ?? '';
-        return acc;
-      }, {} as Record<string, string>);
+      headers.reduce(
+        (acc, h, i) => {
+          acc[h] = r[i] ?? '';
+          return acc;
+        },
+        {} as Record<string, string>
+      );
 
-    const inventory = rows.slice(1).filter(r => r.some(c => c && String(c).trim() !== '')).map(toObj);
+    const inventory = rows
+      .slice(1)
+      .filter((r) => r.some((c) => c && String(c).trim() !== ''))
+      .map(toObj);
 
     return NextResponse.json({ ok: true, count: inventory.length, inventory });
   } catch (err: any) {
     console.error('GET /api/inventory error:', err?.message || err);
-    return NextResponse.json({ ok: false, error: 'Failed to fetch Google Sheet.' }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: 'Failed to fetch Google Sheet.' },
+      { status: 500 }
+    );
   }
 }

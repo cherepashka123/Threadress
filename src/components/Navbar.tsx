@@ -34,6 +34,12 @@ export default function Navbar() {
           Search Lab
         </Link>
         <Link
+          href="/multimodal-test"
+          className="text-neutral-900 hover:text-purple-600 transition-colors font-medium"
+        >
+          Multimodal Search
+        </Link>
+        <Link
           href="/map"
           className="text-neutral-900 hover:text-indigo-600 transition-colors"
         >
@@ -141,6 +147,13 @@ export default function Navbar() {
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Search Lab
+                    </Link>
+                    <Link
+                      href="/multimodal-test"
+                      className="px-4 py-2 hover:bg-purple-50 rounded-lg transition-colors font-medium text-purple-700"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Multimodal Search
                     </Link>
                     <Link
                       href="/map"
