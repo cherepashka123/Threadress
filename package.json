@@ -13,6 +13,8 @@
     "@fontsource/poppins": "^5.2.6",
     "@headlessui/react": "^2.2.4",
     "@heroicons/react": "^2.2.0",
+    "@huggingface/inference": "^4.13.0",
+    "@qdrant/js-client-rest": "^1.15.1",
     "@square/web-sdk": "^2.1.0",
     "daisyui": "^5.0.43",
     "dotenv": "^16.5.0",
