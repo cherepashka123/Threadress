@@ -18,6 +18,31 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET(req: NextRequest) {
   try {
+    // Check environment variables first
+    if (!process.env.HF_TOKEN) {
+      console.error('HF_TOKEN environment variable is not set');
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Server configuration error',
+          message: 'HF_TOKEN environment variable is missing. Please add it to Vercel environment variables.',
+        },
+        { status: 500 }
+      );
+    }
+
+    if (!process.env.QDRANT_URL || !process.env.QDRANT_API_KEY) {
+      console.error('Qdrant environment variables are not set');
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Server configuration error',
+          message: 'QDRANT_URL or QDRANT_API_KEY environment variables are missing. Please add them to Vercel environment variables.',
+        },
+        { status: 500 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const q = searchParams.get('q') || '';
     const imageUrl = searchParams.get('imageUrl') || '';
@@ -80,6 +105,38 @@ export async function GET(req: NextRequest) {
         vector: queryVector,
       },
     };
+
+    // Check if collection has data before searching
+    let collectionInfo;
+    try {
+      collectionInfo = await qdrant.getCollection(INVENTORY_COLLECTION);
+      if (!collectionInfo.points_count || collectionInfo.points_count === 0) {
+        console.error('Collection is empty - no data synced');
+        return NextResponse.json(
+          {
+            ok: false,
+            error: 'Database is empty',
+            message: 'No products found in database. Please sync data first by calling /api/inventory-sync or running the sync script.',
+            details: {
+              collection: INVENTORY_COLLECTION,
+              points_count: 0,
+            },
+          },
+          { status: 500 }
+        );
+      }
+    } catch (collectionError: any) {
+      console.error('Failed to check collection:', collectionError);
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Database connection error',
+          message: 'Failed to connect to database. Please check QDRANT_URL and QDRANT_API_KEY environment variables.',
+          details: collectionError instanceof Error ? collectionError.message : 'Unknown error',
+        },
+        { status: 500 }
+      );
+    }
 
     // Perform initial search
     const res = await qdrant.search(INVENTORY_COLLECTION, qdrantSearchParams);
@@ -293,11 +350,31 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(response);
   } catch (err: any) {
     console.error('GET /api/inventory/search error:', err?.message || err);
+    console.error('Stack trace:', err instanceof Error ? err.stack : 'No stack trace');
+    
+    // Provide helpful error messages for common issues
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    let userMessage = 'Search failed';
+    let details = errorMessage;
+
+    if (errorMessage.includes('HF_TOKEN') || errorMessage.includes('Hugging Face')) {
+      userMessage = 'Embedding service error';
+      details = 'HF_TOKEN environment variable may be missing or invalid. Please check Vercel environment variables.';
+    } else if (errorMessage.includes('Qdrant') || errorMessage.includes('qdrant')) {
+      userMessage = 'Database connection error';
+      details = 'QDRANT_URL or QDRANT_API_KEY may be incorrect. Please check Vercel environment variables.';
+    } else if (errorMessage.includes('collection') || errorMessage.includes('Collection')) {
+      userMessage = 'Database collection error';
+      details = 'The database collection may not exist or be accessible. Try syncing data first.';
+    }
+
     return NextResponse.json(
       {
         ok: false,
-        error: 'Search failed',
-        details: err instanceof Error ? err.message : 'Unknown error',
+        error: userMessage,
+        details,
+        debug: process.env.NODE_ENV === 'development' ? errorMessage : undefined,
+        hint: 'Visit /api/check-database to diagnose the issue',
       },
       { status: 500 }
     );
