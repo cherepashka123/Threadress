@@ -37,8 +37,9 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
   if (texts.length === 0) return [];
 
   // Try direct CLIP service first if available (produces 512-dim vectors)
-  // Only in development - never in production (Vercel)
-  if (clipDirect && !process.env.VERCEL && process.env.NODE_ENV !== 'production') {
+  // Works if CLIP_SERVICE_URL is set to a remote service (not localhost)
+  // Localhost only works in development
+  if (clipDirect) {
     try {
       const embeddings = await clipDirect.embedTextBatch(texts);
       // Convert 512-dim CLIP embeddings to 384-dim for compatibility
@@ -85,8 +86,8 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
 }
 
 export async function embedTextSingle(text: string): Promise<number[]> {
-  // Try direct CLIP service first if available (only in development)
-  if (clipDirect && !process.env.VERCEL && process.env.NODE_ENV !== 'production') {
+  // Try direct CLIP service first if available (works with remote CLIP service)
+  if (clipDirect) {
     try {
       const embedding = await clipDirect.embedTextSingle(text);
       // CLIP returns 512-dim, but we need 384 for compatibility
@@ -144,8 +145,8 @@ export async function embedImageBatch(
       // Use CLIP for real image embeddings
       // Try direct CLIP service first (if available), then Hugging Face, then fallback
       try {
-        // Prefer direct CLIP service if available (only in development)
-        if (clipDirect && !process.env.VERCEL && process.env.NODE_ENV !== 'production') {
+        // Prefer direct CLIP service if available (works with remote CLIP service)
+        if (clipDirect) {
           try {
             const embedding = await clipDirect.embedImageSingle(imageUrl);
             if (embedding && embedding.length === 512 && embedding.some(x => x !== 0)) {

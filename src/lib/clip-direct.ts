@@ -7,20 +7,23 @@
 const CLIP_SERVICE_URL =
   process.env.CLIP_SERVICE_URL || 'http://localhost:8001';
 
-// Check if CLIP service is available (only in development)
+// Check if CLIP service is available
 async function checkClipService(): Promise<boolean> {
-  // Never use local CLIP service in production (Vercel)
-  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
-    return false;
-  }
-  
-  // Don't try localhost if CLIP_SERVICE_URL is explicitly set to something else
+  // If CLIP_SERVICE_URL points to localhost, only use it in development
   if (CLIP_SERVICE_URL.includes('localhost') || CLIP_SERVICE_URL.includes('127.0.0.1')) {
+    // Localhost only works in development (not on Vercel)
+    if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+      return false;
+    }
     // Only try localhost in development
     if (process.env.NODE_ENV !== 'development') {
       return false;
     }
   }
+  
+  // If CLIP_SERVICE_URL is set to a remote URL (not localhost), allow it in production
+  // This enables deploying CLIP service separately (e.g., on a VPS, AWS EC2, etc.)
+  // Example: CLIP_SERVICE_URL=https://clip-api.yourdomain.com
   
   try {
     const response = await fetch(`${CLIP_SERVICE_URL}/health`, {
