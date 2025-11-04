@@ -211,7 +211,7 @@ export async function GET(req: NextRequest) {
           brandAffinityWeight: 0.1,
           popularityWeight: 0.05,
           attributeMatchWeight: 0.2, // Increased for better attribute matching
-          keywordMatchWeight: 0.25, // HYPER-OPTIMIZED: Word-by-word matching (25% weight)
+          keywordMatchWeight: 0.5, // HYPER-OPTIMIZED: Word-by-word matching (50% weight - increased for accuracy)
         }
       );
       

@@ -680,9 +680,18 @@ function calculateKeywordMatch(product: any, query: string): number {
     return 1.6 + (otherMatchCount / Math.max(otherWords.length, 1)) * 0.2; // Up to 60% boost + 20% for other words
   }
 
-  // If category words are required but not matched, significantly reduce score
+  // CRITICAL: If category words are required but not matched, heavily penalize or filter out
   if (categoryWords.length > 0 && categoryMatchCount === 0) {
-    return Math.max(0.3, adjustedMatchRatio); // Heavily penalize if category doesn't match
+    // Category word required but not found - return very low score (near zero)
+    // This will effectively filter out items that don't match the category
+    return 0.1; // Very low score - these should be filtered out
+  }
+
+  // If category words are partially matched but not fully, still penalize
+  if (categoryWords.length > 0 && categoryMatchCount < categoryWords.length) {
+    // Some category words missing - reduce score significantly
+    const categoryMatchRatio = categoryMatchCount / categoryWords.length;
+    return Math.max(0.2, categoryMatchRatio * 0.5 + adjustedMatchRatio * 0.3);
   }
 
   // Progressive boost based on match ratio
@@ -691,7 +700,7 @@ function calculateKeywordMatch(product: any, query: string): number {
   // ENHANCEMENT: If all words matched, boost even more (100% word match guarantee)
   // If matchRatio is 1.0, all words matched (matchCount === totalWords)
   if (matchRatio === 1.0 && matchCount === totalWords) {
-    return baseScore * 1.3; // Additional 30% boost for perfect exact word match
+    return baseScore * 1.5; // Additional 50% boost for perfect exact word match
   }
 
   return baseScore;
@@ -899,84 +908,105 @@ export async function ultraAdvancedSearch(
   }
 
   // Enhanced results with scoring - use try-catch for each result to prevent one failure from breaking all
-  const enhancedResults: EnhancedResult[] = results.map((result) => {
-    try {
-    const baseScore = result.score || 0;
+  const enhancedResults: EnhancedResult[] = results
+    .map((result) => {
+      try {
+        const baseScore = result.score || 0;
 
-    // Calculate enhancement scores
-    const priceRelevance = calculatePriceRelevance(
-      result.price || 0,
-      query,
-      styleContext
-    );
+        // Calculate enhancement scores
+        const priceRelevance = calculatePriceRelevance(
+          result.price || 0,
+          query,
+          styleContext
+        );
 
-    const seasonRelevance = calculateSeasonalRelevance(
-      result,
-      query,
-      styleContext
-    );
+        const seasonRelevance = calculateSeasonalRelevance(
+          result,
+          query,
+          styleContext
+        );
 
-    const brandAffinity = calculateBrandAffinity(result, query);
+        const brandAffinity = calculateBrandAffinity(result, query);
 
-    const popularity = calculatePopularityScore(result);
+        const popularity = calculatePopularityScore(result);
 
-    // HYPER-OPTIMIZED: Enhanced attribute matching with keyword extraction
-    const attributeMatch = calculateAttributeMatch(result, styleContext, query);
+        // HYPER-OPTIMIZED: Enhanced attribute matching with keyword extraction
+        const attributeMatch = calculateAttributeMatch(
+          result,
+          styleContext,
+          query
+        );
 
-    // HYPER-OPTIMIZED: Word-by-word keyword matching (matches EVERY word)
-    const keywordMatch = calculateKeywordMatch(result, query);
+        // HYPER-OPTIMIZED: Word-by-word keyword matching (matches EVERY word)
+        const keywordMatch = calculateKeywordMatch(result, query);
 
     // Combine scores with weights - keyword matching gets high weight
-    const keywordMatchWeight = config.keywordMatchWeight ?? 0.25; // 25% weight for keyword matching
+    const keywordMatchWeight = config.keywordMatchWeight ?? 0.5; // 50% weight for keyword matching (default)
+    
+    // CRITICAL: If keyword match is very low (category mismatch), heavily penalize the entire score
+    let keywordPenalty = 0;
+    if (keywordMatch < 0.3) {
+      // Very poor keyword match (likely category mismatch) - apply heavy penalty
+      keywordPenalty = 0.7; // Reduce final score by 70%
+    } else if (keywordMatch < 0.5) {
+      // Poor keyword match - apply moderate penalty
+      keywordPenalty = 0.4; // Reduce final score by 40%
+    }
+    
     const enhancedScore =
-      baseScore +
+      baseScore * (1 - keywordPenalty) + // Apply keyword penalty to base score
       (priceRelevance - 1.0) * priceRelevanceWeight +
       (seasonRelevance - 1.0) * seasonRelevanceWeight +
       (brandAffinity - 1.0) * brandAffinityWeight +
       (popularity - 1.0) * popularityWeight +
       (attributeMatch - 1.0) * attributeMatchWeight +
-      (keywordMatch - 1.0) * keywordMatchWeight; // NEW: Keyword matching boost
+      (keywordMatch - 1.0) * keywordMatchWeight; // Keyword matching boost
 
-    return {
-      id: result.id,
-      score: Math.max(0, Math.min(1, enhancedScore)), // Clamp to 0-1
-      baseScore,
-      enhancementScores: {
-        priceRelevance,
-        seasonRelevance,
-        brandAffinity,
-        popularity,
-        attributeMatch,
-        keywordMatch, // NEW: Track keyword matching score
-      },
-      payload: result,
-    };
-    } catch (error) {
-      // If enhancement fails for a single result, return it with base score
-      console.warn(`Failed to enhance result ${result.id}:`, error);
-      return {
-        id: result.id,
-        score: result.score || 0.5,
-        baseScore: result.score || 0.5,
-        enhancementScores: {
-          priceRelevance: 1.0,
-          seasonRelevance: 1.0,
-          brandAffinity: 1.0,
-          popularity: 1.0,
-          attributeMatch: 1.0,
-          keywordMatch: 1.0,
-        },
-        payload: result,
-      };
-    }
-  }).filter(Boolean); // Remove any null/undefined results
+        return {
+          id: result.id,
+          score: Math.max(0, Math.min(1, enhancedScore)), // Clamp to 0-1
+          baseScore,
+          enhancementScores: {
+            priceRelevance,
+            seasonRelevance,
+            brandAffinity,
+            popularity,
+            attributeMatch,
+            keywordMatch, // NEW: Track keyword matching score
+          },
+          payload: result,
+        };
+      } catch (error) {
+        // If enhancement fails for a single result, return it with base score
+        console.warn(`Failed to enhance result ${result.id}:`, error);
+        return {
+          id: result.id,
+          score: result.score || 0.5,
+          baseScore: result.score || 0.5,
+          enhancementScores: {
+            priceRelevance: 1.0,
+            seasonRelevance: 1.0,
+            brandAffinity: 1.0,
+            popularity: 1.0,
+            attributeMatch: 1.0,
+            keywordMatch: 1.0,
+          },
+          payload: result,
+        };
+      }
+    })
+    .filter(Boolean); // Remove any null/undefined results
 
   // Sort by enhanced score
   enhancedResults.sort((a, b) => b.score - a.score);
 
   // Ensure we always return at least as many results as input (unless input was empty)
   if (enhancedResults.length === 0 && results.length > 0) {
-    console.error('⚠️ ultraAdvancedSearch returned 0 results but input had', results.length, 'results');
+    console.error(
+      '⚠️ ultraAdvancedSearch returned 0 results but input had',
+      results.length,
+      'results'
+    );
     // Return input results as fallback
     return results.map((result) => ({
       id: result.id,
