@@ -22,13 +22,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY clip_api.py .
 COPY clip_service.py .
 
-# Expose port
+# Expose port (Railway will map $PORT to this)
 EXPOSE 8001
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD python -c "import requests; requests.get('http://localhost:8001/health')" || exit 1
+  CMD python -c "import os, requests; port = os.environ.get('PORT', '8001'); requests.get(f'http://localhost:{port}/health')" || exit 1
 
-# Run the service
-CMD ["python", "-m", "uvicorn", "clip_api:app", "--host", "0.0.0.0", "--port", "8001"]
+# Run the service (uses $PORT from Railway, defaults to 8001)
+# Use shell form to allow environment variable substitution
+CMD python -m uvicorn clip_api:app --host 0.0.0.0 --port ${PORT:-8001}
 
