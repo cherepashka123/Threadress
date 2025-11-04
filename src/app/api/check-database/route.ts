@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
       };
 
       // Get sample points to verify data
-      if (info.points_count > 0) {
+      if (info.points_count && info.points_count > 0) {
         const sample = await qdrant.scroll(INVENTORY_COLLECTION, {
           limit: 3,
           with_payload: true,
