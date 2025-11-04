@@ -318,10 +318,33 @@ export async function GET(req: NextRequest) {
         // Enhancement scores (for debugging/display)
         enhancementScores: enhanced.enhancementScores,
       }))
-      .filter((h: any) => h.score > 0.1) // Filter after enhancement
+      .filter((h: any) => h.score > 0.05) // Lower threshold to show more results (was 0.1)
       .slice(0, k); // Limit to requested number
 
-    console.log(`Found ${res.length} initial results, ${hits.length} after ultra-advanced enhancement`);
+    console.log(`Found ${res.length} initial results, ${enhancedHits.length} after enhancement, ${hits.length} after final filter`);
+    
+    // Log if no results found - this helps debug production issues
+    if (hits.length === 0 && res.length > 0) {
+      console.warn('⚠️ All results filtered out:', {
+        initialResults: res.length,
+        afterEnhancement: enhancedHits.length,
+        afterFilter: hits.length,
+        query,
+        topScores: enhancedHits.slice(0, 5).map((h: any) => ({ id: h.id, score: h.score, title: h.payload?.title })),
+        collectionInfo: {
+          points_count: collectionInfo?.points_count,
+          collection: INVENTORY_COLLECTION,
+        },
+      });
+    } else if (hits.length === 0) {
+      console.warn('⚠️ No initial results from Qdrant:', {
+        query,
+        collectionInfo: {
+          points_count: collectionInfo?.points_count,
+          collection: INVENTORY_COLLECTION,
+        },
+      });
+    }
 
     const response: any = {
       ok: true,
@@ -334,6 +357,16 @@ export async function GET(req: NextRequest) {
       stores: Array.from(
         new Set(hits.map((h: any) => h.store_name || h.brand).filter(Boolean))
       ),
+      // Add diagnostic info if no results
+      ...(hits.length === 0 && {
+        diagnostic: {
+          initialResults: res.length,
+          collectionPointsCount: collectionInfo?.points_count || 0,
+          message: collectionInfo?.points_count === 0 
+            ? 'Database is empty - sync data first'
+            : 'No results match your query - try different search terms',
+        },
+      }),
     };
 
     // Add context information if available
