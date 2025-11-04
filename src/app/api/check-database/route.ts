@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
       const info = await getCollectionInfo();
       checks.collection = {
         exists: true,
-        name: info.collection_name,
+        name: INVENTORY_COLLECTION,
         points_count: info.points_count,
         vector_size: info.config?.params?.vectors?.combined?.size || 'unknown',
       };
