@@ -329,7 +329,7 @@ export async function GET(req: NextRequest) {
         initialResults: res.length,
         afterEnhancement: enhancedHits.length,
         afterFilter: hits.length,
-        query,
+        query: q,
         topScores: enhancedHits.slice(0, 5).map((h: any) => ({ id: h.id, score: h.score, title: h.payload?.title })),
         collectionInfo: {
           points_count: collectionInfo?.points_count,
@@ -338,7 +338,7 @@ export async function GET(req: NextRequest) {
       });
     } else if (hits.length === 0) {
       console.warn('⚠️ No initial results from Qdrant:', {
-        query,
+        query: q,
         collectionInfo: {
           points_count: collectionInfo?.points_count,
           collection: INVENTORY_COLLECTION,
