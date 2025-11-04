@@ -212,7 +212,10 @@ export async function POST(req: NextRequest) {
         description: fields.description,
         price: fields.price,
         currency: fields.currency,
-        url: fields.url,
+        url: fields.url, // Primary image URL
+        Main_Image_URL: fields.Main_Image_URL || '', // Store separately for fallback
+        Hover_Image_URL: fields.Hover_Image_URL || '', // Store separately for fallback
+        product_url: fields.product_url || '', // Product URL for fetching images if needed
         store_id: fields.store_id || 1, // Default store_id if not provided
         color: fields.color,
         material: fields.material,

@@ -134,14 +134,22 @@ function ProductImage({ item }: { item: SearchResult }) {
       const urls = getValidImageUrls();
       setImageUrls(urls);
       
-      // If no valid image URLs found, try to fetch from product URL
-      if (urls.length === 0 && item.product_url) {
+      // If no valid image URLs found OR if all URLs failed, try to fetch from product URL
+      if ((urls.length === 0 || (imageError && currentImageIndex >= urls.length - 1)) && item.product_url) {
         try {
           const response = await fetch(`/api/fetch-product-image?url=${encodeURIComponent(item.product_url)}`);
           if (response.ok) {
             const data = await response.json();
-            if (data.ok && data.imageUrl) {
-              setFetchedImageUrl(data.imageUrl);
+            if (data.ok && data.imageUrl && data.imageUrl.trim()) {
+              // Validate the fetched URL before setting it
+              const cleaned = data.imageUrl.trim();
+              if (cleaned.length >= 8 && 
+                  (cleaned.startsWith('http://') || cleaned.startsWith('https://')) &&
+                  !cleaned.startsWith('data:') && 
+                  !cleaned.includes('data:image')) {
+                setFetchedImageUrl(cleaned);
+                setImageError(false); // Reset error state if we got a valid URL
+              }
             }
           }
         } catch (error) {
@@ -151,7 +159,7 @@ function ProductImage({ item }: { item: SearchResult }) {
       }
     };
     loadImageUrls();
-  }, [item.product_url, item.url, item.Main_Image_URL, item.Hover_Image_URL]);
+  }, [item.product_url, item.url, item.Main_Image_URL, item.Hover_Image_URL, imageError, currentImageIndex]);
   
   // Combine static URLs with fetched URL
   const allImageUrls = [...imageUrls, fetchedImageUrl].filter(Boolean) as string[];
@@ -186,17 +194,24 @@ function ProductImage({ item }: { item: SearchResult }) {
         src={currentImageUrl}
         alt={item.title || 'Product image'}
         className={`w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200`}
-      onError={() => {
-        // Try next fallback image
-        if (currentImageIndex < allImageUrls.length - 1) {
-          setCurrentImageIndex(currentImageIndex + 1);
-          setImageLoaded(false); // Reset loaded state for next image
-        } else {
-          // All images failed
-          setImageError(true);
-          setImageLoaded(false);
-        }
-      }}
+        onError={() => {
+          // Try next fallback image
+          if (currentImageIndex < allImageUrls.length - 1) {
+            setCurrentImageIndex(currentImageIndex + 1);
+            setImageLoaded(false); // Reset loaded state for next image
+          } else {
+            // All images failed - try fetching from product URL if we haven't already
+            if (item.product_url && !fetchedImageUrl) {
+              // Trigger fetch from product URL (will be handled by useEffect)
+              setImageError(true);
+              setImageLoaded(false);
+            } else {
+              // All options exhausted
+              setImageError(true);
+              setImageLoaded(false);
+            }
+          }
+        }}
         onLoad={() => {
           // Image loaded successfully
           setImageLoaded(true);

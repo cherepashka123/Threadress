@@ -26,21 +26,33 @@ export async function GET(req: NextRequest) {
       if (url.hostname.includes('rouje.com')) {
         try {
           // Fetch the product page HTML
+          // Create abort controller for timeout
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+          
           const response = await fetch(productUrl, {
             headers: {
-              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+              'Accept-Language': 'en-US,en;q=0.9',
             },
+            signal: controller.signal,
           });
+          
+          clearTimeout(timeoutId);
           
           if (response.ok) {
             const html = await response.text();
             
             // Try to find image in common Shopify patterns
             // Look for img tags with src containing "cdn" or "shop"
+            // Also check for data-src, data-lazy-src, and other lazy loading attributes
             const imageMatches = [
-              ...html.matchAll(/<img[^>]+src=["']([^"']*cdn[^"']*\.(jpg|jpeg|png|webp))[^"']*["']/gi),
-              ...html.matchAll(/<img[^>]+data-src=["']([^"']*cdn[^"']*\.(jpg|jpeg|png|webp))[^"']*["']/gi),
-              ...html.matchAll(/<img[^>]+src=["']([^"']*shop[^"']*\.(jpg|jpeg|png|webp))[^"']*["']/gi),
+              ...html.matchAll(/<img[^>]+src=["']([^"']*cdn[^"']*\.(jpg|jpeg|png|webp|gif))[^"']*["']/gi),
+              ...html.matchAll(/<img[^>]+data-src=["']([^"']*cdn[^"']*\.(jpg|jpeg|png|webp|gif))[^"']*["']/gi),
+              ...html.matchAll(/<img[^>]+data-lazy-src=["']([^"']*cdn[^"']*\.(jpg|jpeg|png|webp|gif))[^"']*["']/gi),
+              ...html.matchAll(/<img[^>]+src=["']([^"']*shop[^"']*\.(jpg|jpeg|png|webp|gif))[^"']*["']/gi),
+              ...html.matchAll(/<img[^>]+src=["']([^"']*files\/[^"']*\.(jpg|jpeg|png|webp|gif))[^"']*["']/gi),
             ];
             
             for (const match of imageMatches) {
@@ -59,7 +71,8 @@ export async function GET(req: NextRequest) {
             if (!imageUrl) {
               const ogImageMatch = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i);
               if (ogImageMatch && ogImageMatch[1]) {
-                imageUrl = ogImageMatch[1];
+                const metaUrl = ogImageMatch[1];
+                imageUrl = metaUrl.startsWith('http') ? metaUrl : `${url.origin}${metaUrl}`;
               }
             }
           }
@@ -77,17 +90,28 @@ export async function GET(req: NextRequest) {
       // Maniere de Voir pattern - fetch from product page
       if (url.hostname.includes('manieredevoir.com')) {
         try {
+          // Create abort controller for timeout
+          const controller2 = new AbortController();
+          const timeoutId2 = setTimeout(() => controller2.abort(), 10000);
+          
           const response = await fetch(productUrl, {
             headers: {
-              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+              'Accept-Language': 'en-US,en;q=0.9',
             },
+            signal: controller2.signal,
           });
+          
+          clearTimeout(timeoutId2);
           
           if (response.ok) {
             const html = await response.text();
             const imageMatches = [
-              ...html.matchAll(/<img[^>]+src=["']([^"']*cdn[^"']*shop[^"']*\.(jpg|jpeg|png|webp))[^"']*["']/gi),
-              ...html.matchAll(/<img[^>]+data-src=["']([^"']*cdn[^"']*shop[^"']*\.(jpg|jpeg|png|webp))[^"']*["']/gi),
+              ...html.matchAll(/<img[^>]+src=["']([^"']*cdn[^"']*shop[^"']*\.(jpg|jpeg|png|webp|gif))[^"']*["']/gi),
+              ...html.matchAll(/<img[^>]+data-src=["']([^"']*cdn[^"']*shop[^"']*\.(jpg|jpeg|png|webp|gif))[^"']*["']/gi),
+              ...html.matchAll(/<img[^>]+data-lazy-src=["']([^"']*cdn[^"']*shop[^"']*\.(jpg|jpeg|png|webp|gif))[^"']*["']/gi),
+              ...html.matchAll(/<img[^>]+src=["']([^"']*files\/[^"']*\.(jpg|jpeg|png|webp|gif))[^"']*["']/gi),
             ];
             
             for (const match of imageMatches) {
@@ -98,6 +122,15 @@ export async function GET(req: NextRequest) {
               } else if (src && (src.startsWith('//') || src.startsWith('/'))) {
                 imageUrl = src.startsWith('//') ? `https:${src}` : `${url.origin}${src}`;
                 break;
+              }
+            }
+            
+            // Try meta tags if no image found
+            if (!imageUrl) {
+              const ogImageMatch = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i);
+              if (ogImageMatch && ogImageMatch[1]) {
+                const metaUrl = ogImageMatch[1];
+                imageUrl = metaUrl.startsWith('http') ? metaUrl : `${url.origin}${metaUrl}`;
               }
             }
           }
@@ -113,17 +146,28 @@ export async function GET(req: NextRequest) {
       // With Jean pattern (Shopify) - fetch from product page
       if (url.hostname.includes('withjean.com')) {
         try {
+          // Create abort controller for timeout
+          const controller2 = new AbortController();
+          const timeoutId2 = setTimeout(() => controller2.abort(), 10000);
+          
           const response = await fetch(productUrl, {
             headers: {
-              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+              'Accept-Language': 'en-US,en;q=0.9',
             },
+            signal: controller2.signal,
           });
+          
+          clearTimeout(timeoutId2);
           
           if (response.ok) {
             const html = await response.text();
             const imageMatches = [
-              ...html.matchAll(/<img[^>]+src=["']([^"']*cdn\.shopify[^"']*\.(jpg|jpeg|png|webp))[^"']*["']/gi),
-              ...html.matchAll(/<img[^>]+data-src=["']([^"']*cdn\.shopify[^"']*\.(jpg|jpeg|png|webp))[^"']*["']/gi),
+              ...html.matchAll(/<img[^>]+src=["']([^"']*cdn\.shopify[^"']*\.(jpg|jpeg|png|webp|gif))[^"']*["']/gi),
+              ...html.matchAll(/<img[^>]+data-src=["']([^"']*cdn\.shopify[^"']*\.(jpg|jpeg|png|webp|gif))[^"']*["']/gi),
+              ...html.matchAll(/<img[^>]+data-lazy-src=["']([^"']*cdn\.shopify[^"']*\.(jpg|jpeg|png|webp|gif))[^"']*["']/gi),
+              ...html.matchAll(/<img[^>]+src=["']([^"']*files\/[^"']*\.(jpg|jpeg|png|webp|gif))[^"']*["']/gi),
             ];
             
             for (const match of imageMatches) {
@@ -134,6 +178,15 @@ export async function GET(req: NextRequest) {
               } else if (src && (src.startsWith('//') || src.startsWith('/'))) {
                 imageUrl = src.startsWith('//') ? `https:${src}` : `${url.origin}${src}`;
                 break;
+              }
+            }
+            
+            // Try meta tags if no image found
+            if (!imageUrl) {
+              const ogImageMatch = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i);
+              if (ogImageMatch && ogImageMatch[1]) {
+                const metaUrl = ogImageMatch[1];
+                imageUrl = metaUrl.startsWith('http') ? metaUrl : `${url.origin}${metaUrl}`;
               }
             }
           }
