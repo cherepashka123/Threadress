@@ -2,28 +2,66 @@ import { HfInference } from '@huggingface/inference';
 import { enhanceQueryForTypoTolerance } from './typo-tolerance';
 import { extractStyleContext, type StyleContext } from './vibe-search';
 
-const HF_TOKEN = process.env.HF_TOKEN;
-const TEXT_MODEL = 'sentence-transformers/all-MiniLM-L6-v2'; // 384 dimensions for text
-const CLIP_MODEL = 'sentence-transformers/clip-ViT-B-32'; // 512 dimensions for images
-
-if (!HF_TOKEN) {
-  console.warn(
-    'HF_TOKEN environment variable is not set. CLIP advanced search will not work.'
-  );
+// Import direct CLIP service if available
+let clipDirect: typeof import('./clip-direct') | null = null;
+try {
+  // Always try to load CLIP direct service
+  clipDirect = require('./clip-direct');
+} catch (error) {
+  // CLIP service not available, will use Hugging Face
+  console.warn('CLIP direct service not available, will use Hugging Face fallback');
 }
 
-const hf = new HfInference(HF_TOKEN);
+// Get HF_TOKEN dynamically instead of at module load time
+// This allows env vars to be loaded after module import (e.g., in scripts)
+function getHfToken(): string | undefined {
+  return process.env.HF_TOKEN;
+}
+
+function getHfClient(): HfInference {
+  const token = getHfToken();
+  return new HfInference(token);
+}
+
+// TEXT EMBEDDING MODEL OPTIONS:
+// - all-MiniLM-L6-v2: 384 dim, fast, good for general use
+// - all-mpnet-base-v2: 768 dim, better quality, slower
+// - paraphrase-multilingual-mpnet-base-v2: 768 dim, multilingual, best quality
+const TEXT_MODEL = process.env.TEXT_EMBEDDING_MODEL || 'sentence-transformers/all-MiniLM-L6-v2'; // 384 dimensions for text (default)
+const CLIP_MODEL = 'sentence-transformers/clip-ViT-B-32'; // 512 dimensions for images
 
 /**
  * Generate text embeddings using sentence-transformers
  */
 export async function embedTextBatch(texts: string[]): Promise<number[][]> {
-  if (!HF_TOKEN) {
+  if (texts.length === 0) return [];
+
+  // Try direct CLIP service first if available (produces 512-dim vectors)
+  if (clipDirect) {
+    try {
+      const embeddings = await clipDirect.embedTextBatch(texts);
+      // Convert 512-dim CLIP embeddings to 384-dim for compatibility
+      // Or pad 384-dim to match expected dimensions
+      return embeddings.map(emb => {
+        if (emb.length === 512) {
+          // Return first 384 dimensions or pad if needed
+          return emb.slice(0, 384);
+        }
+        return emb;
+      });
+    } catch (error) {
+      console.warn('CLIP service failed, falling back to Hugging Face:', error);
+    }
+  }
+
+  // Fallback to Hugging Face
+  const hfToken = getHfToken();
+  if (!hfToken) {
     console.error('HF_TOKEN is not set. Cannot generate text embeddings.');
     return texts.map(() => new Array(384).fill(0));
   }
-  if (texts.length === 0) return [];
 
+  const hf = getHfClient();
   try {
     const response = await hf.featureExtraction({
       model: TEXT_MODEL,
@@ -42,6 +80,19 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
 }
 
 export async function embedTextSingle(text: string): Promise<number[]> {
+  // Try direct CLIP service first if available
+  if (clipDirect) {
+    try {
+      const embedding = await clipDirect.embedTextSingle(text);
+      // CLIP returns 512-dim, but we need 384 for compatibility
+      // Return first 384 dimensions
+      return embedding.slice(0, 384);
+    } catch (error) {
+      console.warn('CLIP service failed for text, falling back to Hugging Face:', error);
+    }
+  }
+
+  // Fallback to Hugging Face
   const results = await embedTextBatch([text]);
   return results[0] || new Array(384).fill(0);
 }
@@ -53,11 +104,14 @@ export async function embedTextSingle(text: string): Promise<number[]> {
 export async function embedImageBatch(
   imageUrls: string[]
 ): Promise<number[][]> {
-  if (!HF_TOKEN) {
+  const hfToken = getHfToken();
+  if (!hfToken) {
     console.error('HF_TOKEN is not set. Cannot generate image embeddings.');
     return imageUrls.map(() => new Array(512).fill(0));
   }
   if (imageUrls.length === 0) return [];
+  
+  const hf = getHfClient();
 
   const embeddings: number[][] = [];
 
@@ -79,29 +133,58 @@ export async function embedImageBatch(
       }
 
       // Use CLIP for real image embeddings
-      // HuggingFace inference accepts image URLs directly
+      // Try direct CLIP service first (if available), then Hugging Face, then fallback
       try {
-        const response = await hf.featureExtraction({
-          model: CLIP_MODEL,
-          inputs: imageUrl, // URL string is accepted
-        });
-
-        if (Array.isArray(response) && response.length === 512) {
-          embeddings.push(response as number[]);
-        } else {
-          console.warn(`Invalid CLIP embedding response for: ${imageUrl}`);
-          // Fallback to text-based description
-          const fallbackDescription = generateImageDescription(imageUrl);
-          const fallbackEmbedding = await embedTextSingle(fallbackDescription);
-          const paddedEmbedding = [
-            ...fallbackEmbedding,
-            ...new Array(512 - 384).fill(0),
-          ];
-          embeddings.push(paddedEmbedding);
+        // Prefer direct CLIP service if available
+        if (clipDirect) {
+          try {
+            const embedding = await clipDirect.embedImageSingle(imageUrl);
+            if (embedding && embedding.length === 512 && embedding.some(x => x !== 0)) {
+              embeddings.push(embedding);
+              continue;
+            }
+          } catch (clipServiceError: any) {
+            // CLIP service not available or failed, fall through to Hugging Face
+            console.warn(`CLIP service unavailable for ${imageUrl}, trying Hugging Face...`);
+          }
         }
-      } catch (clipError) {
-        console.warn(`CLIP failed for ${imageUrl}, using fallback:`, clipError);
-        // Fallback to text-based description
+        
+        // Fallback to Hugging Face (may not work for CLIP models)
+        try {
+          const hf = getHfClient();
+          const response = await hf.featureExtraction({
+            model: CLIP_MODEL,
+            inputs: imageUrl,
+          });
+
+          // Handle both array and nested array responses
+          let embedding: number[] | null = null;
+          
+          if (Array.isArray(response)) {
+            if (response.length === 512 && typeof response[0] === 'number') {
+              // Direct array of 512 numbers
+              embedding = response as number[];
+            } else if (Array.isArray(response[0]) && response[0].length === 512) {
+              // Nested array: [[512 numbers]]
+              embedding = response[0] as number[];
+            } else if (response.length === 384 && typeof response[0] === 'number') {
+              // 384-dim response, pad to 512
+              embedding = [...response, ...new Array(512 - 384).fill(0)] as number[];
+            }
+          }
+        
+          if (embedding && embedding.length === 512) {
+            embeddings.push(embedding);
+            continue;
+          }
+        } catch (hfError: any) {
+          // Hugging Face failed, will use fallback below
+          console.warn(
+            `Hugging Face CLIP failed for ${imageUrl}, using text fallback: ${hfError.message}`
+          );
+        }
+        
+        // Final fallback: generate text-based description and embed it
         const fallbackDescription = generateImageDescription(imageUrl);
         const fallbackEmbedding = await embedTextSingle(fallbackDescription);
         const paddedEmbedding = [
@@ -109,18 +192,22 @@ export async function embedImageBatch(
           ...new Array(512 - 384).fill(0),
         ];
         embeddings.push(paddedEmbedding);
+      } catch (error) {
+        console.error(`Error processing image ${imageUrl}:`, error);
+        // Fallback to text-based description if CLIP fails
+        const fallbackDescription = generateImageDescription(imageUrl);
+        const fallbackEmbedding = await embedTextSingle(fallbackDescription);
+        // Pad to 512 dimensions for CLIP
+        const paddedEmbedding = [
+          ...fallbackEmbedding,
+          ...new Array(512 - 384).fill(0),
+        ];
+        embeddings.push(paddedEmbedding);
       }
     } catch (error) {
-      console.error(`Error processing image ${imageUrl}:`, error);
-      // Fallback to text-based description if CLIP fails
-      const fallbackDescription = generateImageDescription(imageUrl);
-      const fallbackEmbedding = await embedTextSingle(fallbackDescription);
-      // Pad to 512 dimensions for CLIP
-      const paddedEmbedding = [
-        ...fallbackEmbedding,
-        ...new Array(512 - 384).fill(0),
-      ];
-      embeddings.push(paddedEmbedding);
+      console.error(`Fatal error processing image ${imageUrl}:`, error);
+      // Last resort: return zero vector
+      embeddings.push(new Array(512).fill(0));
     }
   }
 

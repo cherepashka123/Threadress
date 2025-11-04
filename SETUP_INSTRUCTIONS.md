@@ -27,11 +27,53 @@ npm install
 ```
 
 ### 3. Environment Setup
+
+**⚠️ IMPORTANT: Search functionality requires API keys!**
+
+The search feature uses:
+- **Hugging Face API** - For generating search embeddings
+- **Qdrant Vector Database** - For storing and searching product vectors
+
 ```bash
-# Create your local environment file
-cp .env.example .env.local  # if available
-# Or create .env.local with your settings
+# 1. Copy the example environment file
+cp .env.example .env.local
+
+# 2. Edit .env.local and add your API keys
+# At minimum, you need:
+# - HF_TOKEN (Hugging Face API token)
+# - QDRANT_URL and QDRANT_API_KEY (shared credentials - already in .env.example)
 ```
+
+#### Required Environment Variables for Search
+
+**Minimum required for search to work:**
+
+1. **HF_TOKEN** (Hugging Face API Token)
+   - Sign up at https://huggingface.co
+   - Go to Settings → Access Tokens
+   - Create a new token with "Read" permissions
+   - Add it to `.env.local`: `HF_TOKEN=hf_your_token_here`
+
+2. **QDRANT_URL** and **QDRANT_API_KEY**
+   - These are shared credentials (already included in `.env.example`)
+   - You can use the same values as provided
+
+**Example `.env.local` (minimum setup for search):**
+```env
+HF_TOKEN=hf_your_huggingface_token_here
+QDRANT_URL=https://2d684b58-dfb1-4058-967f-9d4f248030c8.us-east4-0.gcp.cloud.qdrant.io
+QDRANT_API_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.sRD2SjycruCSbj2HGoigYEwSh9TzT_zmOHa-3DGdTWg
+```
+
+#### Optional Environment Variables
+
+- Google Sheets integration (for inventory sync)
+- Square API (for Square integration)
+- See `ENV_SETUP.md` for detailed setup instructions and all available options
+
+**📖 For detailed step-by-step instructions, see `ENV_SETUP.md`**
+
+**🚀 For production deployment instructions, see `DEPLOYMENT_GUIDE.md`**
 
 ### 4. Start Development
 ```bash
@@ -82,6 +124,20 @@ git push origin feature/your-feature-name
 **"Permission denied" errors**
 - Make sure scripts are executable: `chmod +x *.sh`
 
+**Search doesn't work / Returns empty results**
+- ✅ Check that `.env.local` exists and has `HF_TOKEN` set
+- ✅ Verify `QDRANT_URL` and `QDRANT_API_KEY` are in `.env.local`
+- ✅ Restart your dev server after adding environment variables (`npm run dev`)
+- ✅ Check the browser console for errors
+- ✅ Check the terminal/server logs for API errors
+- ℹ️ Hugging Face API tokens are free but rate-limited
+- ℹ️ You need to create a Hugging Face account and generate a token
+
+**"HF_TOKEN environment variable is not set" warning**
+- Make sure you've created `.env.local` (not just `.env`)
+- Verify the token format: `HF_TOKEN=hf_...` (starts with `hf_`)
+- Restart your dev server after adding the token
+
 **Merge conflicts**
 - Follow the guide in COLLABORATION_GUIDE.md
 
@@ -110,6 +166,7 @@ threadress-site/
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run linter
+
 
 
 

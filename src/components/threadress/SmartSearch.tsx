@@ -25,10 +25,9 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
 
   const searchExamples = [
     'maxi dress',
-    'one piece swimsuit',
-    'ballet flats',
-    'printed scarf',
-    'sandals',
+    'knit sweater',
+    'cardigan',
+    'elegant black dress',
   ];
 
   const quickLocations = [

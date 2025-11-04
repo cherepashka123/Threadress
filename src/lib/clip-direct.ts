@@ -1,0 +1,153 @@
+/**
+ * Direct CLIP embedding service client
+ * Connects to local Python CLIP service instead of Hugging Face
+ */
+
+const CLIP_SERVICE_URL =
+  process.env.CLIP_SERVICE_URL || 'http://localhost:8001';
+
+// Check if CLIP service is available
+async function checkClipService(): Promise<boolean> {
+  try {
+    const response = await fetch(`${CLIP_SERVICE_URL}/health`, {
+      method: 'GET',
+      signal: AbortSignal.timeout(2000), // 2 second timeout
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Generate image embeddings using local CLIP service
+ */
+export async function embedImageSingle(imageUrl: string): Promise<number[]> {
+  // Check if service is available first
+  const isAvailable = await checkClipService();
+  if (!isAvailable) {
+    throw new Error('CLIP service not available');
+  }
+
+  try {
+    const response = await fetch(`${CLIP_SERVICE_URL}/embed/image`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image_url: imageUrl }),
+      signal: AbortSignal.timeout(30000), // 30 second timeout for image processing
+    });
+
+    if (!response.ok) {
+      throw new Error(`CLIP service error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    if (data.ok && data.embedding) {
+      return data.embedding;
+    }
+
+    throw new Error('Invalid response from CLIP service');
+  } catch (error) {
+    console.error(`CLIP image embedding failed for ${imageUrl}:`, error);
+    // Return zero vector as fallback
+    return new Array(512).fill(0);
+  }
+}
+
+/**
+ * Generate image embeddings in batch
+ */
+export async function embedImageBatch(
+  imageUrls: string[]
+): Promise<number[][]> {
+  if (imageUrls.length === 0) return [];
+
+  // Check if service is available first
+  const isAvailable = await checkClipService();
+  if (!isAvailable) {
+    throw new Error('CLIP service not available');
+  }
+
+  try {
+    const response = await fetch(`${CLIP_SERVICE_URL}/embed/image/batch`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image_urls: imageUrls }),
+      signal: AbortSignal.timeout(60000), // 60 second timeout for batch
+    });
+
+    if (!response.ok) {
+      throw new Error(`CLIP service error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    if (data.ok && data.embeddings) {
+      return data.embeddings;
+    }
+
+    throw new Error('Invalid response from CLIP service');
+  } catch (error) {
+    console.error('CLIP batch image embedding failed:', error);
+    // Return zero vectors as fallback
+    return imageUrls.map(() => new Array(512).fill(0));
+  }
+}
+
+/**
+ * Generate text embeddings using local CLIP service
+ */
+export async function embedTextSingle(text: string): Promise<number[]> {
+  try {
+    const response = await fetch(`${CLIP_SERVICE_URL}/embed/text`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`CLIP service error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    if (data.ok && data.embedding) {
+      return data.embedding;
+    }
+
+    throw new Error('Invalid response from CLIP service');
+  } catch (error) {
+    console.error(`CLIP text embedding failed for "${text}":`, error);
+    // Return zero vector as fallback
+    return new Array(512).fill(0);
+  }
+}
+
+/**
+ * Generate text embeddings in batch
+ */
+export async function embedTextBatch(texts: string[]): Promise<number[][]> {
+  if (texts.length === 0) return [];
+
+  try {
+    const response = await fetch(`${CLIP_SERVICE_URL}/embed/text/batch`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ texts }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`CLIP service error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    if (data.ok && data.embeddings) {
+      return data.embeddings;
+    }
+
+    throw new Error('Invalid response from CLIP service');
+  } catch (error) {
+    console.error('CLIP batch text embedding failed:', error);
+    // Return zero vectors as fallback
+    return texts.map(() => new Array(512).fill(0));
+  }
+}
+

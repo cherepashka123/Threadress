@@ -72,9 +72,13 @@ export async function embedImageBatch(
       const imageData = Buffer.from(imageBuffer);
 
       // Use CLIP for real image embeddings
+      // Convert to base64 data URI for Hugging Face API
+      const base64Image = imageData.toString('base64');
+      const dataUri = `data:image/jpeg;base64,${base64Image}`;
+
       const response = await hf.featureExtraction({
         model: CLIP_MODEL,
-        inputs: imageData,
+        inputs: dataUri,
       });
 
       if (Array.isArray(response) && response.length === 512) {

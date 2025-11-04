@@ -180,9 +180,6 @@ export function extractStyleContext(query: string): StyleContext {
     gothic: 'Gothic',
     punk: 'Punk',
     grunge: 'Grunge',
-    preppy: 'Preppy',
-    preppy: 'Preppy',
-    preppy: 'Preppy',
   };
 
   // Extract values

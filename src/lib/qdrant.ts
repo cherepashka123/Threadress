@@ -87,13 +87,23 @@ export async function getCollectionInfo() {
 
 export async function clearInventoryCollection() {
   try {
-    await qdrant.delete(INVENTORY_COLLECTION, {
-      wait: true,
-      points: {
-        filter: {},
-      },
+    // Delete all points by using scroll to get all IDs first
+    const allPoints = await qdrant.scroll(INVENTORY_COLLECTION, {
+      limit: 10000,
+      with_payload: false,
+      with_vector: false,
     });
-    console.log(`Cleared all points from ${INVENTORY_COLLECTION}`);
+    
+    if (allPoints.points && allPoints.points.length > 0) {
+      const ids = allPoints.points.map(p => p.id);
+      await qdrant.delete(INVENTORY_COLLECTION, {
+        wait: true,
+        points: ids,
+      });
+      console.log(`Cleared ${ids.length} points from ${INVENTORY_COLLECTION}`);
+    } else {
+      console.log(`No points to clear from ${INVENTORY_COLLECTION}`);
+    }
   } catch (error) {
     console.error('Error clearing collection:', error);
     throw error;

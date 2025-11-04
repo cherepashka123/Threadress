@@ -63,8 +63,8 @@ interface HyperSearchResult {
  * Analyze the search input to determine the best search strategy
  */
 function analyzeSearchInput(query: string, imageUrl?: string): SearchAnalysis {
-  const hasText = query.trim().length > 0;
-  const hasImage = imageUrl && imageUrl.trim().length > 0;
+  const hasText: boolean = query.trim().length > 0;
+  const hasImage: boolean = !!(imageUrl && imageUrl.trim().length > 0);
 
   // Detect if this is a vibe/contextual query
   const lowerQuery = query.toLowerCase();

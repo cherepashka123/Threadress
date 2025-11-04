@@ -236,7 +236,6 @@ export async function searchProducts(
     }
 
     const searchParams: any = {
-      collection_name: INVENTORY_COLLECTION,
       limit: limit,
       with_payload: true,
       with_vector: false,
@@ -258,12 +257,12 @@ export async function searchProducts(
       };
     }
 
-    const response = await qdrantClient.search(searchParams);
+    const response = await qdrantClient.search(INVENTORY_COLLECTION, searchParams);
 
     return response.map((result) => ({
       id: result.id as string,
       score: result.score,
-      payload: result.payload as InventoryProduct,
+      payload: result.payload as unknown as InventoryProduct,
     }));
   } catch (error) {
     console.error('Error searching products:', error);
@@ -283,7 +282,7 @@ export async function getProduct(id: string): Promise<InventoryProduct | null> {
       return null;
     }
 
-    return response[0].payload as InventoryProduct;
+    return response[0].payload as unknown as InventoryProduct;
   } catch (error) {
     console.error('Error getting product:', error);
     throw error;
@@ -317,13 +316,23 @@ export async function getCollectionInfo() {
 // Clear all products from collection
 export async function clearCollection(): Promise<void> {
   try {
-    await qdrantClient.delete(INVENTORY_COLLECTION, {
-      wait: true,
-      points: {
-        filter: {},
-      },
+    // Delete all points by using scroll to get all IDs first
+    const allPoints = await qdrantClient.scroll(INVENTORY_COLLECTION, {
+      limit: 10000,
+      with_payload: false,
+      with_vector: false,
     });
-    console.log(`Cleared all products from ${INVENTORY_COLLECTION}`);
+    
+    if (allPoints.points && allPoints.points.length > 0) {
+      const ids = allPoints.points.map(p => p.id);
+      await qdrantClient.delete(INVENTORY_COLLECTION, {
+        wait: true,
+        points: ids,
+      });
+      console.log(`Cleared ${ids.length} products from ${INVENTORY_COLLECTION}`);
+    } else {
+      console.log(`No products to clear from ${INVENTORY_COLLECTION}`);
+    }
   } catch (error) {
     console.error('Error clearing collection:', error);
     throw error;

@@ -93,7 +93,7 @@ export async function GET() {
       {
         ok: false,
         error: 'Advanced multimodal test failed',
-        details: err?.message || 'Unknown error',
+        details: err instanceof Error ? err.message : 'Unknown error',
       },
       { status: 500 }
     );

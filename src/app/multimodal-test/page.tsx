@@ -6,13 +6,29 @@ import MinimalButton from '@/components/MinimalButton';
 interface SearchResult {
   id: string;
   score: number;
+  baseScore?: number;
   title: string;
   brand: string;
+  store_name?: string;
+  store?: string;
   category: string;
   description: string;
   price: number;
   currency: string;
   url: string;
+  product_url?: string;
+  Main_Image_URL?: string;
+  Hover_Image_URL?: string;
+  main_image_url?: string;
+  hover_image_url?: string;
+  image_url?: string;
+  imageUrl?: string;
+  Image_URL?: string;
+  ImageUrl?: string;
+  image?: string;
+  Image?: string;
+  productUrl?: string;
+  Product_URL?: string;
   color: string;
   material: string;
   size: string;
@@ -21,6 +37,14 @@ interface SearchResult {
   season: string;
   preview: string;
   synced_at: string;
+  enhancementScores?: {
+    priceRelevance?: number;
+    seasonRelevance?: number;
+    brandAffinity?: number;
+    popularity?: number;
+    attributeMatch?: number;
+    keywordMatch?: number; // HYPER-OPTIMIZED: Word-by-word keyword matching
+  };
 }
 
 interface SearchResponse {
@@ -46,6 +70,145 @@ interface SearchResponse {
   };
 }
 
+// Component to handle product image with fallbacks
+function ProductImage({ item }: { item: SearchResult }) {
+  const [imageError, setImageError] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [fetchedImageUrl, setFetchedImageUrl] = useState<string | null>(null);
+  
+  // Get ALL valid image URLs from ALL possible fields (synchronous check first)
+  const getValidImageUrls = (): string[] => {
+    const candidates = [
+      // Priority order: Main image first, then hover, then others
+      item.Main_Image_URL,
+      item.main_image_url,
+      (item as any)['Main Image URL'],
+      item.Hover_Image_URL,
+      item.hover_image_url,
+      (item as any)['Hover Image URL'],
+      item.url, // Primary URL field
+      item.image_url,
+      item.imageUrl,
+      item.Image_URL,
+      item.ImageUrl,
+      item.image,
+      item.Image,
+      // Don't include product_url directly - it's not an image URL
+      // But we'll fetch it separately if needed
+      // Also check any other URL fields that might exist
+      (item as any)['Product Image'],
+      (item as any)['main-product-image src'],
+      (item as any)['main-product-image-src'],
+    ].filter((url): url is string => {
+      if (!url || typeof url !== 'string') return false;
+      const clean = url.trim();
+      // Only accept valid HTTP/HTTPS URLs, reject data URIs
+      // Be more lenient - accept URLs that are at least 8 chars (shorter URLs might be valid)
+      // Accept URLs with query parameters (like ?crop=)
+      return clean.length >= 8 && 
+             (clean.startsWith('http://') || clean.startsWith('https://')) &&
+             !clean.startsWith('data:') &&
+             !clean.includes('data:image'); // Extra check for data URIs
+    });
+    
+    // Remove duplicates while preserving order
+    const uniqueUrls: string[] = [];
+    const seen = new Set<string>();
+    for (const url of candidates) {
+      const normalized = url.trim().toLowerCase();
+      if (!seen.has(normalized)) {
+        seen.add(normalized);
+        uniqueUrls.push(url);
+      }
+    }
+    
+    return uniqueUrls;
+  };
+  
+  // Load image URLs on mount and fetch from product URL if needed
+  useEffect(() => {
+    const loadImageUrls = async () => {
+      // First, get all static image URLs
+      const urls = getValidImageUrls();
+      setImageUrls(urls);
+      
+      // If no valid image URLs found, try to fetch from product URL
+      if (urls.length === 0 && item.product_url) {
+        try {
+          const response = await fetch(`/api/fetch-product-image?url=${encodeURIComponent(item.product_url)}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.ok && data.imageUrl) {
+              setFetchedImageUrl(data.imageUrl);
+            }
+          }
+        } catch (error) {
+          // Silently fail - product URL fetching is a fallback
+          console.warn('Failed to fetch image from product URL:', error);
+        }
+      }
+    };
+    loadImageUrls();
+  }, [item.product_url, item.url, item.Main_Image_URL, item.Hover_Image_URL]);
+  
+  // Combine static URLs with fetched URL
+  const allImageUrls = [...imageUrls, fetchedImageUrl].filter(Boolean) as string[];
+  const currentImageUrl = allImageUrls[currentImageIndex] || '';
+  
+  // If no URLs, show placeholder immediately
+  if (allImageUrls.length === 0 && imageUrls.length === 0) {
+    return (
+      <div className="w-full h-full flex items-center justify-center text-neutral-400 text-sm bg-neutral-50">
+        No image available
+      </div>
+    );
+  }
+  
+  // If all images failed to load, show placeholder
+  if (imageError && currentImageIndex >= allImageUrls.length - 1) {
+    return (
+      <div className="w-full h-full flex items-center justify-center text-neutral-400 text-sm bg-neutral-50">
+        Image not available
+      </div>
+    );
+  }
+  
+  return (
+    <div className="relative w-full h-full">
+      {!imageLoaded && !imageError && (
+        <div className="absolute inset-0 flex items-center justify-center bg-neutral-100 z-10">
+          <div className="text-neutral-400 text-xs">Loading...</div>
+        </div>
+      )}
+      <img
+        src={currentImageUrl}
+        alt={item.title || 'Product image'}
+        className={`w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200`}
+      onError={() => {
+        // Try next fallback image
+        if (currentImageIndex < allImageUrls.length - 1) {
+          setCurrentImageIndex(currentImageIndex + 1);
+          setImageLoaded(false); // Reset loaded state for next image
+        } else {
+          // All images failed
+          setImageError(true);
+          setImageLoaded(false);
+        }
+      }}
+        onLoad={() => {
+          // Image loaded successfully
+          setImageLoaded(true);
+          setImageError(false);
+        }}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  );
+}
+
 export default function MultimodalTestPage() {
   // Search state
   const [query, setQuery] = useState('');
@@ -57,10 +220,7 @@ export default function MultimodalTestPage() {
   const searchExamples = [
     'cardigan',
     'elegant black dress',
-    'linen shirt',
     'knit sweater',
-    'satin blouse',
-    'draped top',
     'tight dress for halloween party',
     'elegant blouse for work meeting',
     'comfortable sweater for weekend',
@@ -186,9 +346,6 @@ export default function MultimodalTestPage() {
             <h1 className="text-4xl font-light text-neutral-900 mb-2">
               Advanced Multimodal Search Test
             </h1>
-            <p className="text-neutral-600 text-lg">
-              CLIP Advanced search with typo tolerance and vibe understanding
-            </p>
           </div>
         </div>
       </div>
@@ -345,16 +502,8 @@ export default function MultimodalTestPage() {
                     className="bg-white rounded-xl border border-neutral-200 overflow-hidden hover:shadow-lg transition-shadow duration-200"
                   >
                     {/* Product Image */}
-                    <div className="aspect-square bg-neutral-100">
-                      <img
-                        src={item.url}
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src =
-                            '/placeholder-product.jpg';
-                        }}
-                      />
+                    <div className="aspect-square bg-neutral-100 relative overflow-hidden">
+                      <ProductImage item={item} />
                     </div>
 
                     {/* Product Info */}
@@ -377,12 +526,31 @@ export default function MultimodalTestPage() {
                         </div>
                       </div>
 
+                      {/* Store/Brand Information - Simple Display */}
+                      <div className="mb-4">
+                        <div className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">
+                          Store
+                        </div>
+                        <div className="text-base font-medium text-neutral-900">
+                          {(() => {
+                            // Normalize store names to match the three brands
+                            const storeName = item.store_name || item.store || item.brand || '';
+                            const normalized = storeName.toLowerCase();
+                            
+                            if (normalized.includes('maniere') || normalized.includes('manieredevoir')) {
+                              return 'Maniere de Voir';
+                            } else if (normalized.includes('rouje')) {
+                              return 'Rouje';
+                            } else if (normalized.includes('with jean') || normalized.includes('withjean')) {
+                              return 'With Jean';
+                            }
+                            
+                            return storeName || 'Unknown Store';
+                          })()}
+                        </div>
+                      </div>
+
                       <div className="space-y-2 text-sm text-neutral-500">
-                        {item.brand && (
-                          <div>
-                            <strong>Brand:</strong> {item.brand}
-                          </div>
-                        )}
                         {item.category && (
                           <div>
                             <strong>Category:</strong> {item.category}

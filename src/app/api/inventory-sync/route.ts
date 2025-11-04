@@ -1,5 +1,5 @@
 import { google } from 'googleapis';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import {
   qdrant,
   ensureInventoryCollection,
@@ -82,21 +82,107 @@ async function readSheet(sheetName: string = 'manieredevoir') {
   }
 }
 
-export async function POST() {
+/**
+ * Get list of all sheets in the spreadsheet
+ */
+async function getAllSheetNames(): Promise<string[]> {
+  const auth = new google.auth.GoogleAuth({
+    credentials: {
+      client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    },
+    scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+  });
+
+  const sheets = google.sheets({ version: 'v4', auth });
+
   try {
+    const res = await sheets.spreadsheets.get({
+      spreadsheetId: process.env.GOOGLE_SHEET_ID!,
+    });
+
+    const sheetNames =
+      res.data.sheets?.map((sheet) => sheet.properties?.title || '').filter(Boolean) || [];
+
+    return sheetNames;
+  } catch (error: any) {
+    console.error('Error getting sheet names:', error.message);
+    // Fallback to default sheets if we can't list them
+    return ['manieredevoir', 'rouje', 'Sheet1'];
+  }
+}
+
+/**
+ * Sync inventory from Google Sheets to Qdrant
+ * Supports both GET (manual trigger) and POST (webhook/automatic)
+ */
+export async function GET(req: NextRequest) {
+  // Allow manual sync via GET request - call the POST handler logic
+  return await POST(req);
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    // Parse request body to get optional sheet names
+    let requestedSheets: string[] = [];
+    try {
+      const body = await req.json().catch(() => ({}));
+      requestedSheets = body.sheets || [];
+    } catch {
+      // If no body or invalid JSON, use all sheets
+    }
+
     console.log('Starting inventory sync from Google Sheets to Qdrant...');
 
-    // Read inventory from the "manieredevoir" sheet (contains scraped items)
-    const inventory = await readSheet('manieredevoir');
+    // Determine which sheets to sync
+    let sheetsToSync: string[] = [];
+    if (requestedSheets.length > 0) {
+      // Use requested sheets
+      sheetsToSync = requestedSheets;
+      console.log(`Syncing requested sheets: ${sheetsToSync.join(', ')}`);
+    } else {
+      // Auto-detect all sheets (excluding system sheets)
+      const allSheets = await getAllSheetNames();
+      // Filter out common system sheet names
+      const systemSheets = ['Sheet1', 'Sheet2', 'Sheet3', 'Template', 'Instructions'];
+      sheetsToSync = allSheets.filter(
+        (name) => !systemSheets.includes(name) && name.length > 0
+      );
+      // If no specific sheets found, default to manieredevoir
+      if (sheetsToSync.length === 0) {
+        sheetsToSync = ['manieredevoir'];
+      }
+      console.log(`Auto-detected sheets to sync: ${sheetsToSync.join(', ')}`);
+    }
+
+    // Read inventory from all specified sheets
+    let allInventory: any[] = [];
+    const sheetStats: Record<string, number> = {};
+
+    for (const sheetName of sheetsToSync) {
+      try {
+        const inventory = await readSheet(sheetName);
+        sheetStats[sheetName] = inventory.length;
+        allInventory = allInventory.concat(inventory);
+        console.log(
+          `Found ${inventory.length} valid items from "${sheetName}" sheet`
+        );
+      } catch (error: any) {
+        console.error(`Error reading sheet "${sheetName}":`, error.message);
+        // Continue with other sheets even if one fails
+      }
+    }
+
     console.log(
-      `Found ${inventory.length} valid inventory items from manieredevoir sheet`
+      `Total: ${allInventory.length} valid inventory items from ${sheetsToSync.length} sheet(s)`
     );
 
-    if (inventory.length === 0) {
+    if (allInventory.length === 0) {
       return NextResponse.json({
         ok: true,
         message: 'No inventory items found to sync',
         upserted: 0,
+        sheets: sheetStats,
         collection: INVENTORY_COLLECTION,
       });
     }
@@ -110,7 +196,7 @@ export async function POST() {
     const imageUrls: string[] = [];
     const payloads: Record<string, any>[] = [];
 
-    for (const row of inventory) {
+    for (const row of allInventory) {
       const id = generateInventoryId(row);
       const text = buildInventoryText(row);
       const fields = extractInventoryFields(row);
@@ -233,7 +319,8 @@ export async function POST() {
       message,
       upserted,
       errors,
-      total: inventory.length,
+      total: allInventory.length,
+      sheets: sheetStats,
       collection: INVENTORY_COLLECTION,
     });
   } catch (err: any) {
@@ -242,7 +329,7 @@ export async function POST() {
       {
         ok: false,
         error: 'Sync to Qdrant failed',
-        details: err?.message || 'Unknown error',
+        details: err instanceof Error ? err.message : 'Unknown error',
       },
       { status: 500 }
     );
