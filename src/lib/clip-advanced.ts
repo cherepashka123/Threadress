@@ -37,7 +37,8 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
   if (texts.length === 0) return [];
 
   // Try direct CLIP service first if available (produces 512-dim vectors)
-  if (clipDirect) {
+  // Only in development - never in production (Vercel)
+  if (clipDirect && !process.env.VERCEL && process.env.NODE_ENV !== 'production') {
     try {
       const embeddings = await clipDirect.embedTextBatch(texts);
       // Convert 512-dim CLIP embeddings to 384-dim for compatibility
@@ -50,7 +51,10 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
         return emb;
       });
     } catch (error) {
-      console.warn('CLIP service failed, falling back to Hugging Face:', error);
+      // Silently fail in production - expected behavior
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('CLIP service failed, falling back to Hugging Face:', error);
+      }
     }
   }
 
@@ -80,15 +84,18 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
 }
 
 export async function embedTextSingle(text: string): Promise<number[]> {
-  // Try direct CLIP service first if available
-  if (clipDirect) {
+  // Try direct CLIP service first if available (only in development)
+  if (clipDirect && !process.env.VERCEL && process.env.NODE_ENV !== 'production') {
     try {
       const embedding = await clipDirect.embedTextSingle(text);
       // CLIP returns 512-dim, but we need 384 for compatibility
       // Return first 384 dimensions
       return embedding.slice(0, 384);
     } catch (error) {
-      console.warn('CLIP service failed for text, falling back to Hugging Face:', error);
+      // Silently fail in production - expected behavior
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('CLIP service failed for text, falling back to Hugging Face:', error);
+      }
     }
   }
 
@@ -135,8 +142,8 @@ export async function embedImageBatch(
       // Use CLIP for real image embeddings
       // Try direct CLIP service first (if available), then Hugging Face, then fallback
       try {
-        // Prefer direct CLIP service if available
-        if (clipDirect) {
+        // Prefer direct CLIP service if available (only in development)
+        if (clipDirect && !process.env.VERCEL && process.env.NODE_ENV !== 'production') {
           try {
             const embedding = await clipDirect.embedImageSingle(imageUrl);
             if (embedding && embedding.length === 512 && embedding.some(x => x !== 0)) {
@@ -145,21 +152,24 @@ export async function embedImageBatch(
             }
           } catch (clipServiceError: any) {
             // CLIP service not available or failed, fall through to Hugging Face
-            console.warn(`CLIP service unavailable for ${imageUrl}, trying Hugging Face...`);
+            // Only log in development
+            if (process.env.NODE_ENV !== 'production') {
+              console.warn(`CLIP service unavailable for ${imageUrl}, trying Hugging Face...`);
+            }
           }
         }
         
         // Fallback to Hugging Face (may not work for CLIP models)
         try {
           const hf = getHfClient();
-          const response = await hf.featureExtraction({
-            model: CLIP_MODEL,
+        const response = await hf.featureExtraction({
+          model: CLIP_MODEL,
             inputs: imageUrl,
           });
 
           // Handle both array and nested array responses
           let embedding: number[] | null = null;
-          
+
           if (Array.isArray(response)) {
             if (response.length === 512 && typeof response[0] === 'number') {
               // Direct array of 512 numbers
@@ -176,7 +186,7 @@ export async function embedImageBatch(
           if (embedding && embedding.length === 512) {
             embeddings.push(embedding);
             continue;
-          }
+        }
         } catch (hfError: any) {
           // Hugging Face failed, will use fallback below
           console.warn(
@@ -192,17 +202,17 @@ export async function embedImageBatch(
           ...new Array(512 - 384).fill(0),
         ];
         embeddings.push(paddedEmbedding);
-      } catch (error) {
-        console.error(`Error processing image ${imageUrl}:`, error);
-        // Fallback to text-based description if CLIP fails
-        const fallbackDescription = generateImageDescription(imageUrl);
-        const fallbackEmbedding = await embedTextSingle(fallbackDescription);
-        // Pad to 512 dimensions for CLIP
-        const paddedEmbedding = [
-          ...fallbackEmbedding,
-          ...new Array(512 - 384).fill(0),
-        ];
-        embeddings.push(paddedEmbedding);
+    } catch (error) {
+      console.error(`Error processing image ${imageUrl}:`, error);
+      // Fallback to text-based description if CLIP fails
+      const fallbackDescription = generateImageDescription(imageUrl);
+      const fallbackEmbedding = await embedTextSingle(fallbackDescription);
+      // Pad to 512 dimensions for CLIP
+      const paddedEmbedding = [
+        ...fallbackEmbedding,
+        ...new Array(512 - 384).fill(0),
+      ];
+      embeddings.push(paddedEmbedding);
       }
     } catch (error) {
       console.error(`Fatal error processing image ${imageUrl}:`, error);

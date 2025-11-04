@@ -1,17 +1,31 @@
 /**
  * Direct CLIP embedding service client
  * Connects to local Python CLIP service instead of Hugging Face
+ * NOTE: Only works in local development - always uses Hugging Face in production
  */
 
 const CLIP_SERVICE_URL =
   process.env.CLIP_SERVICE_URL || 'http://localhost:8001';
 
-// Check if CLIP service is available
+// Check if CLIP service is available (only in development)
 async function checkClipService(): Promise<boolean> {
+  // Never use local CLIP service in production (Vercel)
+  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+    return false;
+  }
+  
+  // Don't try localhost if CLIP_SERVICE_URL is explicitly set to something else
+  if (CLIP_SERVICE_URL.includes('localhost') || CLIP_SERVICE_URL.includes('127.0.0.1')) {
+    // Only try localhost in development
+    if (process.env.NODE_ENV === 'production') {
+      return false;
+    }
+  }
+  
   try {
     const response = await fetch(`${CLIP_SERVICE_URL}/health`, {
       method: 'GET',
-      signal: AbortSignal.timeout(2000), // 2 second timeout
+      signal: AbortSignal.timeout(500), // Short timeout - fail fast
     });
     return response.ok;
   } catch {
@@ -97,11 +111,18 @@ export async function embedImageBatch(
  * Generate text embeddings using local CLIP service
  */
 export async function embedTextSingle(text: string): Promise<number[]> {
+  // Check if service is available first (will return false in production)
+  const isAvailable = await checkClipService();
+  if (!isAvailable) {
+    throw new Error('CLIP service not available');
+  }
+  
   try {
     const response = await fetch(`${CLIP_SERVICE_URL}/embed/text`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text }),
+      signal: AbortSignal.timeout(5000), // 5 second timeout
     });
 
     if (!response.ok) {
@@ -115,9 +136,12 @@ export async function embedTextSingle(text: string): Promise<number[]> {
 
     throw new Error('Invalid response from CLIP service');
   } catch (error) {
-    console.error(`CLIP text embedding failed for "${text}":`, error);
-    // Return zero vector as fallback
-    return new Array(512).fill(0);
+    // Don't log errors in production - they're expected when service isn't available
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(`CLIP text embedding failed for "${text}":`, error);
+    }
+    // Throw error so caller can fall back to Hugging Face
+    throw error;
   }
 }
 
@@ -127,11 +151,18 @@ export async function embedTextSingle(text: string): Promise<number[]> {
 export async function embedTextBatch(texts: string[]): Promise<number[][]> {
   if (texts.length === 0) return [];
 
+  // Check if service is available first (will return false in production)
+  const isAvailable = await checkClipService();
+  if (!isAvailable) {
+    throw new Error('CLIP service not available');
+  }
+
   try {
     const response = await fetch(`${CLIP_SERVICE_URL}/embed/text/batch`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ texts }),
+      signal: AbortSignal.timeout(10000), // 10 second timeout
     });
 
     if (!response.ok) {
@@ -145,9 +176,12 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
 
     throw new Error('Invalid response from CLIP service');
   } catch (error) {
-    console.error('CLIP batch text embedding failed:', error);
-    // Return zero vectors as fallback
-    return texts.map(() => new Array(512).fill(0));
+    // Don't log errors in production - they're expected when service isn't available
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('CLIP batch text embedding failed:', error);
+    }
+    // Throw error so caller can fall back to Hugging Face
+    throw error;
   }
 }
 
