@@ -426,8 +426,17 @@ export async function GET(req: NextRequest) {
         // Enhancement scores (for debugging/display)
         enhancementScores: enhanced.enhancementScores,
       }))
-      // Remove score filter temporarily to show all results for debugging
-      // .filter((h: any) => h.score > 0.05) // Lower threshold to show more results (was 0.1)
+      // Filter out items with very low scores (likely category mismatches)
+      .filter((h: any) => {
+        // If score is very low, it likely means category mismatch
+        // Also check if keyword match score was very low
+        const keywordScore = h.enhancementScores?.keywordMatch || 1.0;
+        // Filter out items with both low final score AND low keyword match
+        if (h.score < 0.2 && keywordScore < 0.3) {
+          return false; // Filter out category mismatches
+        }
+        return h.score > 0.05; // Keep items with reasonable scores
+      })
       .slice(0, k); // Limit to requested number
 
     console.log(`Found ${res.length} initial results, ${enhancedHits.length} after enhancement, ${hits.length} after final filter`);
