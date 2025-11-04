@@ -141,14 +141,19 @@ export async function GET(req: NextRequest) {
     // Perform initial search
     const res = await qdrant.search(INVENTORY_COLLECTION, qdrantSearchParams);
 
-    // Format initial results
+    console.log(`🔍 Qdrant search returned ${res.length} results`, {
+      query: q,
+      topScores: res.slice(0, 5).map((r: any) => ({ id: r.id, score: r.score, title: r.payload?.title })),
+    });
+
+    // Format initial results - REMOVE score filter to see all results
     const initialHits = res
       .map((h: any) => ({
         id: h.id,
         score: h.score,
         ...h.payload,
-      }))
-      .filter((h: any) => h.score > 0.05); // Lower threshold to get more candidates
+      }));
+      // Removed filter - let all results through for debugging
 
     // Apply ultra-advanced enhancements with HYPER-OPTIMIZED keyword matching
     const enhancedHits = await ultraAdvancedSearch(
@@ -318,7 +323,8 @@ export async function GET(req: NextRequest) {
         // Enhancement scores (for debugging/display)
         enhancementScores: enhanced.enhancementScores,
       }))
-      .filter((h: any) => h.score > 0.05) // Lower threshold to show more results (was 0.1)
+      // Remove score filter temporarily to show all results for debugging
+      // .filter((h: any) => h.score > 0.05) // Lower threshold to show more results (was 0.1)
       .slice(0, k); // Limit to requested number
 
     console.log(`Found ${res.length} initial results, ${enhancedHits.length} after enhancement, ${hits.length} after final filter`);
