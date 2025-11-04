@@ -884,11 +884,23 @@ export async function ultraAdvancedSearch(
     enableQueryExpansion = false,
   } = config;
 
-  // Extract style context for enhancements
-  const styleContext = extractStyleContext(query);
+  // Return empty array if no results provided
+  if (!results || results.length === 0) {
+    return [];
+  }
 
-  // Enhanced results with scoring
+  // Extract style context for enhancements
+  let styleContext;
+  try {
+    styleContext = extractStyleContext(query);
+  } catch (error) {
+    console.error('Failed to extract style context:', error);
+    styleContext = {}; // Fallback to empty context
+  }
+
+  // Enhanced results with scoring - use try-catch for each result to prevent one failure from breaking all
   const enhancedResults: EnhancedResult[] = results.map((result) => {
+    try {
     const baseScore = result.score || 0;
 
     // Calculate enhancement scores
@@ -939,10 +951,48 @@ export async function ultraAdvancedSearch(
       },
       payload: result,
     };
-  });
+    } catch (error) {
+      // If enhancement fails for a single result, return it with base score
+      console.warn(`Failed to enhance result ${result.id}:`, error);
+      return {
+        id: result.id,
+        score: result.score || 0.5,
+        baseScore: result.score || 0.5,
+        enhancementScores: {
+          priceRelevance: 1.0,
+          seasonRelevance: 1.0,
+          brandAffinity: 1.0,
+          popularity: 1.0,
+          attributeMatch: 1.0,
+          keywordMatch: 1.0,
+        },
+        payload: result,
+      };
+    }
+  }).filter(Boolean); // Remove any null/undefined results
 
   // Sort by enhanced score
   enhancedResults.sort((a, b) => b.score - a.score);
+
+  // Ensure we always return at least as many results as input (unless input was empty)
+  if (enhancedResults.length === 0 && results.length > 0) {
+    console.error('⚠️ ultraAdvancedSearch returned 0 results but input had', results.length, 'results');
+    // Return input results as fallback
+    return results.map((result) => ({
+      id: result.id,
+      score: result.score || 0.5,
+      baseScore: result.score || 0.5,
+      enhancementScores: {
+        priceRelevance: 1.0,
+        seasonRelevance: 1.0,
+        brandAffinity: 1.0,
+        popularity: 1.0,
+        attributeMatch: 1.0,
+        keywordMatch: 1.0,
+      },
+      payload: result,
+    }));
+  }
 
   return enhancedResults;
 }
