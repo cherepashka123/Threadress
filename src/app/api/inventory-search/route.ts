@@ -311,7 +311,37 @@ export async function GET(req: NextRequest) {
         })(),
         store_id: enhanced.payload.store_id || 1,
         // Product information
-        title: enhanced.payload.title,
+        // Ensure title is never a URL - use product name only
+        title: (() => {
+          const rawTitle = enhanced.payload.title || '';
+          // If title looks like a URL, extract product name from it or use a fallback
+          if (rawTitle.startsWith('http://') || rawTitle.startsWith('https://') || rawTitle.includes('cdn.shopify.com')) {
+            // Try to extract product name from the URL
+            const urlMatch = rawTitle.match(/\/([^\/]+?)(?:-with-|-\d+|\.(jpg|png|webp|jpeg)|$)/i);
+            if (urlMatch && urlMatch[1]) {
+              const extractedName = urlMatch[1]
+                .replace(/-/g, ' ')
+                .replace(/\b\w/g, (char: string) => char.toUpperCase())
+                .trim();
+              if (extractedName && extractedName.length > 3) {
+                return extractedName;
+              }
+            }
+            // Fallback: try to get title from product_url
+            const productUrl = enhanced.payload.product_url || enhanced.payload.url || '';
+            if (productUrl && typeof productUrl === 'string') {
+              const urlMatch2 = productUrl.match(/\/([^\/]+?)(?:-with-|-\d+|\.(html|htm)|$)/i);
+              if (urlMatch2 && urlMatch2[1]) {
+                return urlMatch2[1]
+                  .replace(/-/g, ' ')
+                  .replace(/\b\w/g, (char: string) => char.toUpperCase())
+                  .trim();
+              }
+            }
+            return 'Product';
+          }
+          return rawTitle || 'Product';
+        })(),
         description: enhanced.payload.description,
         price: enhanced.payload.price,
         currency: enhanced.payload.currency || 'USD',

@@ -78,7 +78,37 @@ export function extractInventoryFields(row: Record<string, any>) {
   // 3. Legacy format: product_id, text, category, color, material, occasion, tags, price, store_name, address, lat, lng, image_url
 
   // Extract title - prioritize new format, then old formats
-  const title = row['Product_Name'] || row['Style_Name'] || row['text-unset'] || row.text || row.title || row.Title || '';
+  // NEVER use URLs as titles - extract product name from URL if needed
+  let title = row['Product_Name'] || row['Style_Name'] || row['text-unset'] || row.text || row.title || row.Title || '';
+  
+  // If title is empty or looks like a URL, try to extract product name from URL
+  if (!title || title.startsWith('http://') || title.startsWith('https://') || title.includes('cdn.shopify.com')) {
+    // Try to extract from Product_URL or image URL
+    const productUrl = row['Product_URL'] || row['main-product-inner href'] || '';
+    const imageUrl = row['Main_Image_URL'] || row['main-product-image src'] || row.image_url || '';
+    const urlToExtract = productUrl || imageUrl;
+    
+    if (urlToExtract && typeof urlToExtract === 'string') {
+      // Extract product name from URL path
+      // Pattern: .../files/.../product-name-... or .../product-name
+      const urlMatch = urlToExtract.match(/\/([^\/]+?)(?:-with-|-\d+|\.(jpg|png|webp|jpeg)|$)/i);
+      if (urlMatch && urlMatch[1]) {
+        // Clean up the extracted name: replace hyphens with spaces, capitalize words
+        const extractedName = urlMatch[1]
+          .replace(/-/g, ' ')
+          .replace(/\b\w/g, (char) => char.toUpperCase())
+          .trim();
+        if (extractedName && extractedName.length > 3) {
+          title = extractedName;
+        }
+      }
+    }
+  }
+  
+  // Final fallback: if still empty, use a generic placeholder
+  if (!title || title.trim() === '') {
+    title = 'Product';
+  }
 
   // Extract brand/source - new format uses "Source", old uses "text-unset 2", legacy uses "brand"
   // Normalize brand names to the three official brands
@@ -174,7 +204,7 @@ export function extractInventoryFields(row: Record<string, any>) {
       }
     }
   }
-  
+
   return {
     title,
     brand,
