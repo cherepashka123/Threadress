@@ -199,23 +199,49 @@ export async function GET(req: NextRequest) {
     console.log(`📊 Processing ${initialHits.length} initial hits through ultra-advanced search`);
     
     // Apply ultra-advanced enhancements with HYPER-OPTIMIZED keyword matching
-    const enhancedHits = await ultraAdvancedSearch(
-      q,
-      imageUrl || undefined,
-      initialHits,
-      {
-        priceRelevanceWeight: 0.1,
-        seasonRelevanceWeight: 0.1,
-        brandAffinityWeight: 0.1,
-        popularityWeight: 0.05,
-        attributeMatchWeight: 0.2, // Increased for better attribute matching
-        keywordMatchWeight: 0.25, // HYPER-OPTIMIZED: Word-by-word matching (25% weight)
+    let enhancedHits: any[];
+    try {
+      enhancedHits = await ultraAdvancedSearch(
+        q,
+        imageUrl || undefined,
+        initialHits,
+        {
+          priceRelevanceWeight: 0.1,
+          seasonRelevanceWeight: 0.1,
+          brandAffinityWeight: 0.1,
+          popularityWeight: 0.05,
+          attributeMatchWeight: 0.2, // Increased for better attribute matching
+          keywordMatchWeight: 0.25, // HYPER-OPTIMIZED: Word-by-word matching (25% weight)
+        }
+      );
+      
+      console.log(`✨ Enhanced ${enhancedHits.length} results. Top scores:`, 
+        enhancedHits.slice(0, 5).map((h: any) => ({ id: h.id, score: h.score, title: h.payload?.title }))
+      );
+      
+      // If enhancement returned empty array, fall back to initial results
+      if (enhancedHits.length === 0 && initialHits.length > 0) {
+        console.warn('⚠️ Enhancement returned 0 results, falling back to initial results');
+        enhancedHits = initialHits.map((hit: any) => ({
+          id: hit.id,
+          score: hit.score || 0.5,
+          baseScore: hit.score || 0.5,
+          enhancementScores: {},
+          payload: hit,
+        }));
       }
-    );
-    
-    console.log(`✨ Enhanced ${enhancedHits.length} results. Top scores:`, 
-      enhancedHits.slice(0, 5).map((h: any) => ({ id: h.id, score: h.score, title: h.payload?.title }))
-    );
+    } catch (enhanceError: any) {
+      console.error('❌ Ultra-advanced search enhancement failed:', enhanceError);
+      console.warn('⚠️ Falling back to initial results without enhancement');
+      // Fall back to initial results if enhancement fails
+      enhancedHits = initialHits.map((hit: any) => ({
+        id: hit.id,
+        score: hit.score || 0.5,
+        baseScore: hit.score || 0.5,
+        enhancementScores: {},
+        payload: hit,
+      }));
+    }
 
     // Format final results with store information prominently displayed
     const hits = enhancedHits
