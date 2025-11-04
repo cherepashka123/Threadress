@@ -42,11 +42,24 @@ export async function GET(req: NextRequest) {
     // Check collection exists and has data
     try {
       const info = await getCollectionInfo();
+      // Handle both named vectors (combined) and single vector configs
+      let vectorSize: string | number = 'unknown';
+      if (info.config?.params?.vectors) {
+        const vectors = info.config.params.vectors;
+        // Check if it's a named vectors object (has 'combined' key)
+        if (typeof vectors === 'object' && 'combined' in vectors) {
+          vectorSize = (vectors as any).combined?.size || 'unknown';
+        } else if ('size' in vectors) {
+          // Single vector config
+          vectorSize = (vectors as any).size || 'unknown';
+        }
+      }
+
       checks.collection = {
         exists: true,
         name: INVENTORY_COLLECTION,
         points_count: info.points_count,
-        vector_size: info.config?.params?.vectors?.combined?.size || 'unknown',
+        vector_size: vectorSize,
       };
 
       // Get sample points to verify data
