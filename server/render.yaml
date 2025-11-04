@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: clip-embedding-service
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m uvicorn clip_api:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PORT
+        value: 8001
+    healthCheckPath: /health
+    plan: starter  # Free tier available
+
