@@ -17,7 +17,7 @@ async function checkClipService(): Promise<boolean> {
   // Don't try localhost if CLIP_SERVICE_URL is explicitly set to something else
   if (CLIP_SERVICE_URL.includes('localhost') || CLIP_SERVICE_URL.includes('127.0.0.1')) {
     // Only try localhost in development
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV !== 'development') {
       return false;
     }
   }
