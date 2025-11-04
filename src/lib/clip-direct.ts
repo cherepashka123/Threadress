@@ -137,7 +137,8 @@ export async function embedTextSingle(text: string): Promise<number[]> {
     throw new Error('Invalid response from CLIP service');
   } catch (error) {
     // Don't log errors in production - they're expected when service isn't available
-    if (process.env.NODE_ENV !== 'production') {
+    // Only log in development
+    if (process.env.NODE_ENV === 'development') {
       console.error(`CLIP text embedding failed for "${text}":`, error);
     }
     // Throw error so caller can fall back to Hugging Face
@@ -177,7 +178,8 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
     throw new Error('Invalid response from CLIP service');
   } catch (error) {
     // Don't log errors in production - they're expected when service isn't available
-    if (process.env.NODE_ENV !== 'production') {
+    // Only log in development
+    if (process.env.NODE_ENV === 'development') {
       console.error('CLIP batch text embedding failed:', error);
     }
     // Throw error so caller can fall back to Hugging Face

@@ -52,7 +52,8 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
       });
     } catch (error) {
       // Silently fail in production - expected behavior
-      if (process.env.NODE_ENV !== 'production') {
+      // Only log in development
+      if (process.env.NODE_ENV === 'development') {
         console.warn('CLIP service failed, falling back to Hugging Face:', error);
       }
     }
@@ -93,7 +94,8 @@ export async function embedTextSingle(text: string): Promise<number[]> {
       return embedding.slice(0, 384);
     } catch (error) {
       // Silently fail in production - expected behavior
-      if (process.env.NODE_ENV !== 'production') {
+      // Only log in development
+      if (process.env.NODE_ENV === 'development') {
         console.warn('CLIP service failed for text, falling back to Hugging Face:', error);
       }
     }
@@ -153,7 +155,7 @@ export async function embedImageBatch(
           } catch (clipServiceError: any) {
             // CLIP service not available or failed, fall through to Hugging Face
             // Only log in development
-            if (process.env.NODE_ENV !== 'production') {
+            if (process.env.NODE_ENV === 'development') {
               console.warn(`CLIP service unavailable for ${imageUrl}, trying Hugging Face...`);
             }
           }
