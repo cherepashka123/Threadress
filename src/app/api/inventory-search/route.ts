@@ -68,31 +68,72 @@ export async function GET(req: NextRequest) {
     let styleContext: any;
     let enhancedQuery: string | undefined;
 
-    if (q.trim() && imageUrl.trim()) {
-      // Both text and image - full multimodal search
-      const clipResult = await embedAdvancedMultimodalQuery(q, imageUrl);
-      queryVector = clipResult.combinedVector;
-      visualAnalysis = clipResult.visualAnalysis;
-      styleContext = clipResult.styleContext;
-      enhancedQuery = clipResult.enhancedQuery;
-    } else if (q.trim()) {
-      // Text only - use CLIP Advanced with vibe understanding
-      const clipResult = await embedAdvancedMultimodalQuery(q);
-      queryVector = clipResult.combinedVector;
-      visualAnalysis = clipResult.visualAnalysis;
-      styleContext = clipResult.styleContext;
-      enhancedQuery = clipResult.enhancedQuery;
-    } else if (imageUrl.trim()) {
-      // Image only
-      const imageVector = await embedImageSingle(imageUrl);
-      queryVector = imageVector;
-    } else {
+    console.log('🔤 Generating embeddings for query:', q);
+    
+    try {
+      if (q.trim() && imageUrl.trim()) {
+        // Both text and image - full multimodal search
+        const clipResult = await embedAdvancedMultimodalQuery(q, imageUrl);
+        queryVector = clipResult.combinedVector;
+        visualAnalysis = clipResult.visualAnalysis;
+        styleContext = clipResult.styleContext;
+        enhancedQuery = clipResult.enhancedQuery;
+        console.log('✅ Generated multimodal embeddings:', {
+          vectorLength: queryVector.length,
+          hasNonZero: queryVector.some(v => v !== 0),
+          enhancedQuery,
+        });
+      } else if (q.trim()) {
+        // Text only - use CLIP Advanced with vibe understanding
+        const clipResult = await embedAdvancedMultimodalQuery(q);
+        queryVector = clipResult.combinedVector;
+        visualAnalysis = clipResult.visualAnalysis;
+        styleContext = clipResult.styleContext;
+        enhancedQuery = clipResult.enhancedQuery;
+        console.log('✅ Generated text embeddings:', {
+          vectorLength: queryVector.length,
+          hasNonZero: queryVector.some(v => v !== 0),
+          enhancedQuery,
+        });
+      } else if (imageUrl.trim()) {
+        // Image only
+        const imageVector = await embedImageSingle(imageUrl);
+        queryVector = imageVector;
+        console.log('✅ Generated image embeddings:', {
+          vectorLength: queryVector.length,
+          hasNonZero: queryVector.some(v => v !== 0),
+        });
+      } else {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: 'Query or image URL required',
+          },
+          { status: 400 }
+        );
+      }
+
+      // Validate vector
+      if (!queryVector || queryVector.length === 0 || queryVector.every(v => v === 0)) {
+        console.error('❌ Invalid query vector generated - all zeros or empty');
+        return NextResponse.json(
+          {
+            ok: false,
+            error: 'Failed to generate search embeddings',
+            message: 'The search query could not be processed. Please try again.',
+          },
+          { status: 500 }
+        );
+      }
+    } catch (embedError: any) {
+      console.error('❌ Embedding generation failed:', embedError);
       return NextResponse.json(
         {
           ok: false,
-          error: 'Query or image URL required',
+          error: 'Embedding generation failed',
+          message: embedError instanceof Error ? embedError.message : 'Unknown error',
         },
-        { status: 400 }
+        { status: 500 }
       );
     }
 
@@ -155,6 +196,8 @@ export async function GET(req: NextRequest) {
       }));
       // Removed filter - let all results through for debugging
 
+    console.log(`📊 Processing ${initialHits.length} initial hits through ultra-advanced search`);
+    
     // Apply ultra-advanced enhancements with HYPER-OPTIMIZED keyword matching
     const enhancedHits = await ultraAdvancedSearch(
       q,
@@ -168,6 +211,10 @@ export async function GET(req: NextRequest) {
         attributeMatchWeight: 0.2, // Increased for better attribute matching
         keywordMatchWeight: 0.25, // HYPER-OPTIMIZED: Word-by-word matching (25% weight)
       }
+    );
+    
+    console.log(`✨ Enhanced ${enhancedHits.length} results. Top scores:`, 
+      enhancedHits.slice(0, 5).map((h: any) => ({ id: h.id, score: h.score, title: h.payload?.title }))
     );
 
     // Format final results with store information prominently displayed
