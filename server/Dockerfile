@@ -18,6 +18,9 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install Python dependencies
+# Use CPU-only PyTorch to reduce image size (Railway runs on CPU anyway)
+# This reduces image from ~3GB to ~1GB and speeds up build/push
+RUN pip install --no-cache-dir torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cpu
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
