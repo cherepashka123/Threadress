@@ -34,7 +34,7 @@ EXPOSE 8001
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD python -c "import os, requests; port = os.environ.get('PORT', '8001'); requests.get(f'http://localhost:{port}/health')" || exit 1
 
-# Run the service (uses $PORT from Railway, defaults to 8001)
+# Run the service (reads PORT from environment variable)
 # Use shell form to allow environment variable substitution
-CMD python -m uvicorn clip_api:app --host 0.0.0.0 --port ${PORT:-8001}
+CMD sh -c "python -m uvicorn clip_api:app --host 0.0.0.0 --port ${PORT:-8001}"
 
