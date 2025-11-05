@@ -488,10 +488,56 @@ export async function GET(req: NextRequest) {
           description: hit.description,
           price: hit.price,
           currency: hit.currency || 'USD',
-          url: hit.Main_Image_URL || hit.main_image_url || hit.url || hit.image_url || '',
-          Main_Image_URL: hit.Main_Image_URL,
-          Hover_Image_URL: hit.Hover_Image_URL,
-          product_url: hit.product_url || hit.url,
+          url: (() => {
+            const candidates = [
+              hit.Main_Image_URL,
+              hit.main_image_url,
+              hit['Main Image URL'],
+              hit.Hover_Image_URL,
+              hit.hover_image_url,
+              hit.url,
+              hit.image_url,
+            ];
+            for (const candidate of candidates) {
+              if (candidate && typeof candidate === 'string') {
+                const cleaned = candidate.trim();
+                if (cleaned.length >= 8 && (cleaned.startsWith('http://') || cleaned.startsWith('https://')) && !cleaned.startsWith('data:') && !cleaned.includes('data:image')) {
+                  return cleaned;
+                }
+              }
+            }
+            return '';
+          })(),
+          Main_Image_URL: (() => {
+            const url = hit.Main_Image_URL || hit.main_image_url || hit['Main Image URL'] || '';
+            if (url && typeof url === 'string') {
+              const cleaned = url.trim();
+              if (cleaned.length >= 8 && (cleaned.startsWith('http://') || cleaned.startsWith('https://')) && !cleaned.startsWith('data:') && !cleaned.includes('data:image')) {
+                return cleaned;
+              }
+            }
+            return '';
+          })(),
+          Hover_Image_URL: (() => {
+            const url = hit.Hover_Image_URL || hit.hover_image_url || hit['Hover Image URL'] || '';
+            if (url && typeof url === 'string') {
+              const cleaned = url.trim();
+              if (cleaned.length >= 8 && (cleaned.startsWith('http://') || cleaned.startsWith('https://')) && !cleaned.startsWith('data:') && !cleaned.includes('data:image')) {
+                return cleaned;
+              }
+            }
+            return '';
+          })(),
+          image_url: hit.image_url || '',
+          product_url: hit.product_url || hit.url || hit.productUrl || '',
+          color: hit.color,
+          material: hit.material,
+          size: hit.size,
+          style: hit.style,
+          occasion: hit.occasion,
+          season: hit.season,
+          category: hit.category,
+          tags: hit.tags,
           store_id: hit.store_id || 1,
           enhancementScores: {},
         }))
