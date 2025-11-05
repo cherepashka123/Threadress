@@ -248,7 +248,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Format final results with store information prominently displayed
-    const hits = enhancedHits
+    let hits = enhancedHits
       .map((enhanced: any) => ({
         id: enhanced.id,
         score: enhanced.score,
