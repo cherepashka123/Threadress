@@ -204,7 +204,8 @@ export async function GET(req: NextRequest) {
 
     console.log(`📊 Processing ${initialHits.length} initial hits through ultra-advanced search`);
     
-    // Apply ultra-advanced enhancements with HYPER-OPTIMIZED keyword matching
+    // Apply ultra-advanced enhancements - MINIMAL adjustments to preserve base Qdrant scores
+    // The base Qdrant scores are already good, we just add tiny refinements
     let enhancedHits: any[];
     try {
       enhancedHits = await ultraAdvancedSearch(
@@ -212,12 +213,12 @@ export async function GET(req: NextRequest) {
         imageUrl || undefined,
         initialHits,
         {
-          priceRelevanceWeight: 0.05, // Reduced - less impact on base score
-          seasonRelevanceWeight: 0.05, // Reduced - less impact on base score
-          brandAffinityWeight: 0.05, // Reduced - less impact on base score
-          popularityWeight: 0.02, // Reduced - less impact on base score
-          attributeMatchWeight: 0.1, // Reduced - less impact on base score
-          keywordMatchWeight: 0.15, // Reduced - smaller adjustments to preserve base scores (matches localhost)
+          priceRelevanceWeight: 0.02, // Very small - almost no impact
+          seasonRelevanceWeight: 0.02, // Very small - almost no impact
+          brandAffinityWeight: 0.02, // Very small - almost no impact
+          popularityWeight: 0.01, // Very small - almost no impact
+          attributeMatchWeight: 0.03, // Small - minimal impact
+          keywordMatchWeight: 0.05, // Small - minimal adjustments (matches localhost)
         }
       );
       

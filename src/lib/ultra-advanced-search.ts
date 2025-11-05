@@ -943,19 +943,9 @@ export async function ultraAdvancedSearch(
         // Combine scores with weights - keyword matching gets high weight
         const keywordMatchWeight = config.keywordMatchWeight ?? 0.5; // 50% weight for keyword matching (default)
 
-        // CRITICAL: If keyword match is very low (category mismatch), heavily penalize the entire score
-        let keywordPenalty = 0;
-        if (keywordMatch < 0.3) {
-          // Very poor keyword match (likely category mismatch) - apply heavy penalty
-          keywordPenalty = 0.7; // Reduce final score by 70%
-        } else if (keywordMatch < 0.5) {
-          // Poor keyword match - apply moderate penalty
-          keywordPenalty = 0.4; // Reduce final score by 40%
-        }
-
-        // Calculate enhanced score ensuring it never goes below a reasonable minimum
-        // The formula should preserve the base score while adding enhancements
-        const baseScoreWithPenalty = baseScore * (1 - keywordPenalty);
+        // LESS AGGRESSIVE: Only apply small adjustments, preserve base score
+        // This matches localhost behavior - base Qdrant scores are already good
+        // We just add small refinements, not major rewrites
         const enhancementAdjustments =
           (priceRelevance - 1.0) * priceRelevanceWeight +
           (seasonRelevance - 1.0) * seasonRelevanceWeight +
@@ -964,19 +954,18 @@ export async function ultraAdvancedSearch(
           (attributeMatch - 1.0) * attributeMatchWeight +
           (keywordMatch - 1.0) * keywordMatchWeight;
 
-        // Ensure the score doesn't go negative - preserve base score as minimum
-        // If enhancements are negative, they should reduce the base score, but not below a reasonable minimum
-        // Always preserve at least 50% of base score to ensure items are visible
-        const minPreservedScore = baseScore * 0.5; // Preserve at least 50% of base score
-        const enhancedScore = Math.max(
-          minPreservedScore, // Minimum is 50% of base score (never drop below this)
-          baseScoreWithPenalty +
-            Math.min(enhancementAdjustments, baseScoreWithPenalty * 0.5) // Cap negative adjustments
+        // PRESERVE BASE SCORE: Start with base score, only add small adjustments
+        // Maximum adjustment is ±15% of base score to keep it close to original (matches localhost)
+        const maxAdjustment = baseScore * 0.15; // Max 15% adjustment (small)
+        const cappedAdjustments = Math.max(
+          -maxAdjustment,
+          Math.min(maxAdjustment, enhancementAdjustments)
         );
+        const enhancedScore = baseScore + cappedAdjustments;
 
         return {
           id: result.id,
-          score: Math.max(baseScore * 0.8, Math.min(1, enhancedScore)), // Preserve at least 80% of base score
+          score: Math.max(baseScore * 0.95, Math.min(1, enhancedScore)), // Preserve at least 95% of base score (almost no change)
           baseScore,
           enhancementScores: {
             priceRelevance,
