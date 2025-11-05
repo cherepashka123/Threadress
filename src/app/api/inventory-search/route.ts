@@ -430,25 +430,73 @@ export async function GET(req: NextRequest) {
         // Enhancement scores (for debugging/display)
         enhancementScores: enhanced.enhancementScores,
       }))
-      // Filter out items with very low scores (likely category mismatches)
-      // BUT: Don't filter too aggressively - keep items that have reasonable base scores
+      // MINIMAL FILTERING: Only filter out items with extremely low scores
+      // This matches localhost behavior - be very permissive
       .filter((h: any) => {
-        // If score is very low AND base score is also very low, it's likely a mismatch
-        const keywordScore = h.enhancementScores?.keywordMatch || 1.0;
-        const baseScore = h.baseScore || 0;
-        
-        // Only filter if BOTH final score AND base score are very low
-        // This prevents filtering out items that just got penalized but have good base similarity
-        if (h.score < 0.1 && baseScore < 0.2 && keywordScore < 0.3) {
-          return false; // Filter out true category mismatches
-        }
-        
-        // Keep items with any reasonable score (lowered threshold to 0.05)
-        return h.score > 0.05;
+        // Only filter if score is extremely low (near zero)
+        // Keep everything else - let the user see results
+        return h.score > 0.01; // Very permissive threshold
       })
       .slice(0, k); // Limit to requested number
 
     console.log(`Found ${res.length} initial results, ${enhancedHits.length} after enhancement, ${hits.length} after final filter`);
+    
+    // CRITICAL FALLBACK: If all results filtered out, return initial results from Qdrant
+    // This ensures we always show something if Qdrant found results
+    if (hits.length === 0 && res.length > 0) {
+      console.warn('⚠️ All results filtered out, using initial Qdrant results as fallback');
+      hits = initialHits
+        .map((hit: any) => ({
+          id: hit.id,
+          score: hit.score || 0.5,
+          baseScore: hit.score || 0.5,
+          store_name: (() => {
+            const sourceValue = hit.brand || hit.store_name || '';
+            const normalized = sourceValue.toLowerCase().trim();
+            if (normalized.includes('maniere') || normalized.includes('manieredevoir')) return 'Maniere de Voir';
+            if (normalized.includes('rouje')) return 'Rouje';
+            if (normalized.includes('with jean') || normalized.includes('withjean')) return 'With Jean';
+            return 'Maniere de Voir';
+          })(),
+          store: (() => {
+            const sourceValue = hit.brand || hit.store_name || '';
+            const normalized = sourceValue.toLowerCase().trim();
+            if (normalized.includes('maniere') || normalized.includes('manieredevoir')) return 'Maniere de Voir';
+            if (normalized.includes('rouje')) return 'Rouje';
+            if (normalized.includes('with jean') || normalized.includes('withjean')) return 'With Jean';
+            return 'Maniere de Voir';
+          })(),
+          brand: (() => {
+            const sourceValue = hit.brand || hit.store_name || '';
+            const normalized = sourceValue.toLowerCase().trim();
+            if (normalized.includes('maniere') || normalized.includes('manieredevoir')) return 'Maniere de Voir';
+            if (normalized.includes('rouje')) return 'Rouje';
+            if (normalized.includes('with jean') || normalized.includes('withjean')) return 'With Jean';
+            return 'Maniere de Voir';
+          })(),
+          title: (() => {
+            const rawTitle = hit.title || '';
+            if (rawTitle.startsWith('http://') || rawTitle.startsWith('https://') || rawTitle.includes('cdn.shopify.com')) {
+              const urlMatch = rawTitle.match(/\/([^\/]+?)(?:-with-|-\d+|\.(jpg|png|webp|jpeg)|$)/i);
+              if (urlMatch && urlMatch[1]) {
+                return urlMatch[1].replace(/-/g, ' ').replace(/\b\w/g, (char: string) => char.toUpperCase()).trim();
+              }
+              return 'Product';
+            }
+            return rawTitle || 'Product';
+          })(),
+          description: hit.description,
+          price: hit.price,
+          currency: hit.currency || 'USD',
+          url: hit.Main_Image_URL || hit.main_image_url || hit.url || hit.image_url || '',
+          Main_Image_URL: hit.Main_Image_URL,
+          Hover_Image_URL: hit.Hover_Image_URL,
+          product_url: hit.product_url || hit.url,
+          store_id: hit.store_id || 1,
+          enhancementScores: {},
+        }))
+        .slice(0, k);
+    }
     
     // Log if no results found - this helps debug production issues
     if (hits.length === 0 && res.length > 0) {

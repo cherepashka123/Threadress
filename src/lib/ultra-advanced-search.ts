@@ -963,17 +963,19 @@ export async function ultraAdvancedSearch(
           (popularity - 1.0) * popularityWeight +
           (attributeMatch - 1.0) * attributeMatchWeight +
           (keywordMatch - 1.0) * keywordMatchWeight;
-        
-        // Ensure the score doesn't go negative - if enhancements are negative, 
-        // they should reduce the base score proportionally, not make it negative
+
+        // Ensure the score doesn't go negative - preserve base score as minimum
+        // If enhancements are negative, they should reduce the base score, but not below a reasonable minimum
+        // Always preserve at least 50% of base score to ensure items are visible
+        const minPreservedScore = baseScore * 0.5; // Preserve at least 50% of base score
         const enhancedScore = Math.max(
-          0.05, // Minimum score to keep items visible
+          minPreservedScore, // Minimum is 50% of base score (never drop below this)
           baseScoreWithPenalty + Math.min(enhancementAdjustments, baseScoreWithPenalty * 0.5) // Cap negative adjustments
         );
 
         return {
           id: result.id,
-          score: Math.max(0.05, Math.min(1, enhancedScore)), // Clamp to 0.05-1 (minimum 0.05 to keep items visible)
+          score: Math.max(0.01, Math.min(1, enhancedScore)), // Clamp to 0.01-1 (very permissive minimum)
           baseScore,
           enhancementScores: {
             priceRelevance,
