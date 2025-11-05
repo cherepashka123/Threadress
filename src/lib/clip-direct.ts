@@ -26,12 +26,17 @@ async function checkClipService(): Promise<boolean> {
   // Example: CLIP_SERVICE_URL=https://clip-api.yourdomain.com
   
   try {
-    const response = await fetch(`${CLIP_SERVICE_URL}/health`, {
+    const healthUrl = `${CLIP_SERVICE_URL}/health`;
+    console.log(`🔍 Checking CLIP service health: ${healthUrl}`);
+    const response = await fetch(healthUrl, {
       method: 'GET',
       signal: AbortSignal.timeout(500), // Short timeout - fail fast
     });
-    return response.ok;
-  } catch {
+    const isOk = response.ok;
+    console.log(`🔍 CLIP service health check: ${isOk ? 'OK' : 'FAILED'} (${response.status})`);
+    return isOk;
+  } catch (error: any) {
+    console.warn(`⚠️ CLIP service health check failed:`, error.message);
     return false;
   }
 }
@@ -114,13 +119,15 @@ export async function embedImageBatch(
  * Generate text embeddings using local CLIP service
  */
 export async function embedTextSingle(text: string): Promise<number[]> {
-  // Check if service is available first (will return false in production)
+  // Check if service is available first
   const isAvailable = await checkClipService();
   if (!isAvailable) {
+    console.warn(`⚠️ CLIP service not available. URL: ${CLIP_SERVICE_URL}`);
     throw new Error('CLIP service not available');
   }
   
   try {
+    console.log(`📤 Sending text embedding request to CLIP service: "${text.substring(0, 50)}..."`);
     const response = await fetch(`${CLIP_SERVICE_URL}/embed/text`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -129,21 +136,21 @@ export async function embedTextSingle(text: string): Promise<number[]> {
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`❌ CLIP service error: ${response.status} ${response.statusText}`, errorText);
       throw new Error(`CLIP service error: ${response.statusText}`);
     }
 
     const data = await response.json();
     if (data.ok && data.embedding) {
+      console.log(`✅ CLIP text embedding received: ${data.embedding.length} dim, non-zero: ${data.embedding.some((v: number) => v !== 0)}`);
       return data.embedding;
     }
 
     throw new Error('Invalid response from CLIP service');
   } catch (error) {
-    // Don't log errors in production - they're expected when service isn't available
-    // Only log in development
-    if (process.env.NODE_ENV === 'development') {
-      console.error(`CLIP text embedding failed for "${text}":`, error);
-    }
+    // Log errors in production for debugging
+    console.error(`❌ CLIP text embedding failed for "${text.substring(0, 50)}...":`, error instanceof Error ? error.message : error);
     // Throw error so caller can fall back to Hugging Face
     throw error;
   }

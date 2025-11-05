@@ -92,14 +92,14 @@ export async function embedTextSingle(text: string): Promise<number[]> {
       const embedding = await clipDirect.embedTextSingle(text);
       // CLIP returns 512-dim, but we need 384 for compatibility
       // Return first 384 dimensions
+      console.log(`✅ CLIP service used for text embedding: ${embedding.length} dim, non-zero: ${embedding.some(v => v !== 0)}`);
       return embedding.slice(0, 384);
     } catch (error) {
-      // Silently fail in production - expected behavior
-      // Only log in development
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('CLIP service failed for text, falling back to Hugging Face:', error);
-      }
+      // Log in production too to diagnose issues
+      console.warn('CLIP service failed for text, falling back to Hugging Face:', error instanceof Error ? error.message : error);
     }
+  } else {
+    console.log('ℹ️ CLIP direct service not available, using Hugging Face');
   }
 
   // Fallback to Hugging Face

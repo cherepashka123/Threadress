@@ -69,6 +69,10 @@ export async function GET(req: NextRequest) {
     let enhancedQuery: string | undefined;
 
     console.log('🔤 Generating embeddings for query:', q);
+    console.log('🔍 CLIP_SERVICE_URL:', process.env.CLIP_SERVICE_URL ? 'SET' : 'NOT SET');
+    if (process.env.CLIP_SERVICE_URL) {
+      console.log('🔍 CLIP_SERVICE_URL value:', process.env.CLIP_SERVICE_URL);
+    }
     
     try {
       if (q.trim() && imageUrl.trim()) {
