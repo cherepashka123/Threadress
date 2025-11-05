@@ -970,12 +970,13 @@ export async function ultraAdvancedSearch(
         const minPreservedScore = baseScore * 0.5; // Preserve at least 50% of base score
         const enhancedScore = Math.max(
           minPreservedScore, // Minimum is 50% of base score (never drop below this)
-          baseScoreWithPenalty + Math.min(enhancementAdjustments, baseScoreWithPenalty * 0.5) // Cap negative adjustments
+          baseScoreWithPenalty +
+            Math.min(enhancementAdjustments, baseScoreWithPenalty * 0.5) // Cap negative adjustments
         );
 
         return {
           id: result.id,
-          score: Math.max(0.01, Math.min(1, enhancedScore)), // Clamp to 0.01-1 (very permissive minimum)
+          score: Math.max(baseScore * 0.8, Math.min(1, enhancedScore)), // Preserve at least 80% of base score
           baseScore,
           enhancementScores: {
             priceRelevance,

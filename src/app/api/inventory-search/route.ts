@@ -210,12 +210,12 @@ export async function GET(req: NextRequest) {
         imageUrl || undefined,
         initialHits,
         {
-          priceRelevanceWeight: 0.1,
-          seasonRelevanceWeight: 0.1,
-          brandAffinityWeight: 0.1,
-          popularityWeight: 0.05,
-          attributeMatchWeight: 0.2, // Increased for better attribute matching
-          keywordMatchWeight: 0.5, // HYPER-OPTIMIZED: Word-by-word matching (50% weight - increased for accuracy)
+          priceRelevanceWeight: 0.05, // Reduced - less impact on base score
+          seasonRelevanceWeight: 0.05, // Reduced - less impact on base score
+          brandAffinityWeight: 0.05, // Reduced - less impact on base score
+          popularityWeight: 0.02, // Reduced - less impact on base score
+          attributeMatchWeight: 0.1, // Reduced - less impact on base score
+          keywordMatchWeight: 0.15, // Reduced - smaller adjustments to preserve base scores (matches localhost)
         }
       );
       
