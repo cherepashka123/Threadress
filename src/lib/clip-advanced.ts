@@ -92,7 +92,12 @@ export async function embedTextSingle(text: string): Promise<number[]> {
       const embedding = await clipDirect.embedTextSingle(text);
       // CLIP returns 512-dim, but we need 384 for compatibility
       // Return first 384 dimensions
-      console.log(`✅ CLIP service used for text embedding: ${embedding.length} dim, non-zero: ${embedding.some(v => v !== 0)}`);
+      const isNonZero = embedding.some(v => v !== 0);
+      console.log(`✅ CLIP service used for text embedding: ${embedding.length} dim → 384 dim, non-zero: ${isNonZero}`);
+      if (!isNonZero) {
+        console.warn('⚠️ CLIP returned zero vector, falling back to Hugging Face');
+        throw new Error('CLIP returned zero vector');
+      }
       return embedding.slice(0, 384);
     } catch (error) {
       // Log in production too to diagnose issues
@@ -104,7 +109,13 @@ export async function embedTextSingle(text: string): Promise<number[]> {
 
   // Fallback to Hugging Face
   const results = await embedTextBatch([text]);
-  return results[0] || new Array(384).fill(0);
+  const embedding = results[0] || new Array(384).fill(0);
+  const isNonZero = embedding.some(v => v !== 0);
+  console.log(`📊 Hugging Face text embedding: ${embedding.length} dim, non-zero: ${isNonZero}`);
+  if (!isNonZero) {
+    console.error('❌ Hugging Face returned zero vector!');
+  }
+  return embedding;
 }
 
 /**
@@ -150,15 +161,15 @@ export async function embedImageBatch(
           try {
             const embedding = await clipDirect.embedImageSingle(imageUrl);
             if (embedding && embedding.length === 512 && embedding.some(x => x !== 0)) {
+              console.log(`✅ CLIP service used for image embedding: ${imageUrl.substring(0, 50)}...`);
               embeddings.push(embedding);
               continue;
+            } else {
+              console.warn(`⚠️ CLIP returned invalid embedding for ${imageUrl}: length=${embedding?.length}, all-zero=${!embedding?.some(x => x !== 0)}`);
             }
           } catch (clipServiceError: any) {
             // CLIP service not available or failed, fall through to Hugging Face
-            // Only log in development
-            if (process.env.NODE_ENV === 'development') {
-              console.warn(`CLIP service unavailable for ${imageUrl}, trying Hugging Face...`);
-            }
+            console.warn(`CLIP service unavailable for ${imageUrl}, trying Hugging Face...`, clipServiceError.message);
           }
         }
         

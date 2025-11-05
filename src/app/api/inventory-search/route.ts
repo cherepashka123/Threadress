@@ -69,10 +69,12 @@ export async function GET(req: NextRequest) {
     let enhancedQuery: string | undefined;
 
     console.log('🔤 Generating embeddings for query:', q);
-    console.log('🔍 CLIP_SERVICE_URL:', process.env.CLIP_SERVICE_URL ? 'SET' : 'NOT SET');
-    if (process.env.CLIP_SERVICE_URL) {
-      console.log('🔍 CLIP_SERVICE_URL value:', process.env.CLIP_SERVICE_URL);
-    }
+    console.log('🔍 CLIP_SERVICE_URL:', process.env.CLIP_SERVICE_URL ? `SET (${process.env.CLIP_SERVICE_URL})` : 'NOT SET');
+    console.log('🔍 HF_TOKEN:', process.env.HF_TOKEN ? 'SET' : 'NOT SET');
+    console.log('🔍 Environment:', {
+      NODE_ENV: process.env.NODE_ENV,
+      VERCEL: process.env.VERCEL ? 'true' : 'false',
+    });
     
     try {
       if (q.trim() && imageUrl.trim()) {
