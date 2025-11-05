@@ -442,7 +442,9 @@ export async function GET(req: NextRequest) {
       })
       .slice(0, k); // Limit to requested number
 
-    console.log(`Found ${res.length} initial results, ${enhancedHits.length} after enhancement, ${hits.length} after final filter`);
+    console.log(`📊 Search summary: ${res.length} initial results, ${enhancedHits.length} after enhancement, ${hits.length} after final filter`);
+    console.log(`📊 Top 3 base scores:`, res.slice(0, 3).map((r: any) => ({ id: r.id, score: r.score.toFixed(4), title: r.payload?.title?.substring(0, 40) })));
+    console.log(`📊 Top 3 enhanced scores:`, enhancedHits.slice(0, 3).map((h: any) => ({ id: h.id, baseScore: h.baseScore?.toFixed(4), enhancedScore: h.score.toFixed(4), title: h.payload?.title?.substring(0, 40) })));
     
     // CRITICAL FALLBACK: If all results filtered out, return initial results from Qdrant
     // This ensures we always show something if Qdrant found results
