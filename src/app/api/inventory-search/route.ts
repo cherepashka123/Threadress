@@ -431,15 +431,20 @@ export async function GET(req: NextRequest) {
         enhancementScores: enhanced.enhancementScores,
       }))
       // Filter out items with very low scores (likely category mismatches)
+      // BUT: Don't filter too aggressively - keep items that have reasonable base scores
       .filter((h: any) => {
-        // If score is very low, it likely means category mismatch
-        // Also check if keyword match score was very low
+        // If score is very low AND base score is also very low, it's likely a mismatch
         const keywordScore = h.enhancementScores?.keywordMatch || 1.0;
-        // Filter out items with both low final score AND low keyword match
-        if (h.score < 0.2 && keywordScore < 0.3) {
-          return false; // Filter out category mismatches
+        const baseScore = h.baseScore || 0;
+        
+        // Only filter if BOTH final score AND base score are very low
+        // This prevents filtering out items that just got penalized but have good base similarity
+        if (h.score < 0.1 && baseScore < 0.2 && keywordScore < 0.3) {
+          return false; // Filter out true category mismatches
         }
-        return h.score > 0.05; // Keep items with reasonable scores
+        
+        // Keep items with any reasonable score (lowered threshold to 0.05)
+        return h.score > 0.05;
       })
       .slice(0, k); // Limit to requested number
 

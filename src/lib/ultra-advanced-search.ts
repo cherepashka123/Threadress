@@ -940,31 +940,40 @@ export async function ultraAdvancedSearch(
         // HYPER-OPTIMIZED: Word-by-word keyword matching (matches EVERY word)
         const keywordMatch = calculateKeywordMatch(result, query);
 
-    // Combine scores with weights - keyword matching gets high weight
-    const keywordMatchWeight = config.keywordMatchWeight ?? 0.5; // 50% weight for keyword matching (default)
-    
-    // CRITICAL: If keyword match is very low (category mismatch), heavily penalize the entire score
-    let keywordPenalty = 0;
-    if (keywordMatch < 0.3) {
-      // Very poor keyword match (likely category mismatch) - apply heavy penalty
-      keywordPenalty = 0.7; // Reduce final score by 70%
-    } else if (keywordMatch < 0.5) {
-      // Poor keyword match - apply moderate penalty
-      keywordPenalty = 0.4; // Reduce final score by 40%
-    }
-    
-    const enhancedScore =
-      baseScore * (1 - keywordPenalty) + // Apply keyword penalty to base score
-      (priceRelevance - 1.0) * priceRelevanceWeight +
-      (seasonRelevance - 1.0) * seasonRelevanceWeight +
-      (brandAffinity - 1.0) * brandAffinityWeight +
-      (popularity - 1.0) * popularityWeight +
-      (attributeMatch - 1.0) * attributeMatchWeight +
-      (keywordMatch - 1.0) * keywordMatchWeight; // Keyword matching boost
+        // Combine scores with weights - keyword matching gets high weight
+        const keywordMatchWeight = config.keywordMatchWeight ?? 0.5; // 50% weight for keyword matching (default)
+
+        // CRITICAL: If keyword match is very low (category mismatch), heavily penalize the entire score
+        let keywordPenalty = 0;
+        if (keywordMatch < 0.3) {
+          // Very poor keyword match (likely category mismatch) - apply heavy penalty
+          keywordPenalty = 0.7; // Reduce final score by 70%
+        } else if (keywordMatch < 0.5) {
+          // Poor keyword match - apply moderate penalty
+          keywordPenalty = 0.4; // Reduce final score by 40%
+        }
+
+        // Calculate enhanced score ensuring it never goes below a reasonable minimum
+        // The formula should preserve the base score while adding enhancements
+        const baseScoreWithPenalty = baseScore * (1 - keywordPenalty);
+        const enhancementAdjustments =
+          (priceRelevance - 1.0) * priceRelevanceWeight +
+          (seasonRelevance - 1.0) * seasonRelevanceWeight +
+          (brandAffinity - 1.0) * brandAffinityWeight +
+          (popularity - 1.0) * popularityWeight +
+          (attributeMatch - 1.0) * attributeMatchWeight +
+          (keywordMatch - 1.0) * keywordMatchWeight;
+        
+        // Ensure the score doesn't go negative - if enhancements are negative, 
+        // they should reduce the base score proportionally, not make it negative
+        const enhancedScore = Math.max(
+          0.05, // Minimum score to keep items visible
+          baseScoreWithPenalty + Math.min(enhancementAdjustments, baseScoreWithPenalty * 0.5) // Cap negative adjustments
+        );
 
         return {
           id: result.id,
-          score: Math.max(0, Math.min(1, enhancedScore)), // Clamp to 0-1
+          score: Math.max(0.05, Math.min(1, enhancedScore)), // Clamp to 0.05-1 (minimum 0.05 to keep items visible)
           baseScore,
           enhancementScores: {
             priceRelevance,
