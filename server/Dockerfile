@@ -30,9 +30,9 @@ COPY clip_service.py .
 # Expose port (Railway will map $PORT to this)
 EXPOSE 8001
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD python -c "import os, requests; port = os.environ.get('PORT', '8001'); requests.get(f'http://localhost:{port}/health')" || exit 1
+# Health check - give more time for CLIP model to load (it can take 2-3 minutes)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=5 \
+  CMD python -c "import os, requests; port = os.environ.get('PORT', '8001'); requests.get(f'http://localhost:{port}/health', timeout=5)" || exit 1
 
 # Run the service (reads PORT from environment variable)
 # Use shell form to allow environment variable substitution

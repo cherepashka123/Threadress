@@ -13,10 +13,15 @@ from typing import List, Union
 import os
 
 # Load CLIP model once at startup
-device = "cuda" if torch.cuda.is_available() else "cpu"
+# Use CPU for Railway (no GPU available)
+device = "cpu"  # Railway doesn't have GPU, force CPU
 print(f"Loading CLIP model on {device}...")
-model, preprocess = clip.load("ViT-B/32", device=device)
-print("CLIP model loaded successfully!")
+try:
+    model, preprocess = clip.load("ViT-B/32", device=device)
+    print("CLIP model loaded successfully!")
+except Exception as e:
+    print(f"Error loading CLIP model: {e}")
+    raise
 
 def fetch_image(url: str) -> Image.Image:
     """Fetch image from URL"""
