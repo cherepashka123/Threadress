@@ -8,7 +8,7 @@ const CLIP_SERVICE_URL =
   process.env.CLIP_SERVICE_URL || 'http://localhost:8001';
 
 // Check if CLIP service is available
-async function checkClipService(): Promise<boolean> {
+export async function checkClipService(): Promise<boolean> {
   // If CLIP_SERVICE_URL points to localhost, only use it in development
   if (CLIP_SERVICE_URL.includes('localhost') || CLIP_SERVICE_URL.includes('127.0.0.1')) {
     // Localhost only works in development (not on Vercel)
