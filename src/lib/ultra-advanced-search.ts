@@ -954,9 +954,10 @@ export async function ultraAdvancedSearch(
           (attributeMatch - 1.0) * attributeMatchWeight +
           (keywordMatch - 1.0) * keywordMatchWeight;
 
-        // PRESERVE BASE SCORE: Start with base score, only add small adjustments
-        // Maximum adjustment is ±15% of base score to keep it close to original (matches localhost)
-        const maxAdjustment = baseScore * 0.15; // Max 15% adjustment (small)
+        // PRESERVE BASE SCORE: Start with base score, only add tiny adjustments
+        // Maximum adjustment is ±5% of base score to keep it very close to original (matches localhost exactly)
+        // This ensures results are almost identical to what Qdrant returns
+        const maxAdjustment = baseScore * 0.05; // Max 5% adjustment (very small - almost no change)
         const cappedAdjustments = Math.max(
           -maxAdjustment,
           Math.min(maxAdjustment, enhancementAdjustments)
