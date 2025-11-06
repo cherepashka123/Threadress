@@ -24,6 +24,13 @@ logger = logging.getLogger(__name__)
 app = FastAPI(title="CLIP Embedding Service")
 logger.info("FastAPI app created")
 
+@app.on_event("startup")
+async def startup_event():
+    import os
+    port = os.environ.get("PORT", "8001")
+    logger.info(f"🚀 CLIP service starting on port {port}")
+    logger.info(f"🚀 Listening on 0.0.0.0:{port}")
+
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
