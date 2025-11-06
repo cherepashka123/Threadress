@@ -36,3 +36,4 @@ echo "3. Redeploy your Vercel app"
 echo ""
 railway domain
 
+

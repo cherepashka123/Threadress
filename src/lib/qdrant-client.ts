@@ -325,10 +325,10 @@ export async function clearCollection(): Promise<void> {
     
     if (allPoints.points && allPoints.points.length > 0) {
       const ids = allPoints.points.map(p => p.id);
-      await qdrantClient.delete(INVENTORY_COLLECTION, {
-        wait: true,
+    await qdrantClient.delete(INVENTORY_COLLECTION, {
+      wait: true,
         points: ids,
-      });
+    });
       console.log(`Cleared ${ids.length} products from ${INVENTORY_COLLECTION}`);
     } else {
       console.log(`No products to clear from ${INVENTORY_COLLECTION}`);

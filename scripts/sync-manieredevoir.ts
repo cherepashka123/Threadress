@@ -481,9 +481,9 @@ async function main() {
           console.warn(`   Trying HuggingFace as fallback for batch ${batchNum}...`);
           try {
             const [hfTextVectors, hfImageVectors] = await Promise.all([
-              embedTextBatch(chunkTexts),
-              embedImageBatch(chunkImageUrls),
-            ]);
+          embedTextBatch(chunkTexts),
+          embedImageBatch(chunkImageUrls),
+        ]);
             const hasValidHfText = hfTextVectors.some(v => v.some(x => x !== 0));
             if (hasValidHfText) {
               textVectors = hfTextVectors;

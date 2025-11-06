@@ -126,3 +126,4 @@ Your deployed CLIP service doesn't need any special environment variables - it w
 - Reduce batch sizes
 - Upgrade to service with more RAM (2GB+ recommended)
 
+

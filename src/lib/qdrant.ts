@@ -96,10 +96,10 @@ export async function clearInventoryCollection() {
     
     if (allPoints.points && allPoints.points.length > 0) {
       const ids = allPoints.points.map(p => p.id);
-      await qdrant.delete(INVENTORY_COLLECTION, {
-        wait: true,
+    await qdrant.delete(INVENTORY_COLLECTION, {
+      wait: true,
         points: ids,
-      });
+    });
       console.log(`Cleared ${ids.length} points from ${INVENTORY_COLLECTION}`);
     } else {
       console.log(`No points to clear from ${INVENTORY_COLLECTION}`);

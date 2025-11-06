@@ -59,3 +59,4 @@ Would you like me to add Replicate support? It's the easiest option!
 
 **My recommendation**: Stick with Hugging Face unless you specifically need CLIP!
 
+

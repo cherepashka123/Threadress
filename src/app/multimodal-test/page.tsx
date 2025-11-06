@@ -290,6 +290,16 @@ export default function MultimodalTestPage() {
       const data = await response.json();
 
       if (data.ok) {
+        // Check if database is empty
+        if (data.count === 0 && data.diagnostic?.collectionPointsCount === 0) {
+          setError('Database is empty. Please sync data first by visiting /api/inventory-sync or running the sync script.');
+        } else if (data.count === 0) {
+          // Results filtered out - show helpful message
+          setError('No results found. Try different search terms or check the diagnostic endpoint: /api/check-database');
+        } else {
+          setError(null); // Clear any previous errors
+        }
+        
         setResults({
           ...data,
           mode: 'clip-advanced',
@@ -309,7 +319,7 @@ export default function MultimodalTestPage() {
           },
         });
       } else {
-        setError(data.error || 'Search failed');
+        setError(data.message || data.error || 'Search failed');
       }
     } catch (err) {
       setError('Network error: ' + (err as Error).message);

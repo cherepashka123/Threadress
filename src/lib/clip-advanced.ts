@@ -7,9 +7,10 @@ let clipDirect: typeof import('./clip-direct') | null = null;
 try {
   // Always try to load CLIP direct service
   clipDirect = require('./clip-direct');
+  console.log('✅ CLIP direct service module loaded successfully');
 } catch (error) {
   // CLIP service not available, will use Hugging Face
-  console.warn('CLIP direct service not available, will use Hugging Face fallback');
+  console.warn('⚠️ CLIP direct service not available, will use Hugging Face fallback:', error instanceof Error ? error.message : error);
 }
 
 // Get HF_TOKEN dynamically instead of at module load time
@@ -41,23 +42,26 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
   // Localhost only works in development
   if (clipDirect) {
     try {
+      console.log(`🔍 Attempting CLIP batch text embedding for ${texts.length} texts...`);
       const embeddings = await clipDirect.embedTextBatch(texts);
-      // Convert 512-dim CLIP embeddings to 384-dim for compatibility
-      // Or pad 384-dim to match expected dimensions
-      return embeddings.map(emb => {
+      // CLIP returns 512-dim embeddings - keep full size
+      // The combination function will handle dimension alignment
+      const processed = embeddings.map(emb => {
         if (emb.length === 512) {
-          // Return first 384 dimensions or pad if needed
-          return emb.slice(0, 384);
+          // Return full 512-dim CLIP embedding
+          return emb;
         }
-        return emb;
+        // If somehow not 512, pad to 512
+        return emb.length < 512 ? [...emb, ...new Array(512 - emb.length).fill(0)] : emb;
       });
+      console.log(`✅ CLIP batch text embedding successful: ${processed.length} embeddings, ${processed[0]?.length || 0} dim`);
+      return processed;
     } catch (error) {
-      // Silently fail in production - expected behavior
-      // Only log in development
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('CLIP service failed, falling back to Hugging Face:', error);
-      }
+      // Log in production too - important for debugging
+      console.warn('⚠️ CLIP batch service failed, falling back to Hugging Face:', error instanceof Error ? error.message : error);
     }
+  } else {
+    console.log('ℹ️ CLIP direct service not loaded, using Hugging Face for batch');
   }
 
   // Fallback to Hugging Face
@@ -89,25 +93,27 @@ export async function embedTextSingle(text: string): Promise<number[]> {
   // Try direct CLIP service first if available (works with remote CLIP service)
   if (clipDirect) {
     try {
+      console.log(`🔍 Attempting CLIP text embedding for: "${text.substring(0, 50)}..."`);
       const embedding = await clipDirect.embedTextSingle(text);
-      // CLIP returns 512-dim, but we need 384 for compatibility
-      // Return first 384 dimensions
+      // CLIP returns 512-dim embeddings - keep full size for combined vector
+      // The combination function will handle padding if needed
       const isNonZero = embedding.some(v => v !== 0);
-      console.log(`✅ CLIP service used for text embedding: ${embedding.length} dim → 384 dim, non-zero: ${isNonZero}`);
+      console.log(`✅ CLIP service used for text embedding: ${embedding.length} dim, non-zero: ${isNonZero}`);
       if (!isNonZero) {
         console.warn('⚠️ CLIP returned zero vector, falling back to Hugging Face');
         throw new Error('CLIP returned zero vector');
       }
-      return embedding.slice(0, 384);
+      // Return full 512-dim CLIP embedding (will be used in combined vector)
+      return embedding;
     } catch (error) {
       // Log in production too to diagnose issues
-      console.warn('CLIP service failed for text, falling back to Hugging Face:', error instanceof Error ? error.message : error);
+      console.warn('⚠️ CLIP service failed for text, falling back to Hugging Face:', error instanceof Error ? error.message : error);
     }
   } else {
-    console.log('ℹ️ CLIP direct service not available, using Hugging Face');
+    console.log('ℹ️ CLIP direct service module not loaded, using Hugging Face');
   }
 
-  // Fallback to Hugging Face
+  // Fallback to Hugging Face (384-dim, will be padded to 512 in combination)
   const results = await embedTextBatch([text]);
   const embedding = results[0] || new Array(384).fill(0);
   const isNonZero = embedding.some(v => v !== 0);

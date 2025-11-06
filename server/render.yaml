@@ -10,3 +10,4 @@ services:
     healthCheckPath: /health
     plan: starter  # Free tier available
 
+

@@ -13,7 +13,7 @@ export async function embedBatch(texts: string[]): Promise<number[][]> {
   if (!project) {
     console.warn('Vertex AI not configured - returning zero vectors');
     return texts.map(() => new Array(768).fill(0));
-  }
+      }
   
   // If Vertex AI was configured, implementation would go here
   return texts.map(() => new Array(768).fill(0));
@@ -27,7 +27,7 @@ export async function embedSingle(text: string): Promise<number[]> {
 // Test function to verify Vertex AI connection
 export async function testVertexAI(): Promise<boolean> {
   // Vertex AI not configured
-  return false;
+    return false;
 }
 
 
