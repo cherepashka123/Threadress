@@ -25,9 +25,16 @@ def _ensure_model_loaded():
         print(f"Loading CLIP model on {device}...")
         try:
             model, preprocess = clip.load("ViT-B/32", device=device)
+            if model is None or preprocess is None:
+                raise Exception("CLIP model loaded but returned None - likely out of memory")
             print("CLIP model loaded successfully!")
         except Exception as e:
             print(f"Error loading CLIP model: {e}")
+            import traceback
+            traceback.print_exc()
+            # Set to None to trigger retry on next call
+            model = None
+            preprocess = None
             raise
     return model, preprocess
 
@@ -112,6 +119,10 @@ def embed_text(text: str) -> List[float]:
         # Load model if not already loaded
         model, preprocess = _ensure_model_loaded()
         
+        # Check if model is None (could happen if loading was killed)
+        if model is None:
+            raise Exception("CLIP model failed to load - likely out of memory on Railway free tier (512MB limit). CLIP needs ~1-2GB.")
+        
         # Tokenize text
         text_tokens = clip.tokenize([text]).to(device)
         
@@ -131,6 +142,8 @@ def embed_text(text: str) -> List[float]:
         return embedding
     except Exception as e:
         print(f"Error embedding text '{text}': {e}")
+        import traceback
+        traceback.print_exc()
         # Return zero vector as fallback
         return [0.0] * 512
 
@@ -145,6 +158,13 @@ def embed_text_batch(texts: List[str]) -> List[List[float]]:
         List of embeddings (each is 512 floats)
     """
     try:
+        # Ensure model is loaded first
+        model, preprocess = _ensure_model_loaded()
+        
+        # Check if model is None (could happen if loading was killed)
+        if model is None:
+            raise Exception("CLIP model failed to load - likely out of memory on Railway free tier (512MB limit). CLIP needs ~1-2GB.")
+        
         # Tokenize all texts
         text_tokens = clip.tokenize(texts).to(device)
         
@@ -165,6 +185,8 @@ def embed_text_batch(texts: List[str]) -> List[List[float]]:
         return embeddings
     except Exception as e:
         print(f"Error embedding texts batch: {e}")
+        import traceback
+        traceback.print_exc()
         # Return zero vectors as fallback
         return [[0.0] * 512] * len(texts)
 
