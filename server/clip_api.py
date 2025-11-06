@@ -27,7 +27,8 @@ logger.info("FastAPI app created")
 @app.on_event("startup")
 async def startup_event():
     import os
-    port = os.environ.get("PORT", "8001")
+    # HF Spaces uses port 7860, Railway uses dynamic PORT, local uses 8001
+    port = os.environ.get("PORT", "7860")
     logger.info(f"🚀 CLIP service starting on port {port}")
     logger.info(f"🚀 Listening on 0.0.0.0:{port}")
 
