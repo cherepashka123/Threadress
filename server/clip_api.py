@@ -33,6 +33,15 @@ class TextEmbedRequest(BaseModel):
 class TextEmbedBatchRequest(BaseModel):
     texts: List[str]
 
+@app.get("/")
+async def root():
+    """Root endpoint"""
+    return {
+        "status": "ok",
+        "service": "clip-embeddings",
+        "message": "CLIP Embedding Service is running"
+    }
+
 @app.get("/health")
 async def health():
     """Health check endpoint - responds immediately without loading model"""

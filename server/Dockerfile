@@ -27,7 +27,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY clip_api.py .
 COPY clip_service.py .
 
-# Expose port (Railway will map $PORT to this)
+# Expose port - Railway will set PORT env var dynamically
+# We expose both 8001 (default) and use Railway's PORT
 EXPOSE 8001
 
 # Health check - give more time for CLIP model to load (it can take 2-3 minutes)
