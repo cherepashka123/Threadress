@@ -7,7 +7,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
-import clip_service
+# Don't import clip_service at module level - import it lazily to avoid startup crashes
+# import clip_service
 
 app = FastAPI(title="CLIP Embedding Service")
 
@@ -58,6 +59,7 @@ async def health():
 async def embed_image(request: ImageEmbedRequest):
     """Generate embedding for a single image"""
     try:
+        import clip_service
         embedding = clip_service.embed_image(request.image_url)
         return {
             "ok": True,
@@ -71,6 +73,7 @@ async def embed_image(request: ImageEmbedRequest):
 async def embed_image_batch(request: ImageEmbedBatchRequest):
     """Generate embeddings for multiple images"""
     try:
+        import clip_service
         embeddings = clip_service.embed_image_batch(request.image_urls)
         return {
             "ok": True,
@@ -85,6 +88,7 @@ async def embed_image_batch(request: ImageEmbedBatchRequest):
 async def embed_text(request: TextEmbedRequest):
     """Generate embedding for a single text"""
     try:
+        import clip_service
         embedding = clip_service.embed_text(request.text)
         return {
             "ok": True,
@@ -98,6 +102,7 @@ async def embed_text(request: TextEmbedRequest):
 async def embed_text_batch(request: TextEmbedBatchRequest):
     """Generate embeddings for multiple texts"""
     try:
+        import clip_service
         embeddings = clip_service.embed_text_batch(request.texts)
         return {
             "ok": True,
