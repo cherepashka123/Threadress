@@ -39,13 +39,15 @@ export async function checkClipService(): Promise<boolean> {
     console.log(`🔍 Checking CLIP service health: ${healthUrl}`);
     const response = await fetch(healthUrl, {
       method: 'GET',
-      signal: AbortSignal.timeout(500), // Short timeout - fail fast
+      signal: AbortSignal.timeout(5000), // Increased to 5 seconds - Railway may be slow to respond
     });
     const isOk = response.ok;
     console.log(`🔍 CLIP service health check: ${isOk ? 'OK' : 'FAILED'} (${response.status})`);
     return isOk;
   } catch (error: any) {
     console.warn(`⚠️ CLIP service health check failed:`, error.message);
+    // Don't immediately give up - Railway might be cold-starting
+    // Return false but log that we'll retry on actual embedding requests
     return false;
   }
 }
