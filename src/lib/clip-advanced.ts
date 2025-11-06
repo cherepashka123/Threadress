@@ -458,13 +458,13 @@ export async function embedAdvancedMultimodalQuery(
     await Promise.all(embeddingPromises);
 
   // Validate vectors are not all zeros - use hash fallback if needed
-  const finalTextVector = textVector.some(v => v !== 0) 
+  const finalTextVector = textVector.some((v: number) => v !== 0) 
     ? textVector 
     : generateSimpleHashEmbedding(enhancedQuery);
-  const finalVibeVector = vibeVector.some(v => v !== 0) 
+  const finalVibeVector = vibeVector.some((v: number) => v !== 0) 
     ? vibeVector 
     : (vibeText ? generateSimpleHashEmbedding(vibeText) : new Array(384).fill(0));
-  const finalImageVector = imageVector.some(v => v !== 0) 
+  const finalImageVector = imageVector.some((v: number) => v !== 0) 
     ? imageVector 
     : new Array(512).fill(0);
 
@@ -486,7 +486,7 @@ export async function embedAdvancedMultimodalQuery(
   );
 
   // Final validation: ensure combined vector is not all zeros
-  if (!combinedVector.some(v => v !== 0)) {
+  if (!combinedVector.some((v: number) => v !== 0)) {
     console.error('❌ Combined vector is all zeros! Using hash fallback for query');
     const hashEmbedding = generateSimpleHashEmbedding(enhancedQuery);
     // Pad to 512 dimensions
