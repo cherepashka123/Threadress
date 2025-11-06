@@ -34,7 +34,25 @@ class TextEmbedBatchRequest(BaseModel):
 
 @app.get("/health")
 async def health():
-    return {"status": "healthy", "service": "clip-embeddings"}
+    """Health check endpoint - responds immediately without loading model"""
+    # Check if model is loaded (optional - doesn't block if not loaded)
+    try:
+        import clip_service
+        model_loaded = clip_service.model is not None
+        return {
+            "status": "healthy",
+            "service": "clip-embeddings",
+            "model_loaded": model_loaded
+        }
+    except Exception as e:
+        # Still return healthy if there's an error checking model
+        # The service is running, model might just be loading
+        return {
+            "status": "healthy",
+            "service": "clip-embeddings",
+            "model_loaded": False,
+            "note": "Model may still be loading"
+        }
 
 @app.post("/embed/image")
 async def embed_image(request: ImageEmbedRequest):

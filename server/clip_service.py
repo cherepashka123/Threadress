@@ -12,16 +12,24 @@ import numpy as np
 from typing import List, Union
 import os
 
-# Load CLIP model once at startup
+# Load CLIP model lazily (not at import time)
 # Use CPU for Railway (no GPU available)
 device = "cpu"  # Railway doesn't have GPU, force CPU
-print(f"Loading CLIP model on {device}...")
-try:
-    model, preprocess = clip.load("ViT-B/32", device=device)
-    print("CLIP model loaded successfully!")
-except Exception as e:
-    print(f"Error loading CLIP model: {e}")
-    raise
+model = None
+preprocess = None
+
+def _ensure_model_loaded():
+    """Load CLIP model on first use (lazy loading)"""
+    global model, preprocess
+    if model is None or preprocess is None:
+        print(f"Loading CLIP model on {device}...")
+        try:
+            model, preprocess = clip.load("ViT-B/32", device=device)
+            print("CLIP model loaded successfully!")
+        except Exception as e:
+            print(f"Error loading CLIP model: {e}")
+            raise
+    return model, preprocess
 
 def fetch_image(url: str) -> Image.Image:
     """Fetch image from URL"""
@@ -43,6 +51,9 @@ def embed_image(image_url: str) -> List[float]:
         List of 512 floats representing the image embedding
     """
     try:
+        # Load model if not already loaded
+        model, preprocess = _ensure_model_loaded()
+        
         # Fetch and preprocess image
         image = fetch_image(image_url)
         image_input = preprocess(image).unsqueeze(0).to(device)
