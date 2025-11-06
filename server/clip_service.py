@@ -109,6 +109,9 @@ def embed_text(text: str) -> List[float]:
         List of 512 floats representing the text embedding
     """
     try:
+        # Load model if not already loaded
+        model, preprocess = _ensure_model_loaded()
+        
         # Tokenize text
         text_tokens = clip.tokenize([text]).to(device)
         
