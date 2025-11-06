@@ -68,7 +68,9 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
   const hfToken = getHfToken();
   if (!hfToken) {
     console.error('HF_TOKEN is not set. Cannot generate text embeddings.');
-    return texts.map(() => new Array(384).fill(0));
+    // Use hash fallback instead of zero vectors
+    console.warn('⚠️ Using hash-based fallback embeddings (HF_TOKEN missing)');
+    return texts.map(text => generateSimpleHashEmbedding(text));
   }
 
   const hf = getHfClient();
@@ -82,10 +84,23 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
       throw new Error('Invalid response format from Hugging Face API');
     }
 
-    return response as number[][];
+    // Validate embeddings are not all zeros
+    const embeddings = response as number[][];
+    const validEmbeddings = embeddings.map((emb, idx) => {
+      const isNonZero = emb.some(v => v !== 0);
+      if (!isNonZero && texts[idx]) {
+        console.warn(`⚠️ Hugging Face returned zero vector for text ${idx}, using hash fallback`);
+        return generateSimpleHashEmbedding(texts[idx]);
+      }
+      return emb;
+    });
+
+    return validEmbeddings;
   } catch (error) {
     console.error('Text embedding error:', error);
-    return texts.map(() => new Array(384).fill(0));
+    // Return hash-based embeddings instead of zero vectors
+    console.warn('⚠️ Hugging Face failed completely, using hash-based fallback for all texts');
+    return texts.map(text => generateSimpleHashEmbedding(text));
   }
 }
 
@@ -114,14 +129,82 @@ export async function embedTextSingle(text: string): Promise<number[]> {
   }
 
   // Fallback to Hugging Face (384-dim, will be padded to 512 in combination)
-  const results = await embedTextBatch([text]);
-  const embedding = results[0] || new Array(384).fill(0);
-  const isNonZero = embedding.some(v => v !== 0);
-  console.log(`📊 Hugging Face text embedding: ${embedding.length} dim, non-zero: ${isNonZero}`);
-  if (!isNonZero) {
-    console.error('❌ Hugging Face returned zero vector!');
+  try {
+    const results = await embedTextBatch([text]);
+    const embedding = results[0] || new Array(384).fill(0);
+    const isNonZero = embedding.some(v => v !== 0);
+    console.log(`📊 Hugging Face text embedding: ${embedding.length} dim, non-zero: ${isNonZero}`);
+    
+    if (!isNonZero) {
+      console.error('❌ Hugging Face returned zero vector! Attempting direct HF call...');
+      // Last resort: try direct Hugging Face API call
+      const hfToken = getHfToken();
+      if (hfToken) {
+        try {
+          const hf = getHfClient();
+          const directResponse = await hf.featureExtraction({
+            model: TEXT_MODEL,
+            inputs: text,
+          });
+          
+          if (Array.isArray(directResponse) && Array.isArray(directResponse[0])) {
+            const directEmbedding = directResponse[0] as number[];
+            const hasNonZero = directEmbedding.some(v => v !== 0);
+            if (hasNonZero) {
+              console.log(`✅ Direct Hugging Face call succeeded: ${directEmbedding.length} dim`);
+              return directEmbedding;
+            }
+          }
+        } catch (directError) {
+          console.error('❌ Direct Hugging Face call also failed:', directError);
+        }
+      }
+      
+      // If we still have zero vector, throw error to prevent invalid search
+      throw new Error('All embedding methods failed - returned zero vectors');
+    }
+    
+    return embedding;
+  } catch (fallbackError) {
+    console.error('❌ Hugging Face fallback failed:', fallbackError instanceof Error ? fallbackError.message : fallbackError);
+    // Last resort: Generate a simple hash-based embedding to prevent zero vector
+    // This ensures search can still work, even if quality is lower
+    const hashEmbedding = generateSimpleHashEmbedding(text);
+    console.warn('⚠️ Using hash-based fallback embedding to prevent zero vector');
+    return hashEmbedding;
   }
-  return embedding;
+}
+
+/**
+ * Generate a simple hash-based embedding as final fallback
+ * This ensures we never return all-zero vectors, which break search
+ */
+function generateSimpleHashEmbedding(text: string): number[] {
+  const words = text.toLowerCase().split(/\s+/);
+  const vector = new Array(384).fill(0);
+
+  // Create a simple hash-based embedding
+  let hash = 0;
+  for (const word of words) {
+    for (let i = 0; i < word.length; i++) {
+      hash = ((hash << 5) - hash + word.charCodeAt(i)) & 0xffffffff;
+    }
+  }
+
+  // Generate vector based on hash
+  for (let i = 0; i < 384; i++) {
+    const seed = hash + i;
+    vector[i] = Math.sin(seed) * Math.cos(seed * 1.1) * 0.1;
+  }
+
+  // Normalize the vector
+  const magnitude = Math.sqrt(vector.reduce((sum, val) => sum + val * val, 0));
+  if (magnitude > 0) {
+    return vector.map((val) => val / magnitude);
+  }
+  
+  // If somehow still zero, return a small random vector
+  return vector.map(() => (Math.random() - 0.5) * 0.01);
 }
 
 /**
@@ -351,10 +434,17 @@ export async function embedAdvancedMultimodalQuery(
     : typoTolerantQuery;
 
   // Generate embeddings in parallel for efficiency
+  // Ensure we never get zero vectors - use hash fallback if needed
   const embeddingPromises: Promise<any>[] = [
-    embedTextSingle(enhancedQuery),
+    embedTextSingle(enhancedQuery).catch(err => {
+      console.error('❌ Text embedding failed in embedAdvancedMultimodalQuery:', err);
+      return generateSimpleHashEmbedding(enhancedQuery);
+    }),
     vibeText
-      ? embedTextSingle(vibeText)
+      ? embedTextSingle(vibeText).catch(err => {
+          console.error('❌ Vibe embedding failed in embedAdvancedMultimodalQuery:', err);
+          return generateSimpleHashEmbedding(vibeText);
+        })
       : Promise.resolve(new Array(384).fill(0)),
   ];
 
@@ -367,27 +457,55 @@ export async function embedAdvancedMultimodalQuery(
   const [textVector, vibeVector, imageVector] =
     await Promise.all(embeddingPromises);
 
+  // Validate vectors are not all zeros - use hash fallback if needed
+  const finalTextVector = textVector.some(v => v !== 0) 
+    ? textVector 
+    : generateSimpleHashEmbedding(enhancedQuery);
+  const finalVibeVector = vibeVector.some(v => v !== 0) 
+    ? vibeVector 
+    : (vibeText ? generateSimpleHashEmbedding(vibeText) : new Array(384).fill(0));
+  const finalImageVector = imageVector.some(v => v !== 0) 
+    ? imageVector 
+    : new Array(512).fill(0);
+
   // Generate visual analysis from CLIP embeddings
   const visualAnalysis = await analyzeVisualStyle(
-    imageVector,
+    finalImageVector,
     enhancedQuery,
     styleContext
   );
 
   // Combine vectors with proper dimension handling (prioritize combined for 512-dim output)
   const combinedVector = combineAdvancedVectorsWithVibe(
-    textVector,
-    imageVector,
-    vibeVector,
+    finalTextVector,
+    finalImageVector,
+    finalVibeVector,
     textWeight,
     imageWeight,
     vibeWeight
   );
 
+  // Final validation: ensure combined vector is not all zeros
+  if (!combinedVector.some(v => v !== 0)) {
+    console.error('❌ Combined vector is all zeros! Using hash fallback for query');
+    const hashEmbedding = generateSimpleHashEmbedding(enhancedQuery);
+    // Pad to 512 dimensions
+    const paddedHash = hashEmbedding.concat(new Array(512 - hashEmbedding.length).fill(0));
+    return {
+      textVector: finalTextVector,
+      imageVector: finalImageVector,
+      vibeVector: finalVibeVector,
+      combinedVector: paddedHash,
+      visualAnalysis,
+      styleContext,
+      enhancedQuery,
+    };
+  }
+
   return {
-    textVector,
-    imageVector,
-    vibeVector,
+    textVector: finalTextVector,
+    imageVector: finalImageVector,
+    vibeVector: finalVibeVector,
     combinedVector,
     visualAnalysis,
     styleContext,
