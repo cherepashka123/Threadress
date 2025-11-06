@@ -7,10 +7,22 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
+import logging
+import sys
+
+# Set up logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler(sys.stdout)]
+)
+logger = logging.getLogger(__name__)
+
 # Don't import clip_service at module level - import it lazily to avoid startup crashes
 # import clip_service
 
 app = FastAPI(title="CLIP Embedding Service")
+logger.info("FastAPI app created")
 
 # Enable CORS
 app.add_middleware(
@@ -85,14 +97,21 @@ async def embed_image_batch(request: ImageEmbedBatchRequest):
 async def embed_text(request: TextEmbedRequest):
     """Generate embedding for a single text"""
     try:
+        logger.info(f"Received text embedding request: {request.text[:50]}...")
         import clip_service
+        logger.info("clip_service imported successfully")
         embedding = clip_service.embed_text(request.text)
+        logger.info(f"Generated embedding: {len(embedding)} dimensions")
         return {
             "ok": True,
             "embedding": embedding,
             "dimension": len(embedding)
         }
+    except ImportError as e:
+        logger.error(f"Failed to import clip_service: {e}")
+        raise HTTPException(status_code=500, detail=f"Service import error: {str(e)}")
     except Exception as e:
+        logger.error(f"Error generating text embedding: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/embed/text/batch")
