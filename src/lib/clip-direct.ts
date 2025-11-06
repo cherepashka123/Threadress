@@ -56,10 +56,12 @@ export async function checkClipService(): Promise<boolean> {
  * Generate image embeddings using local CLIP service
  */
 export async function embedImageSingle(imageUrl: string): Promise<number[]> {
-  // Check if service is available first
+  // Soft check - don't fail immediately if health check fails
+  // Railway might be cold-starting or slow, but embedding request might still work
   const isAvailable = await checkClipService();
   if (!isAvailable) {
-    throw new Error('CLIP service not available');
+    console.warn(`⚠️ CLIP service health check failed, but trying image embedding request anyway. URL: ${CLIP_SERVICE_URL}`);
+    // Don't throw - try the actual request anyway
   }
 
   try {
@@ -130,11 +132,12 @@ export async function embedImageBatch(
  * Generate text embeddings using local CLIP service
  */
 export async function embedTextSingle(text: string): Promise<number[]> {
-  // Check if service is available first
+  // Soft check - don't fail immediately if health check fails
+  // Railway might be cold-starting or slow, but embedding request might still work
   const isAvailable = await checkClipService();
   if (!isAvailable) {
-    console.warn(`⚠️ CLIP service not available. URL: ${CLIP_SERVICE_URL}`);
-    throw new Error('CLIP service not available');
+    console.warn(`⚠️ CLIP service health check failed, but trying embedding request anyway. URL: ${CLIP_SERVICE_URL}`);
+    // Don't throw - try the actual request anyway
   }
   
   try {
