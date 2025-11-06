@@ -4,8 +4,17 @@
  * NOTE: Only works in local development - always uses Hugging Face in production
  */
 
-const CLIP_SERVICE_URL =
-  process.env.CLIP_SERVICE_URL || 'http://localhost:8001';
+// Normalize CLIP_SERVICE_URL to always include protocol
+function normalizeClipServiceUrl(): string {
+  const url = process.env.CLIP_SERVICE_URL || 'http://localhost:8001';
+  // If URL doesn't start with http:// or https://, add https://
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return `https://${url}`;
+  }
+  return url;
+}
+
+const CLIP_SERVICE_URL = normalizeClipServiceUrl();
 
 // Check if CLIP service is available
 export async function checkClipService(): Promise<boolean> {
